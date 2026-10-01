@@ -21,8 +21,8 @@ jobs:
       - run: pip install -r requirements.txt -r requirements-dev.txt
       - name: Syntax check
         run: python -m compileall -q .
-      - name: Tests
-        run: python -m pytest -q
+      - name: Tests (one process per file — see requirements-dev.txt)
+        run: bash run_tests.sh
 
   app:
     name: app (node)
@@ -60,7 +60,7 @@ jobs:
         run: |
           set -e
           if grep -rInE 'employer|analytics-repo|dbt-repo|\.ts\.net|100\.(64|81)\.' \
-               --exclude-dir=.git --exclude-dir=node_modules . ; then
+               --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.github . ; then
             echo "::error::forbidden work/host marker found"; exit 1
           fi
           echo "hygiene OK"

@@ -23,3 +23,6 @@ build/
 Thumbs.db
 .idea/
 .vscode/
+
+# test caches
+.pytest_cache/

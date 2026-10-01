@@ -1,0 +1,66 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  server:
+    name: server (python)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Syntax check
+        run: python -m compileall -q .
+      - name: Tests
+        run: python -m pytest -q
+
+  app:
+    name: app (node)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+
+  compose:
+    name: compose config
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate docker-compose.yml
+        run: |
+          cp .env.example .env
+          docker compose config -q && echo "compose OK"
+
+  hygiene:
+    name: no work/personal markers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail if forbidden strings are present
+        run: |
+          set -e
+          if grep -rInE 'employer|analytics-repo|dbt-repo|\.ts\.net|100\.(64|81)\.' \
+               --exclude-dir=.git --exclude-dir=node_modules . ; then
+            echo "::error::forbidden work/host marker found"; exit 1
+          fi
+          echo "hygiene OK"

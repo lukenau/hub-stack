@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.example.hub-api</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/uvicorn</string>
+    <string>app:app</string>
+    <string>--host</string>
+    <string>127.0.0.1</string>
+    <string>--port</string>
+    <string>8787</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>${HOME}/code/ai/services/hub-api</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <key>HUB_LOG_DIR</key>
+    <string>/var/log/hub</string>
+    <key>HUB_ROSTER</key>
+    <string>${HOME}/.hub/agents.json</string>
+    <key>HUB_MY_PAGES</key>
+    <string>${HOME}/.hub/my-pages.json</string>
+    <key>MY_PAGES_ROOT</key>
+    <string>${HOME}/Sites/my-pages</string>
+    <key>HUB_SKILLS</key>
+    <string>${HOME}/.hub/skills.json</string>
+    <key>HUB_HOME_ASSISTANT</key>
+    <string>${HOME}/.hub/home-assistant.json</string>
+    <key>HUB_RP_ID</key>
+    <string>hub.${TAILNET}.example.com</string>
+    <key>HUB_ORIGIN</key>
+    <string>https://hub.${TAILNET}.example.com</string>
+    <key>HA_LIVE_APPLY</key>
+    <string></string>
+    <key>LA_DIR</key>
+    <string>${HOME}/Library/LaunchAgents</string>
+    <key>OPENCLAW_BIN</key>
+    <string>/opt/homebrew/bin/openclaw</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/var/log/hub/hub-api.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/var/log/hub/hub-api.err.log</string>
+</dict>
+</plist>

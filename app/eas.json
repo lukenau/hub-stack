@@ -1,0 +1,43 @@
+{
+  "cli": {
+    "version": ">= 23.0.0",
+    "appVersionSource": "remote",
+    "promptToConfigurePushNotifications": false
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "store",
+      "autoIncrement": true
+    },
+    "production": {
+      "distribution": "store",
+      "autoIncrement": true,
+      "channel": "production"
+    }
+  },
+  "submit": {
+    "development": {
+      "ios": {
+        "ascApiKeyPath": "/opt/murmur/asc/AuthKey.p8",
+        "ascApiKeyId": "EXAMPLKEY1",
+        "ascApiKeyIssuerId": "7359bd9e-ee6d-4455-aad9-93991edb39b1",
+        "groups": [
+          "internal"
+        ],
+        "ascAppId": "6811085935"
+      }
+    },
+    "production": {
+      "ios": {
+        "ascApiKeyPath": "/opt/murmur/asc/AuthKey.p8",
+        "ascApiKeyId": "EXAMPLKEY1",
+        "ascApiKeyIssuerId": "7359bd9e-ee6d-4455-aad9-93991edb39b1",
+        "groups": [
+          "internal"
+        ],
+        "ascAppId": "6811085935"
+      }
+    }
+  }
+}

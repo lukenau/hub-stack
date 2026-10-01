@@ -1,0 +1,44 @@
+# hub-stack — server (the "hub"). Brings up hub-api only.
+#
+# The container binds 0.0.0.0 INSIDE the container; exposure is controlled by
+# the host publish below (127.0.0.1 by default = loopback only). Put TLS or a
+# private mesh (Tailscale) in front — see docs/CONNECT-APP.md.
+#
+# Single worker is load-bearing: the WebAuthn challenge cache is in-process.
+
+name: hub-stack
+
+services:
+  hub-api:
+    build:
+      context: ./server
+      args:
+        HUB_UID: "${HUB_UID:-1000}"
+    image: hub-stack/hub-api:local
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      HUB_API_HOST: 0.0.0.0
+      HUB_API_PORT: "8090"
+    ports:
+      # Change the left side to 0.0.0.0 only if you are deliberately putting a
+      # proxy/mesh in front. Default keeps it reachable from this machine only.
+      - "${HUB_BIND:-127.0.0.1}:8090:8090"
+    volumes:
+      - "${HUB_DATA_DIR:-./data}:/data"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8090/api/healthz', timeout=3).status==200 else 1)"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

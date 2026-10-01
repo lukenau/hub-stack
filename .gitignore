@@ -1,0 +1,25 @@
+# secrets / local config
+.env
+data/
+*.pem
+*.key
+!**/*.example
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# node / expo
+node_modules/
+.expo/
+dist/
+build/
+*.tsbuildinfo
+
+# os / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

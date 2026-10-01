@@ -1,0 +1,9 @@
+# requirements-dev.txt tells you to run `python3 -m venv .venv` in this
+# directory to get a test runner, but nothing ignored it — so anyone who
+# followed the documented workflow and then ran `git add -A` would stage a
+# whole virtualenv. Same shape as the apps/hub-app/node_modules symlink trap
+# (see the hub-chat research notes): the instructions create an artifact the
+# ignore rules did not cover.
+.venv/
+__pycache__/
+*.pyc

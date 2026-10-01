@@ -1,0 +1,12 @@
+# Test-only dependencies for services/hub-api. NOT installed into the image (Dockerfile
+# installs requirements.txt alone) — the host python3 has none of these, so tests run from
+# a venv:
+#   python3 -m venv .venv && .venv/bin/pip install -r requirements.txt -r requirements-dev.txt
+#   .venv/bin/python -m pytest test_devicekeys.py -v
+# Run each test file separately, or list the murmur files first: test_murmur_bridge.py and
+# test_murmur_commands.py set their env at module scope and then import app, so their
+# config only lands if they are the first module to import it.
+-r requirements.txt
+pytest>=8.0,<9.0
+httpx>=0.27,<1.0          # fastapi.testclient transport
+cbor2>=5.6,<6.0           # test_devicekeys.py builds COSE public keys for the WebAuthn fixtures

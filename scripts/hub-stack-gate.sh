@@ -69,10 +69,10 @@ scan_cs "secrets: slack/google"     'xapp-[0-9A-Za-z-]{10}|AIza[0-9A-Za-z_-]{35}
 # app.json needs the real one for any build to work. Submission credentials
 # (ascAppId, key id, issuer id) stay covered.
 scan_cs "ident: ASC/EAS account ids" '"(ascAppId|ascApiKeyId|ascApiKeyIssuerId)": *"[0-9a-zA-Z][0-9a-zA-Z-]{5,}"'
-# Host filesystem layout of the author's private deployment. `/srv/hub-data`
-# is the host mount; `/srv/hub-data` is the same directory as seen inside the
-# gateway container, and both leaked into the tree before the export scrubber
-# ran — match either.
+# Host filesystem layout of the author's private deployment, scrubbed from the
+# public export: the estate root as seen on the host and inside the gateway
+# container, plus the service dirs beneath it. Those strings leaked into the
+# tree before the scrubber ran — match any of them.
 scan    "host: private estate paths" '/opt/(agent-data|data|murmur|hermes)/'
 # .env files must never ship with real values
 scan_env() {

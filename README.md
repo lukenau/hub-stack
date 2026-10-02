@@ -24,23 +24,12 @@ name on the app's home screen.
   <img src="app/assets/xavier/triumph.jpg" width="118" alt="Xavier, triumphant">
 </p>
 
-The pose tracks what the hub is actually doing — idle, working a job, done, or
-broken.
-
 **Bring your own model.** hub-stack talks to [OpenRouter](https://openrouter.ai),
 so you point it at one key and pick whichever frontier model you want — Claude,
 GPT, Gemini, Llama, whatever fits the task — with no per-provider wiring. Your
 key, your spend, your choice.
 
-```
-┌────────────────────┐        HTTPS (your network / private mesh)      ┌──────────────────┐
-│   Hub app          │  ───────────────────────────────────────────▶  │   hub-api        │
-│  (web / iOS /      │  ◀───────────────────────────────────────────  │  (this repo,     │
-│   Android)         │              JSON over HTTP(S)                 │   FastAPI)       │
-└────────────────────┘                                                └──────────────────┘
-                                                                              │
-                                                              local services / files / HA
-```
+![Architecture: the app talks to your server, which hands the work to the agent runtime](assets/img/architecture.png)
 
 ---
 
@@ -96,23 +85,23 @@ Tailscale, Headscale, WireGuard, Cloudflare Tunnel, or LAN-only — see
   <img src="app/assets/xavier/tilt.jpg" width="96" alt="">
 </p>
 
-Real screenshots of the app (rendered from the app's own web target at iPhone
-dimensions — 1170x2532), dark theme:
+The app, dark theme, sample data throughout:
 
-Home — the agent card with Xavier's portrait, today's brief, calendar, money:
+![Home](assets/img/app-home.jpg)
+![Chat — the empty thread](assets/img/app-chat-thread.jpg)
+![Chat](assets/img/app-chat.jpg)
 
-![Home](assets/img/app-home.png)
+![Calendar](assets/img/app-calendar.jpg)
+![Automations](assets/img/app-automations.jpg)
 
-Today's brief, the calendar, and the activity feed:
+![Weather](assets/img/app-weather.jpg)
+![Rain forecast](assets/img/app-precip.jpg)
 
-![Brief](assets/img/app-brief.png)
-![Calendar](assets/img/app-calendar.png)
-![Feed](assets/img/app-feed.png)
+![Brief](assets/img/app-brief.jpg)
+![Feed](assets/img/app-feed.jpg)
 
-Ops and Config:
-
-![Ops](assets/img/app-ops.png)
-![Config](assets/img/app-config.png)
+![Ops](assets/img/app-ops.jpg)
+![Config](assets/img/app-config.jpg)
 
 ```
 hub-stack/
@@ -129,7 +118,7 @@ hub-stack/
 
 ## What actually does the work
 
-![How a request flows: the app talks to your server, which hands the work to the agent runtime](assets/img/flow-request.svg)
+![How a request flows: the app talks to your server, which hands the work to the agent runtime](assets/img/flow-request.png)
 
 
 The hub is the **server and the app**. The intelligence behind it is an agent
@@ -161,7 +150,7 @@ and what happens when a service is unset:
 
 ## Integrations — what's included, what isn't
 
-![The connector surface: hub-api at the centre, every service optional](assets/img/flow-services.svg)
+![The connector surface: hub-api at the centre, every service optional](assets/img/flow-services.png)
 
 
 This repo is the **hub server + app**. It includes the code that talks to
@@ -178,7 +167,7 @@ degrade instead of crashing. Full breakdown: **[docs/INTEGRATIONS.md](docs/INTEG
   <img src="app/assets/xavier/asleep.jpg" width="96" alt="">
 </p>
 
-![What stays on the box and what has to leave it](assets/img/flow-trust.svg)
+![What stays on the box and what has to leave it](assets/img/flow-trust.png)
 
 
 - **Your data never leaves your machine.** Everything the hub knows lives in

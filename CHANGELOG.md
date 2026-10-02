@@ -58,6 +58,7 @@ earlier release to compare against.
 - Murmur is presented as a sub-product of Xavier led by the BLE passthrough, rather than as a standalone capability. (`be03bca`, `0dbc989`)
 - The Murmur surface in the app appears only once the server reports a bridge token is provisioned (`GET /api/murmur/configured`), instead of inferring it from a derived status file. (`9d44bb3`)
 - The public app ships without the owner's trading tab and personal ops runbooks, and its tooling no longer assumes a private monorepo directory. (`8d1c80f`)
+- The app's build identity is no longer the author's: `app/app.json` carries a placeholder bundle id and no Expo owner, `app/app.config.js` overrides them (and the EAS project id) from `EXPO_OWNER`, `IOS_BUNDLE_IDENTIFIER` and `EAS_PROJECT_ID` at build time, and `app/eas.json` ships a placeholder `ascAppId`. The fork checklist is in `docs/PUBLISH-APP.md`. (`7989e0e`)
 
 ### Fixed
 
@@ -68,6 +69,8 @@ earlier release to compare against.
 - Hub-server tests run one process per file, so module-scope environment setup in one test cannot leak into another. (`9aa6649`)
 - App test tooling no longer requires the non-public PWA directory, so `npm run check` and `npm test` pass on a fresh clone; genuinely broken tests were repaired, and a misleading `window.dispatchEvent` failure caused by the test renderer is gone. (`8d1c80f`)
 - Private-architecture strings on the Ops, System and Config screens were replaced with generic operator descriptions. (`567d005`, `ba0243f`)
+- The Backups card no longer asserts one deployment's schedule and repository policy to every user; the schedule and append-only flag render only when the server's backup status file reports them. (`7989e0e`)
+- Backup test fixtures use obviously-fictional values instead of a repository name and size that may be the author's real ones. (`7989e0e`)
 
 ### Removed
 

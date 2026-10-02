@@ -134,10 +134,3 @@ Two honest caveats about the *distribution*, not the data:
    path (install/update pings) and it means you can push JS to their devices. For
    a build you hand to self-hosters, either leave `updates.url` unset or point it
    at your own infrastructure, and say so.
-
----
-
-## If you are hosting for other people
-
-That is a different thing from this beta, and it changes what you owe the people
-on your server. See [`HOSTING-FOR-OTHERS.md`](HOSTING-FOR-OTHERS.md).

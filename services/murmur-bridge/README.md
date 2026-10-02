@@ -3,8 +3,8 @@
 A BLE bridge for a wearable audio pendant: it connects to the device over
 Bluetooth, streams the audio it records off its flash storage, and uploads it
 to a transcription backend (Chronicle) which turns it into speaker-tagged
-transcripts. A small companion set of scripts then mirrors those transcripts
-into a memory store and a canonical day-file directory.
+transcripts. A small companion script then mirrors those transcripts into a
+memory store and a canonical day-file directory.
 
 This is the piece that makes an always-on memory pipeline reproducible: the
 pendant records continuously into a ~35-hour flash buffer, and the bridge
@@ -23,9 +23,6 @@ page after a restart.
 - `murmur/etl/murmur_to_supermemory.py` — deterministic Chronicle → Supermemory
   mirror: republishes edited conversations, deletes dropped ones, and appends
   the canonical per-day transcript file.
-- `murmur/mac/capture-sync_memory_sync.py` — optional companion that syncs
-  Capture-sync markdown (day recaps, todos, wiki pages) into the same memory
-  store, skipping machinery directories.
 - `murmur/tests/` — the test suite (pytest, plus `responses` for HTTP mocks).
 - `config.example.toml` — annotated example configuration.
 - `murmur-bridge.service` — systemd unit template.

@@ -130,7 +130,7 @@ const ORIGIN_SYMBOLS: Record<string, SymbolName> = {
   calendar: 'calendar',
   email: 'envelope',
   imessage: 'message',
-  capture-sync: 'desktopcomputer',
+  'capture-sync': 'desktopcomputer',
   murmur: 'waveform',
   packages: 'shippingbox',
   oura: 'bed.double',

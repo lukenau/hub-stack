@@ -279,7 +279,7 @@ export const LIVE_BRIEF: Brief = {
           "Yankee papa ingot romeo plinth sextant mike bravo...."
         ],
         "gate": "O3",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "commitments",
         "split": "work",
@@ -303,7 +303,7 @@ export const LIVE_BRIEF: Brief = {
           "Ember xray charlie mike uniform victor jetty....."
         ],
         "gate": "O3",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "commitments",
         "split": "work",
@@ -351,7 +351,7 @@ export const LIVE_BRIEF: Brief = {
           "Delta trellis trellis sierra plinth fathom xray quarry foxtrot nocturne lantern ember quebec oscar obelisk foxtrot anchor delta anchor quarry lima harbor xray juliet anchor....."
         ],
         "gate": "O3",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "todo-list-assistant",
         "split": "work",
@@ -378,7 +378,7 @@ export const LIVE_BRIEF: Brief = {
           "Quebec beacon keel echo tango charlie girder keel yankee dossier kilo beacon quarry sextant...."
         ],
         "gate": "O3",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "todo-list-assistant",
         "split": "work",
@@ -402,7 +402,7 @@ export const LIVE_BRIEF: Brief = {
           "Keel echo girder ember keel lantern echo november bravo girder delta mike oscar beacon keel rampart zulu quarry lima beacon dossier quebec india..."
         ],
         "gate": "O2",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "todo-list-assistant",
         "split": "work",
@@ -426,7 +426,7 @@ export const LIVE_BRIEF: Brief = {
           "Bravo girder ember delta trellis girder xray papa victor jetty ember delta girder romeo..."
         ],
         "gate": "O1",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "todo-list-assistant",
         "split": "work",
@@ -450,7 +450,7 @@ export const LIVE_BRIEF: Brief = {
           "November hotel november uniform papa obelisk lima oscar bravo tango victor papa beacon whiskey cipher..."
         ],
         "gate": "O1",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "todo-list-assistant",
         "split": "work",
@@ -474,7 +474,7 @@ export const LIVE_BRIEF: Brief = {
           "Quarry zulu quebec victor whiskey cipher juliet uniform cipher quarry sierra india harbor echo tango victor plinth fathom rampart zulu quebec victor plinth mortise sextant foxtrot anchor quarry..."
         ],
         "gate": "O2",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "todo-list-assistant",
         "split": "work",
@@ -498,7 +498,7 @@ export const LIVE_BRIEF: Brief = {
           "Jetty yankee charlie nocturne yankee dossier xray quarry sextant sierra plinth sierra victor jetty romeo plinth..."
         ],
         "gate": "O2",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "todo-list-assistant",
         "split": "work",
@@ -523,7 +523,7 @@ export const LIVE_BRIEF: Brief = {
           "Foxtrot tango cipher xray jetty yankee whiskey cipher dossier quebec plinth......"
         ],
         "gate": "O3",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "missed-todos",
         "split": "work",
@@ -549,7 +549,7 @@ export const LIVE_BRIEF: Brief = {
           "Bravo trellis girder kilo hotel harbor echo nocturne sextant trellis trellis girder delta golf tango plinth fathom quebec india harbor kilo november ingot rampart foxtrot november oscar beacon."
         ],
         "gate": "O2",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "missed-todos",
         "split": "work",
@@ -796,7 +796,7 @@ export const LIVE_BRIEF: Brief = {
           "Rampart sierra plinth yankee jetty echo november oscar victor jetty yankee quarry..."
         ],
         "gate": "O2",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "commitments",
         "split": "work",
@@ -820,7 +820,7 @@ export const LIVE_BRIEF: Brief = {
           "Echo trellis foxtrot nocturne sierra cipher..."
         ],
         "gate": "O2",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "commitments",
         "split": "work",
@@ -844,7 +844,7 @@ export const LIVE_BRIEF: Brief = {
           "Echo golf november oscar victor papa india november....."
         ],
         "gate": "O2",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "commitments",
         "split": "work",
@@ -868,7 +868,7 @@ export const LIVE_BRIEF: Brief = {
           "Fathom ember rampart foxtrot....."
         ],
         "gate": "O2",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "commitments",
         "split": "work",
@@ -892,7 +892,7 @@ export const LIVE_BRIEF: Brief = {
           "Whiskey plinth mortise sextant foxtrot..."
         ],
         "gate": "O2",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "commitments",
         "split": "work",
@@ -970,7 +970,7 @@ export const LIVE_BRIEF: Brief = {
           "Lantern lantern echo golf golf alpha girder delta anchor dossier delta golf golf"
         ],
         "gate": "O3",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "todo-list-assistant",
         "split": "work",
@@ -996,7 +996,7 @@ export const LIVE_BRIEF: Brief = {
           "Mortise sextant trellis sierra papa oscar beacon keel romeo...."
         ],
         "gate": "O2",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "todo-list-assistant",
         "split": "work",
@@ -1021,7 +1021,7 @@ export const LIVE_BRIEF: Brief = {
           "Lantern yankee dossier quebec......"
         ],
         "gate": "O1",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "missed-todos",
         "split": "work",
@@ -1046,7 +1046,7 @@ export const LIVE_BRIEF: Brief = {
           "Oscar bravo zulu quebec victor.."
         ],
         "gate": "O2",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "missed-todos",
         "split": "work",
@@ -1096,7 +1096,7 @@ export const LIVE_BRIEF: Brief = {
           "Rampart sextant fathom delta girder ember rampart mike obelisk foxtrot tango papa bravo mike"
         ],
         "gate": "O3",
-        "source": "Capture-sync",
+        "source": "Capture",
         "origin": "capture-sync",
         "kind": "day-recap",
         "split": "work",

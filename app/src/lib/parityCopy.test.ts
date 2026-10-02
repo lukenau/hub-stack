@@ -158,9 +158,10 @@ describe('COST-04/05/08/10/11 — the account cards, bucket labels, rows', () =>
 });
 
 describe('OPS-04/08/10 — ops copy', () => {
-  test('OPS-08 backup sub-line carries the hard-coded schedule', () => {
-    expect(backupSubLine({ repo: 'b2:homebase', total_size_gb: 41.2 } as never)).toBe(
-      'b2:homebase · 41.2 GB · nightly 08:30 UTC · append-only',
+  test('OPS-08 backup sub-line reports only what the server sends', () => {
+    // Fictional fixture values — never the author's real bucket or size.
+    expect(backupSubLine({ repo: 'b2:example-bucket', total_size_gb: 12.5 } as never)).toBe(
+      'b2:example-bucket · 12.5 GB',
     );
   });
 

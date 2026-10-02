@@ -4,19 +4,41 @@ The one-time setup that turns this source tree into an installable TestFlight
 build. Do it on a machine that holds your own Apple and Expo credentials; this
 repo ships no credentials of any kind.
 
-## Names and identifiers (decided)
+## Names and identifiers (fork checklist)
+
+Everything here belongs to whoever **builds** the app, not to this repo. `app/app.json`
+ships neutral placeholders; `app/app.config.js` overrides them from the environment
+at build time, so the author's Expo account, bundle id, and project id never travel
+with a fork:
+
+| Environment variable | Overrides | `app.json` placeholder |
+|---|---|---|
+| `EXPO_OWNER` | `expo.owner` | (unset — EAS uses the account you log in with) |
+| `IOS_BUNDLE_IDENTIFIER` | `expo.ios.bundleIdentifier` | `me.example.xavier` |
+| `EAS_PROJECT_ID` | `expo.extra.eas.projectId` | the id `eas init` writes |
 
 | Thing | Value | Where |
 |---|---|---|
 | Display name (home screen) | **Xavier** | `app/app.json` → `expo.name` |
 | App Store name | **Xavier: Private AI Hub** | set in App Store Connect |
 | Slug / EAS project | **xavier** | `app/app.json` → `expo.slug` |
-| Bundle identifier (example) | **me.example.xavier** | `app/app.json` → `expo.ios.bundleIdentifier` |
 
 The bundle identifier follows reverse-DNS on a domain or handle you control —
-`me.example.xavier` above is an example, not a value to copy. Pick your own
-before the first upload; it is **permanent after that** — Apple will not let
-you reuse or rename it.
+`me.example.xavier` above is a **placeholder, not a value to copy**. Pick your own
+before the first upload; it is **permanent after that** — Apple will not let you
+reuse or rename it.
+
+Set the three variables before a build (or put them in the build profile's `env`
+block in `app/eas.json` so you do not retype them):
+
+```bash
+export EXPO_OWNER=your-expo-username
+export IOS_BUNDLE_IDENTIFIER=me.yourdomain.xavier
+export EAS_PROJECT_ID=<the id eas init prints in step 1>
+```
+
+Nothing here needs editing a tracked file, so a later `git pull` can never hand you
+the author's identity again.
 
 ---
 
@@ -25,13 +47,16 @@ you reuse or rename it.
 ```bash
 cd app
 npx eas-cli login              # Expo account; or export EXPO_TOKEN=... first
-npx eas-cli init               # creates the project, writes expo.extra.eas.projectId
+npx eas-cli init               # creates the project, prints its project id
 ```
 
-`eas init` writes a real `projectId` into `app.json` and offers to create
-`extra.eas.projectId`. Commit it — a placeholder `projectId` blocks every build.
+`eas init` offers to write the real `projectId` into `app.json` — a placeholder
+`projectId` blocks every build. Commit it, or skip the edit and export
+`EAS_PROJECT_ID` (above) instead.
 
-Then set the owner so the project belongs to the right account:
+If the project belongs to an Expo organisation rather than your personal account,
+set the owner so the build targets the right account — either `EXPO_OWNER` (above),
+or `"owner": "<your-expo-username>"` in `app.json`:
 
 ```json
 "owner": "<your-expo-username>"

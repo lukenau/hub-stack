@@ -11,7 +11,7 @@
       "backgroundColor": "#000d0e"
     },
     "ios": {
-      "bundleIdentifier": "me.lukenau.xavier",
+      "bundleIdentifier": "me.example.xavier",
       "supportsTablet": false,
       "config": {
         "usesNonExemptEncryption": false
@@ -78,7 +78,6 @@
     "runtimeVersion": {
       "policy": "fingerprint"
     },
-    "owner": "luketnau",
     "extra": {
       "router": {},
       "eas": {

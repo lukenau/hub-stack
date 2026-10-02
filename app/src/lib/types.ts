@@ -40,6 +40,12 @@ export interface BackupStatus {
   snapshot_count?: number;
   total_size_gb?: number;
   repo?: string;
+  /** The deploying server's own schedule/policy, passed through verbatim when
+   * the backup status file carries it (a human string such as a cadence plus
+   * timezone). Absent when the deployment does not report one — the app never
+   * invents it. */
+  schedule?: string | null;
+  append_only?: boolean | null;
   snapshots?: { id: string; ts: string; tags?: string[] }[];
   rel_time: string;
 }

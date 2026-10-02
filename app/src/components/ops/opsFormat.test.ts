@@ -222,11 +222,29 @@ describe('claude shells', () => {
 });
 
 describe('backups and board', () => {
-  test('the sub line survives a missing repo and size', () => {
-    expect(backupSubLine({ rel_time: '4h ago', repo: 'b2:homebase', total_size_gb: 41.2 })).toBe(
-      'b2:homebase · 41.2 GB · nightly 08:30 UTC · append-only',
+  test('the sub line carries no schedule the server did not send', () => {
+    // Fixtures are deliberately fictional: a real repo name and size must not
+    // ship in this public repo.
+    expect(backupSubLine({ rel_time: '4h ago', repo: 'b2:example-bucket', total_size_gb: 12.5 })).toBe(
+      'b2:example-bucket · 12.5 GB',
     );
-    expect(backupSubLine({ rel_time: 'unknown' })).toBe('repo unknown · nightly 08:30 UTC · append-only');
+    expect(backupSubLine({ rel_time: 'unknown' })).toBe('repo unknown');
+  });
+
+  test('a schedule and append-only policy render only when the deployment reports them', () => {
+    expect(
+      backupSubLine({
+        rel_time: '4h ago',
+        repo: 's3:demo-bucket',
+        total_size_gb: 1.5,
+        schedule: 'weekly 02:00 UTC',
+        append_only: true,
+      }),
+    ).toBe('s3:demo-bucket · 1.5 GB · weekly 02:00 UTC · append-only');
+    // A deployment with no configured schedule says nothing about one.
+    expect(backupSubLine({ rel_time: 'unknown', schedule: null, append_only: false })).toBe(
+      'repo unknown',
+    );
   });
 
   test('the board pulse is one joined line', () => {

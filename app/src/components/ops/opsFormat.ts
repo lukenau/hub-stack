@@ -131,13 +131,17 @@ export function attachSnippet(attach: string | undefined, name: string): string 
   return attach ?? `tmux switch-client -t ${name}`;
 }
 
-/** Ops.tsx:801-804 — the Backups card's mono second line, hard-coded tail included. */
+/** Ops.tsx:801-804 — the Backups card's mono second line. Only what THIS
+ * deployment's server reports: repo and size always, the schedule and the
+ * append-only policy only when the status payload carries them. A literal
+ * schedule+policy used to be appended here, which asserted one deployment's
+ * configuration to every user of the app. */
 export function backupSubLine(d: BackupStatus): string {
-  return (
-    (d.repo ?? 'repo unknown') +
-    (d.total_size_gb != null ? ` · ${d.total_size_gb} GB` : '') +
-    ' · nightly 08:30 UTC · append-only'
-  );
+  const parts = [d.repo ?? 'repo unknown'];
+  if (d.total_size_gb != null) parts.push(`${d.total_size_gb} GB`);
+  if (d.schedule) parts.push(d.schedule);
+  if (d.append_only) parts.push('append-only');
+  return parts.join(' · ');
 }
 
 /** Ops.tsx:518 — the whole Board section is this one line. */

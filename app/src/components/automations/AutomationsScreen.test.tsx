@@ -234,9 +234,9 @@ test('one automation shows its controls and its history with the folds', async (
 test('a run is drawn as the one message it is', () => {
   const detail = {
     ...run(),
-    output: '⚠️ hub-server ops-watch:\n• backup stale',
+    output: '⚠️ ops-watch:\n• backup stale',
     truncated: false,
-    parts: [{ type: 'text' as const, text: '⚠️ hub-server ops-watch:\n• backup stale' }],
+    parts: [{ type: 'text' as const, text: '⚠️ ops-watch:\n• backup stale' }],
   };
   const message = runAsMessage(detail, 'fu_abc');
   expect(message).toMatchObject({ role: 'assistant', status: 'complete', thread_id: 'fu_abc', cron_run_id: detail.run_id });

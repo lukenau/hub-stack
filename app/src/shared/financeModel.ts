@@ -54,7 +54,7 @@ export function isInflowType(t: TxnType): boolean {
 
 /**
  * CLASSIFICATION PARITY SPEC — mirrored in the merger
- * (hub-server/hermes/finance/finance-snapshot.py). Both implementations MUST
+ * (the finance-snapshot merger). Both implementations MUST
  * agree; edit them together. Plaid enum categories compare with underscores as
  * spaces (BANK_FEES → "bank fees"). Order matters:
  *   1. kind == "income" OR category ~ income|paycheck|payroll|salary|dividend|direct deposit → income

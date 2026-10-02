@@ -281,7 +281,7 @@ def _save_devicekeys(items: list[dict[str, Any]]) -> None:
     nothing; WRITE access is what matters — appending a public key here is equivalent to
     owning the gate. 0600 buys exactly one thing: an unprivileged process running as some
     OTHER uid cannot edit the file. It does NOT defend against the adversary that actually
-    matters here (hub-server/SECURITY-FOLLOWUPS.md F1): example-gateway holds
+    matters here (security follow-up F1): example-gateway holds
     /srv/hub-data as a rw mount and runs as ROOT over it, so root ignores the mode bits
     entirely, and anything that can write the containing DIRECTORY can replace the file
     regardless. A prompt-injected agent in that container therefore still owns this store.

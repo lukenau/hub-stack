@@ -307,10 +307,10 @@ are never served.
 
 ```ini
 # Replace the whole root registry wholesale (one "id:label:/abs/path" per root):
-HUB_FS_ROOTS=sites:Sites:/data/sites;code_ai:code/ai:/data/code/ai
+HUB_FS_ROOTS=sites:Sites:/data/sites;code:Code:/data/code
 # Or, without HUB_FS_ROOTS, move roots one at a time from their Mac defaults:
 HUB_FS_SITES=
-HUB_FS_CODE_AI=
+HUB_FS_CODE=
 HUB_FS_HUB_CONFIG=
 HUB_FS_LAUNCH_AGENTS=
 ```

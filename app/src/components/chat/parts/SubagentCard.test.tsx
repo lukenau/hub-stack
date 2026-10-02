@@ -80,7 +80,7 @@ it("draws the child's own text and tool calls", async () => {
     parts: [
       { type: 'reasoning', text: 'check the kernel' },
       { type: 'tool_call', tool_call_id: 't1', tool_name: 'terminal', args: 'uname -a', status: 'complete' },
-      { type: 'text', text: 'Linux 6.8.0 on hub-server.', role: 'assistant' },
+      { type: 'text', text: 'Linux 6.8.0 on example-host.', role: 'assistant' },
     ],
   });
   const tree = render(<SubagentCard part={part()} threadId="thr_1" />);
@@ -90,7 +90,7 @@ it("draws the child's own text and tool calls", async () => {
   const shown = texts(tree);
   expect(shown).toContain('check the kernel');
   expect(shown).toContain('terminal');
-  expect(shown).toContain('Linux 6.8.0 on hub-server.');
+  expect(shown).toContain('Linux 6.8.0 on example-host.');
 });
 
 it('says so when the transcript cannot be read, rather than showing an empty child', async () => {

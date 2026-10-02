@@ -239,8 +239,8 @@ def _unused_port() -> int:
 class _Respond503Handler(http.server.BaseHTTPRequestHandler):
     """Stands in for the live gateway's generic platform-events callback answering
     `503 platform_http_events_unsupported` — Phase 1's hub adapter implements neither
-    `verify_http_event_request` nor `dispatch_http_event` (hub-server/hermes/
-    hub-platform/adapter.py)."""
+    `verify_http_event_request` nor `dispatch_http_event` (the hub-platform
+    adapter)."""
 
     def do_POST(self) -> None:  # noqa: N802 (BaseHTTPRequestHandler's own naming)
         body = b'{"code":"platform_http_events_unsupported"}'

@@ -1,6 +1,6 @@
 """hub-api calendar module — a date range out of the calendar snapshot.
 
-hub-server/scripts/calendar-sync.py keeps the snapshot; this only reads it.
+A host cron (`calendar-sync.py`) keeps the snapshot; this only reads it.
 The source behind it (Superhuman's natural-language query) takes minutes per
 week and is never called from here.
 

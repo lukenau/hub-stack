@@ -107,13 +107,13 @@ def test_category_comes_from_where_the_job_delivers():
 
 def test_severity_is_read_from_the_mark_the_job_already_prints():
     assert severity_of("ok", "\U0001F6A8 credit-watch: OpenRouter balance $9.97 left") == "alert"
-    assert severity_of("ok", "⚠️ hub-server ops-watch:\n• backup stale") == "warn"
+    assert severity_of("ok", "⚠️ ops-watch:\n• backup stale") == "warn"
     assert severity_of("ok", "**Amazon order update**") == "info"
     assert severity_of("failed", "Script exited with code 28") == "failed"
 
 
 def test_preview_drops_a_first_line_that_only_names_the_job():
-    out = "⚠️ hub-server ops-watch:\n• backup stale — last snapshot 136h ago\n• state volume 94% full"
+    out = "⚠️ ops-watch:\n• backup stale — last snapshot 136h ago\n• state volume 94% full"
     assert preview_of(out) == "backup stale — last snapshot 136h ago · state volume 94% full"
     assert preview_of("**Amazon order update**\n- Cocofloss · Arriving today") == "Cocofloss · Arriving today"
     assert preview_of("\U0001F6A8 credit-watch: OpenRouter balance $9.97 left") == (
@@ -123,7 +123,7 @@ def test_preview_drops_a_first_line_that_only_names_the_job():
 
 def test_a_card_shows_its_lines_one_per_line():
     from chat.automation_store import preview_lines
-    out = "\u26A0\uFE0F hub-server ops-watch:\n\u2022 backup stale \u2014 last snapshot 160h ago\n\u2022 state volume 94% full\n\u2022 briefing page missing\n\u2022 a source is erroring"
+    out = "\u26A0\uFE0F ops-watch:\n\u2022 backup stale \u2014 last snapshot 160h ago\n\u2022 state volume 94% full\n\u2022 briefing page missing\n\u2022 a source is erroring"
     assert preview_lines(out) == ["backup stale \u2014 last snapshot 160h ago", "state volume 94% full", "briefing page missing"]
     assert preview_lines("x" * 200)[0].endswith("\u2026")
 
@@ -568,7 +568,7 @@ def test_backfill_files_stored_deliveries_on_evidence_only(unlocked):
     autos = AutomationStore(platform.get_store())
     sync(jobs=[{"id": "ce4ca12805ee", "name": "cron-watch", "deliver": "discord:100000000000000004,hub:cron"}])
     sync(runs=[
-        run(OPS, "f1", 30, "\u26A0\uFE0F hub-server ops-watch:\n\u2022 backup stale \u2014 112h"),
+        run(OPS, "f1", 30, "\u26A0\uFE0F ops-watch:\n\u2022 backup stale \u2014 112h"),
         run(CREDIT, "f1", 1, "\U0001F6A8 credit-watch: balance $9.97 left"),
     ])
 
@@ -578,7 +578,7 @@ def test_backfill_files_stored_deliveries_on_evidence_only(unlocked):
         assert r.status_code == 200, r.text
 
     stored("ops", "\U0001F6A8 credit-watch: balance $9.97 left")                       # text
-    stored("ops", "\u26A0\uFE0F hub-server ops-watch:\n\u2022 state volume 94% full")   # opener
+    stored("ops", "\u26A0\uFE0F ops-watch:\n\u2022 state volume 94% full")   # opener
     stored("cron", "\U0001F6A8 cron-watch:\n  credit-watch missed its run")            # thread
     stored("ops", "\u23F3 Working \u2014 18 min \u2014 iteration 3")                    # nothing claims it
     stored("brief", "\u26A0\uFE0F Cron 'cron-watch' failed: the AI model service says no")  # named

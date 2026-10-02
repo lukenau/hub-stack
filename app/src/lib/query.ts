@@ -540,9 +540,9 @@ export const QUERY_TUNING: Record<string, QueryTuning> = {
     source: 'Files.tsx:167',
   },
   'fs-browse': {
-    // Files.tsx:168-169 `useState('code_ai')` / `useState('')` — the PWA's own
+    // Files.tsx:168-169 `useState('code')` / `useState('')` — the PWA's own
     // initial state, copied verbatim.
-    queryKeyExample: ['fs-browse', 'code_ai', ''],
+    queryKeyExample: ['fs-browse', 'code', ''],
     staleTime: GLOBAL_STALE_TIME_MS,
     staleTimeOverridden: false,
     refetchInterval: false,

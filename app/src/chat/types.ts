@@ -82,7 +82,7 @@ export interface ToolCallPart {
   choices?: ApprovalChoice[];
   /** A delegated task. The plugin's `subagent_start`/`subagent_stop` hooks send
    * the SAME `tool_call` part shape with this extra key
-   * (hub-server/hermes/plugins/hub-platform/hub_wire.py `subagent_message`),
+   * (the hub-platform plugin's `hub_wire.py` `subagent_message`),
    * so a delegation is a tool call that knows it is one. Present ⇒ the
    * transcript draws a subagent card instead of a tool row. */
   subagent?: {

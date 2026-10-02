@@ -74,6 +74,24 @@ scan_cs "ident: ASC/EAS account ids" '"(ascAppId|ascApiKeyId|ascApiKeyIssuerId)"
 # container, plus the service dirs beneath it. Those strings leaked into the
 # tree before the scrubber ran — match any of them.
 scan    "host: private estate paths" '/opt/(agent-data|data|murmur|hermes)/'
+# ...and the same estate named from other roots. The `/opt/...` rule above only
+# catches paths written from the host/container root, so a reference that used a
+# different mount or a bare repo name slipped through. Two spellings are covered:
+#   * the author's private monorepo, `code-ai` (container mount `/data/code-ai`,
+#     Mac checkout `~/code/ai`) — both hyphen and underscore ids, and the
+#     `code/ai` dir form;
+#   * `hub-server/` — the private monorepo's server directory, named in comments
+#     as though it lived under this tree.
+# Only the PATH-SHAPED `hub-server/` is matched on purpose. Bare `hub-server` is
+# NOT flagged: a bare name cannot be told apart from a component name, and while
+# no component here is called that (this product's server is `hub-api` — see
+# docker-compose.yml), the trailing slash is what makes a string a layout path.
+# A bare `/data/...` path is likewise NOT flagged: `/data` is this product's own
+# container mount root (docker-compose.yml `${HUB_DATA_DIR:-./data}:/data`), so
+# `/data/hub/...`, `/data/sites` and `/data/finance` are the product's layout,
+# not the author's — only `/data/code-ai` and `/data/code/ai`, reached through
+# the `code-ai`/`code/ai` alternatives, are private.
+scan    "host: private repo/layout refs" '(^|[^A-Za-z0-9_-])(code-ai|code_ai|code/ai)|(^|[^A-Za-z0-9_-])hub-server/'
 # .env files must never ship with real values
 scan_env() {
   local out; out=$(find . -name '.env' -not -path './.git/*' -not -path './node_modules/*' 2>/dev/null | sed 's/^/        /')

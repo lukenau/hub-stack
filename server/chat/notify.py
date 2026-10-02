@@ -15,7 +15,8 @@ to the foreground and `background` when it leaves, and a report goes stale after
 PRESENCE_TTL so an app that was killed outright (no background event) stops
 counting as present rather than silencing his phone forever.
 
-The Expo send is lifted from `hub-server/brief/brief_notify.py` — no APNs key
+The Expo send is lifted from the host's brief notifier (`brief_notify.py`) — no
+APNs key
 lives on this box; Expo holds it and resolves the token to the device.
 """
 

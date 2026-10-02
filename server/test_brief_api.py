@@ -215,7 +215,7 @@ def test_dismiss_json_accepts_the_ruling_146_why_chip_codes():
     """The undo-row chips (not-mine/done/noise) post through the SAME
     reason: handler as the legacy irrelevant/bot codes — this only proves the
     server accepts and logs them; load_exemplars grouping them by reason is
-    covered in hub-server/brief/tests/test_brief_triage.py."""
+    covered by the brief-triage tests."""
     assert post_dismiss("reason:done", item_id=WRAPPED).status_code == 200
     entry = json.loads(FEEDBACK.read_text().splitlines()[-1])
     assert entry["reason"] == "done" and entry["item_id"] == WRAPPED

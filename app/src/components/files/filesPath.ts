@@ -64,9 +64,9 @@ export function filePreviewErrorCopy(message: string): string {
 }
 
 /**
- * `Files.tsx:168` `useState<string>('code_ai')`. The PWA's OQ-14 discrepancy
- * (live root id `code_ai` vs the mock server's `code-ai`) does not apply
- * here: `src/lib/api.ts` has no mock mode (it always talks to the live
- * hub-api), so the live id is simply the only default that exists.
+ * `Files.tsx:168` `useState<string>('code')`. `src/lib/api.ts` has no mock
+ * mode (it always talks to the live hub-api), so the live root id is the
+ * only default that exists — there is no second, mock-server spelling to
+ * reconcile it with.
  */
-export const DEFAULT_ROOT_ID = 'code_ai';
+export const DEFAULT_ROOT_ID = 'code';

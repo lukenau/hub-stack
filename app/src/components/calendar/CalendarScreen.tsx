@@ -1,7 +1,7 @@
 // The calendar: both of the user's calendars, read-only, in four views.
 //
-// What is drawn is a snapshot a cron job keeps (hub-server/scripts/
-// calendar-sync.py), not a live read — the source takes minutes per week and
+// What is drawn is a snapshot a cron job keeps (`calendar-sync.py`), not a live
+// read — the source takes minutes per week and
 // can miss an event. So the header says how fresh the dates ON SCREEN are, a
 // day the snapshot has never read says so rather than looking free, and an
 // event the last sync did not return is drawn as unconfirmed.

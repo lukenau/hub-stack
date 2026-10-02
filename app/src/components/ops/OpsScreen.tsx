@@ -69,7 +69,7 @@ export function OpsScreen() {
       <BoardLine q={kanban} />
       <NavCard
         rows={[
-          { href: '/ops/files', label: 'Files', sub: 'code/ai · hub data · read-only' },
+          { href: '/ops/files', label: 'Files', sub: 'code · hub data · read-only' },
         ]}
         style={{ marginTop: 14 }}
       />

@@ -1,7 +1,7 @@
 """hub-api files module — read-only multi-root file browser.
 
 Per ADR 011 amendment 2026-04-20 (read-only FS surface):
-- Four allowlisted roots: sites, code_ai, hub_config, launch_agents
+- Four allowlisted roots: sites, code, hub_config, launch_agents
 - Each root resolved once at import; requests validate the final resolved
   path still sits within the root (rejects traversal + symlink escapes)
 - Day-1 is GET-only. No write endpoints — additions to POST_ALLOWLIST_PREFIXES
@@ -47,7 +47,7 @@ def _root_registry() -> dict[str, Root]:
         return roots
     entries = [
         Root("sites", "Sites", Path(os.environ.get("HUB_FS_SITES", str(_HOME / "Sites")))),
-        Root("code_ai", "code/ai", Path(os.environ.get("HUB_FS_CODE_AI", str(_HOME / "code/ai")))),
+        Root("code", "Code", Path(os.environ.get("HUB_FS_CODE", str(_HOME / "code")))),
         Root("hub_config", ".hub", Path(os.environ.get("HUB_FS_HUB_CONFIG", str(_HOME / ".hub")))),
         Root("launch_agents", "LaunchAgents", Path(os.environ.get("HUB_FS_LAUNCH_AGENTS", str(_HOME / "Library/LaunchAgents")))),
     ]

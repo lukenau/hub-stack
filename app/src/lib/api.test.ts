@@ -116,9 +116,9 @@ describe('GET reads: exact path + query', () => {
 
   it('fsBrowse encodes root and path as query params', async () => {
     mockFetchOnce(jsonResponse({}));
-    await api.fsBrowse('code-ai', '/some dir/x');
+    await api.fsBrowse('code', '/some dir/x');
     expect(global.fetch).toHaveBeenCalledWith(
-      `${BASE}/files/browse?root=code-ai&path=%2Fsome%20dir%2Fx`,
+      `${BASE}/files/browse?root=code&path=%2Fsome%20dir%2Fx`,
       { credentials: 'include' },
     );
   });

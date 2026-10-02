@@ -12,7 +12,7 @@ Runs as a launchd user agent bound to `127.0.0.1:8787`. Exposed over Tailscale v
 |---|---|
 | `app.py` | FastAPI app — read-only GETs + WebAuthn endpoints + middleware allowlist |
 | `ha_actions.py` | HA proposal challenge + apply router (dry-run Day-1, live when `HA_LIVE_APPLY=true`) |
-| `files.py` | Multi-root read-only file browser (`sites`, `code_ai`, `hub_config`, `launch_agents`) |
+| `files.py` | Multi-root read-only file browser (`sites`, `code`, `hub_config`, `launch_agents`) |
 | `requirements.txt` | pinned pip deps (fastapi, uvicorn, webauthn) |
 | `launchd/com.example.hub-api.plist.tmpl` | envsubst-rendered by `scripts/render-plists.sh` |
 | `passkeys.json` | registered platform authenticator credentials (gitignored, populated at Phase 9.5 enrolment) |

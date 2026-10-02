@@ -25,7 +25,7 @@ docstring gives (auth-in-handler, since `@app.middleware("http")` never runs on 
 WebSocket scope).
 
 `/send`'s honest limit: the gateway's `hub` platform adapter is Phase 1,
-observer-only (hub-server/hermes/hub-platform/adapter.py) — it implements neither
+observer-only (the hub-platform adapter, `adapter.py`) — it implements neither
 `verify_http_event_request` nor `dispatch_http_event`, so every forward attempt to
 `POST /api/platforms/hub/events` legitimately comes back `503
 platform_http_events_unsupported` today. `/send` records the message durably and

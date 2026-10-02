@@ -283,7 +283,8 @@ export interface SpendTimeseries {
 // Max plan — prorated onto the SAME window the spend pills resolve, so the card
 // tiles the range line above it. Metered spend (OpenRouter, Anthropic API
 // credits) is excluded by construction: it is already the hero, and the server
-// never folds these totals into it. Ledger: hub-server/hermes/finance/recurring-costs.json.
+// never folds these totals into it. Ledger: the recurring-costs file
+// (server-side, HUB_RECURRING_COSTS).
 export interface RecurringItem {
   id: string;
   label: string;
@@ -312,7 +313,7 @@ export interface RecurringCosts {
 // --- Personal finance snapshot (day-to-day spend surface) --------------------
 // Written 3x/day by the hermes finance-snapshot.py cron. Amounts render on the
 // Hub only (the private surface); positive = spend (outflow). RH agentic account
-// is ring-fenced out upstream. See hub-server/hermes/finance/DESIGN-2026-07-23.md.
+// is ring-fenced out upstream. See the finance-snapshot design note.
 export type FinanceSourceStatus = 'ok' | 'degraded' | 'error';
 
 export interface FinanceTxn {
@@ -772,7 +773,7 @@ export type ApplyErrorCode =
   | 'network'
   | 'unknown';
 
-// --- Murmur (GET /api/murmur — hub-api file-reader, hub-server/scripts/murmur-derive.sh) ---
+// --- Murmur (GET /api/murmur — hub-api file-reader, murmur-derive.sh) ---
 export interface MurmurPendant {
   state: 'recording' | 'paused' | 'disconnected' | 'never_seen';
   battery_pct: number | null;

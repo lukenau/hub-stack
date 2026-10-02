@@ -3027,8 +3027,8 @@ async def imessage_send(draft_id: int, request: Request) -> Response:
 # /srv/hub-data/hub/config/telegram-topics.json). The Hub edits it through the
 # SAME WebAuthn gate the action writes use — a challenge bound to the sha256 of
 # the exact payload (purpose "topics"), then a verified assertion — and the write
-# only marks pending_sync; the host-side applier (hub-server/scripts/
-# topic-routing-sync.sh, cron */10) pushes routes into Hermes cron jobs and the
+# only marks pending_sync; the host-side applier (topic-routing-sync.sh,
+# cron */10) pushes routes into Hermes cron jobs and the
 # approvals secret. hub-api NEVER touches jobs.json.
 TOPICS_CONFIG_FILE = Path(os.environ.get("HUB_TOPICS_CONFIG", "/data/hub/config/telegram-topics.json"))
 # Live deliver snapshot ({"jobs": {name: deliver}, "approvals_topic": {...}, "ts": ...})
@@ -3193,8 +3193,8 @@ def topics_apply(req: TopicsApplyRequest) -> dict[str, Any]:
 # sha256 of {id, option_key, note}, purpose "decisions", then a verified
 # assertion). Every answer ALSO appends to decisions/responses.jsonl — an
 # append-only ledger, nothing deleted. Reserved option_key "dismiss" marks the
-# card dismissed. Schema + producer/consumer contract:
-# ai/hub-server/hermes/DECISION-INBOX.md.
+# card dismissed. Schema + producer/consumer contract: the decision-inbox
+# design note (not shipped in this repo).
 DECISIONS_DIR = Path(os.environ.get("HUB_DECISIONS_DIR", "/data/hub/decisions"))
 DECISIONS_LEDGER = DECISIONS_DIR / "responses.jsonl"
 _DECISION_ID_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
@@ -4423,7 +4423,7 @@ def cost_openrouter() -> dict[str, Any]:
         except (urllib.error.URLError, OSError, ValueError, KeyError, TypeError):
             activity = None  # credits still render; the card notes activity is off
 
-    # Per-key spend from the cost-watch snapshot trail (hub-server/scripts/cost-watch.sh,
+    # Per-key spend from the cost-watch snapshot trail (cost-watch.sh,
     # host cron 09:15). The keys live in /srv/hub-data/.env, which this container cannot
     # read — the host script does the key handling and writes the totals here, so tracking
     # another key never puts its secret in hub-api's environment. Rows predating multi-key
@@ -4463,8 +4463,8 @@ def cost_openrouter() -> dict[str, Any]:
 
 
 # --- Cost tab, recurring spend (the flat charges under the estate) ----------
-# Read from the repo, mounted read-only at /data/code-ai, so correcting a price
-# is an edit + commit — no image rebuild and no container recreate.
+# Read from a file bind-mounted read-only (HUB_RECURRING_COSTS below), so a
+# price correction is an edit + commit — no image rebuild and no container recreate.
 RECURRING_COSTS = Path(os.environ.get(
     "HUB_RECURRING_COSTS", "/srv/hub-data/finance/recurring-costs.json"))
 
@@ -5556,7 +5556,7 @@ def healthz() -> dict[str, str]:
 
 # ---------------------------------------------------------------------------
 # Murmur (pendant capture pipeline) status — derived by
-# hub-server/scripts/murmur-derive.sh (host cron, */5) from live Chronicle,
+# murmur-derive.sh (host cron, */5) from live Chronicle,
 # the Supermemory ETL state, and the Pi bridge's own pushed status file.
 # Filesystem-as-API, same freshness contract as the other derived files: read_cache 503s
 # a murmur.json that's missing or older than HUB_CACHE_MAX_AGE_S (900s).
@@ -5707,7 +5707,7 @@ async def _ttyd_ws_connect():
 
 
 # --- Push notification devices ------------------------------------------------
-# The brief pipeline (hub-server/brief/brief_notify.py) composes and sends the
+# The brief pipeline (brief_notify.py) composes and sends the
 # one notification a morning earns; hub-api's only job is holding the tokens it
 # sends to. They live beside the other briefing state, written here as uid 1000
 # and read by the pipeline as uid 1001 — the same crossing briefing_dismissals

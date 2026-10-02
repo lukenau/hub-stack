@@ -594,6 +594,21 @@ export const QUERY_TUNING: Record<string, QueryTuning> = {
     source: 'useCalendar.ts:9',
     note: 'One key for the whole synced span; Home\'s card and the screen share it.',
   },
+  'murmur-configured': {
+    queryKeyExample: ['murmur-configured'],
+    staleTime: 300_000,
+    staleTimeOverridden: true,
+    // Whether Murmur is configured at all almost never changes at runtime (it
+    // tracks a server-side bridge token), so a tight poll would just re-read
+    // the same answer. Pull-to-refresh and the app-foreground refetch are the
+    // refresh paths, as for the brief/calendar.
+    refetchInterval: false,
+    retry: GLOBAL_RETRY,
+    retryOverridden: false,
+    // No PWA original: gating the Murmur surface (absent unless configured)
+    // is a native-only addition.
+    source: 'OpsScreen.tsx:36',
+  },
 };
 
 // ===========================================================================

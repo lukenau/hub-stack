@@ -67,3 +67,27 @@ def test_commands_empty_when_file_absent(monkeypatch):
 
 def test_other_posts_still_405():
     assert client.post("/api/murmur/bridge/nope", json={}).status_code == 405
+
+
+def test_configured_true_when_bridge_token_is_provisioned():
+    r = client.get("/api/murmur/configured")
+    assert r.status_code == 200 and r.json() == {"configured": True}
+
+
+def test_configured_false_when_no_token_file_or_env(monkeypatch):
+    import app as mod
+
+    monkeypatch.setattr(mod, "MURMUR_BRIDGE_TOKEN_FILE", TMP / "no-such-token-file")
+    monkeypatch.delenv("MURMUR_BRIDGE_TOKEN", raising=False)
+    r = client.get("/api/murmur/configured")
+    assert r.status_code == 200 and r.json() == {"configured": False}
+
+
+def test_configured_never_503s_even_if_the_derive_file_is_missing(monkeypatch):
+    # The whole point of this endpoint vs /api/murmur: it must answer even
+    # when murmur.json (the derive-cron output) is absent or stale.
+    import app as mod
+
+    monkeypatch.setattr(mod, "MURMUR_DERIVED", TMP / "no-such-murmur.json")
+    r = client.get("/api/murmur/configured")
+    assert r.status_code == 200

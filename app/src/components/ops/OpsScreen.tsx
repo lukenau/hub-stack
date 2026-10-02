@@ -10,7 +10,7 @@
 // Terminal moves up into that card, directly under Murmur (2026-09-22: "move
 // the terminal entry point to the top of the ops page under murmur").
 import { PageTitle, RefreshControl, Screen } from '../shell';
-import { NavCard } from './NavCard';
+import { NavCard, type NavRow } from './NavCard';
 import { NeedsYou } from './NeedsYou';
 import { SessionsSection } from './SessionsSection';
 import { ShellsSection } from './ShellsSection';
@@ -21,6 +21,21 @@ import { BoardLine } from './BoardLine';
 import { api } from '../../lib/api';
 import { QUERY_TUNING, usePoll } from '../../lib/query';
 
+/** Pure so the absent-unless-configured gate is unit-testable without
+ * standing up the whole screen's query plumbing. `murmurConfigured` is
+ * `undefined` while that read is in flight — treated the same as `false`
+ * (fail closed to hidden, never a flash of a row that then disappears). */
+export function opsNavRows(murmurConfigured: boolean | undefined): NavRow[] {
+  return [
+    { href: '/ops/feed', label: 'Feed', sub: 'briefs & cards from Xavier' },
+    { href: '/ops/cost', label: 'Agent spend', sub: 'model + cron cost · windows & trends' },
+    ...(murmurConfigured
+      ? [{ href: '/ops/murmur' as const, label: 'Murmur', sub: 'pendant capture · bridge · Chronicle · memory' }]
+      : []),
+    { href: '/ops/terminal', label: 'Terminal', sub: 'tmux hub-term · Face ID gate' },
+  ];
+}
+
 export function OpsScreen() {
   const pairing = usePoll(['pairing'], api.pairing, QUERY_TUNING['pairing-ops']);
   const sessions = usePoll(['sessions'], api.sessions, QUERY_TUNING['sessions-ops']);
@@ -29,6 +44,10 @@ export function OpsScreen() {
   const kanban = usePoll(['kanban'], api.kanban, QUERY_TUNING.kanban);
   const shells = usePoll(['tmux-sessions'], api.tmuxSessions, QUERY_TUNING['tmux-sessions']);
   const backups = usePoll(['backups'], api.backups, QUERY_TUNING.backups);
+  // Murmur requires a physical pendant + bridge most self-hosters don't have;
+  // the nav row is absent until the server confirms a bridge is configured
+  // (fails closed to hidden on error/loading — see api.murmurConfigured).
+  const murmurConfigured = usePoll(['murmur-configured'], api.murmurConfigured, QUERY_TUNING['murmur-configured']);
 
   return (
     <Screen
@@ -40,15 +59,7 @@ export function OpsScreen() {
         </PageTitle>
       }
     >
-      <NavCard
-        rows={[
-          { href: '/ops/feed', label: 'Feed', sub: 'briefs & cards from Xavier' },
-          { href: '/ops/cost', label: 'Agent spend', sub: 'model + cron cost · windows & trends' },
-          { href: '/ops/murmur', label: 'Murmur', sub: 'pendant capture · bridge · Chronicle · memory' },
-          { href: '/ops/terminal', label: 'Terminal', sub: 'tmux hub-term · Face ID gate' },
-        ]}
-        style={{ marginBottom: 10 }}
-      />
+      <NavCard rows={opsNavRows(murmurConfigured.data)} style={{ marginBottom: 10 }} />
       <NeedsYou q={pairing} />
       <SessionsSection q={sessions} />
       <ShellsSection q={shells} />

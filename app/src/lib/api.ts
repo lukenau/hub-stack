@@ -438,6 +438,18 @@ export const api = {
     }
   },
 
+  // Whether Murmur is configured at all (gates the surface's visibility —
+  // present when configured, absent otherwise). The endpoint never 503s; any
+  // fetch failure here fails closed to "not configured" rather than risking a
+  // dead panel for a stranger without the hardware.
+  murmurConfigured: async (): Promise<boolean> => {
+    try {
+      return (await get<{ configured: boolean }>('/murmur/configured')).configured;
+    } catch {
+      return false;
+    }
+  },
+
   // --- finance (day-to-day spend; 404 = snapshot not written yet → cards self-hide) ---
   finance: async (): Promise<FinanceSnapshot | null> => {
     try {

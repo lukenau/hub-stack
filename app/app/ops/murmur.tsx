@@ -6,7 +6,9 @@
 // diarization backend) lives on its own tailnet port; this page links out to
 // it rather than reimplementing its UI.
 import type { ReactNode } from 'react';
+import { useEffect } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import {
   PageTitle,
@@ -155,6 +157,15 @@ export default function MurmurScreen() {
   // Pushed detail route: the tab bar drops while this screen is focused.
   useHideTabBar();
   const q = usePoll(['murmur'], api.murmur, QUERY_TUNING.murmur);
+  // Reachable by deep link even with no nav card, so the route gates itself
+  // too: a stranger without a configured bridge gets bounced to Ops rather
+  // than seeing the page at all (same "absent unless configured" rule as the
+  // nav card — see OpsScreen.tsx and api.murmurConfigured).
+  const configuredQ = usePoll(['murmur-configured'], api.murmurConfigured, QUERY_TUNING['murmur-configured']);
+  useEffect(() => {
+    if (configuredQ.data === false) router.replace('/ops');
+  }, [configuredQ.data]);
+  if (configuredQ.data !== true) return null;
 
   return (
     <Screen header={<PageTitle right={<RefreshControl queries={q} />}>Murmur</PageTitle>}>

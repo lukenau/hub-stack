@@ -197,6 +197,16 @@ describe('null-on-error normalization', () => {
     await expect(api.murmur()).rejects.toBeInstanceOf(ApiError);
   });
 
+  it('murmurConfigured(): reads the server flag straight through', async () => {
+    mockFetchOnce(jsonResponse({ configured: true }));
+    await expect(api.murmurConfigured()).resolves.toBe(true);
+  });
+
+  it('murmurConfigured(): any fetch failure fails closed to not-configured', async () => {
+    mockFetchOnce(jsonResponse({ detail: 'boom' }, { status: 500 }));
+    await expect(api.murmurConfigured()).resolves.toBe(false);
+  });
+
   it('finance(): 404 means "not connected yet"', async () => {
     mockFetchOnce(jsonResponse({ detail: 'no snapshot' }, { status: 404 }));
     await expect(api.finance()).resolves.toBeNull();

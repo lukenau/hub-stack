@@ -5561,6 +5561,20 @@ def murmur() -> dict[str, Any]:
     return read_cache(MURMUR_DERIVED, "murmur", CACHE_MAX_AGE_S)
 
 
+@app.get("/api/murmur/configured")
+def murmur_configured() -> dict[str, bool]:
+    """Whether Murmur integration is configured AT ALL, so the app can render
+    the Murmur surface conditionally: present when configured, completely
+    absent when not (a stranger without the pendant hardware never sees a dead
+    "never bonded" panel). The signal is the same one that gates the bridge
+    endpoints themselves — a provisioned bridge bearer token (MURMUR_BRIDGE_TOKEN
+    or the token file) — because the derive-cron status file cannot tell
+    "never configured" apart from "configured but the derive cron is currently
+    stale": both are a missing /api/murmur. Never 503s; a fetch failure on the
+    app side fails closed to "not configured"."""
+    return {"configured": bool(_murmur_bridge_token())}
+
+
 # ===========================================================================
 # Terminal proxy (Slice 2b). Forwards http + websocket for /terminal/* to the
 # host ttyd's UNIX socket — but ONLY with a valid hub_term_session cookie (issued

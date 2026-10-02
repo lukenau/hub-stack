@@ -76,6 +76,9 @@ const SECTION_3_1_QUERY_NAMESPACES = [
   'brief',
   // Native-only as well: the calendar is a surface the PWA never had.
   'calendar',
+  // Native-only: whether Murmur is configured at all, gating the whole
+  // surface's visibility (absent unless configured).
+  'murmur-configured',
 ];
 
 describe('QUERY_TUNING coverage (PARITY-INVENTORY §3.1)', () => {

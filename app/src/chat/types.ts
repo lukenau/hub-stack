@@ -45,6 +45,10 @@ export interface FilePart {
   name?: string;
   url?: string;
   mime?: string;
+  /** The bytes hub-api holds, when it holds them. A file the agent could not
+   * upload (too big, unreadable) arrives without one and only names its path. */
+  media_id?: string;
+  size_bytes?: number;
 }
 
 /** The choices T3 (chat/approval.py) will ever accept for one decision — the
@@ -430,9 +434,19 @@ export interface ApprovalAnsweredFrame {
   choice: ApprovalChoice;
 }
 
+/** A row the server has withdrawn: the gateway streamed a reply the thread
+ * already holds, so the duplicate is taken back rather than left standing
+ * (chat/store.py `_delete_message`). The only frame that removes a message. */
+export interface MessageDeleteFrame extends FrameBase {
+  type: 'message.delete';
+  message_id: string;
+  version: number;
+}
+
 export type ChatFrame =
   | ThreadCreateFrame
   | MessageUpsertFrame
+  | MessageDeleteFrame
   | PartUpsertFrame
   | PartDeltaFrame
   | ThreadPatchFrame

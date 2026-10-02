@@ -257,7 +257,10 @@ export function groupTranscript(input: ChatMessage[]): TranscriptItem[] {
       // Each heartbeat replaces the last: they are one status, restated.
       const previous = items[items.length - 1];
       if (previous?.kind === 'progress') items.pop();
-      items.push({ kind: 'progress', key: `progress:${message.id}`, progress });
+      // One stable key: only the newest heartbeat is ever shown, and a key that
+      // changed with each one remounted the card and restarted the dot's pulse
+      // from its dim phase — the dot "going grey" as the widget updated.
+      items.push({ kind: 'progress', key: 'progress', progress });
       continue;
     }
     flush();

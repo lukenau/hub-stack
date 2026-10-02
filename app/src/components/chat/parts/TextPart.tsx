@@ -6,7 +6,7 @@
 // expo-updates fingerprint — waiting for a TestFlight build to make **bold**
 // bold is the wrong trade. `chat/markdown.ts` parses the subset in-app and
 // this file lays it out; the part shape is unchanged either way.
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 import { Linking, StyleSheet, Text, TextInput, View, type StyleProp, type TextStyle } from 'react-native';
 import { parseMarkdown, type Block, type Span } from '../../../chat/markdown';
 import { useSmoothedText } from '../../../chat/useSmoothedText';
@@ -54,12 +54,15 @@ function Inline({ spans, color }: { spans: Span[]; color: TokenName }) {
  * The one cost: a tap on a nested Text inside a TextInput does not fire, so a
  * block that contains a link stays as selectable Text and keeps its link. */
 function Prose({ spans, color, style }: { spans: Span[]; color: TokenName; style: StyleProp<TextStyle> }) {
-  // A UITextView sizes itself, and inside a flex column it does not always
-  // settle on the height its text needs: two of the six list items in one of
-  // the user's replies reserved an extra two lines of empty space each
-  // ("rendering a bit weird", 2026-09-30). Its own reported content height is
-  // the one measurement that is always right, so the block is pinned to it.
-  const [height, setHeight] = useState<number | null>(null);
+  // No height is pinned here, and none should be. A text view never reports a
+  // content height smaller than its own frame, so a height taken from it can
+  // only ratchet UP: one transient tall measurement stuck for good as an empty
+  // gap above the timestamp, and while a long reply streamed the pin ran a pass
+  // behind the text on every tick, so the page bounced ("long tool calls or
+  // messages cause the chat page to go up and down in a flicker", the user,
+  // 2026-10-01). The pin was a workaround for list items that were each their
+  // own view in a flex row; those now live in one view (ProseRun) in a plain
+  // column, which sizes itself in a single pass.
   if (spans.some((span) => span.href)) {
     return (
       <Text selectable style={style}>
@@ -72,13 +75,7 @@ function Prose({ spans, color, style }: { spans: Span[]; color: TokenName; style
       editable={false}
       multiline
       scrollEnabled={false}
-      onContentSizeChange={(e) => {
-        const next = Math.ceil(e.nativeEvent.contentSize.height);
-        // Only a real change: setting the height feeds back into content size,
-        // and an unguarded setState there is a render loop.
-        setHeight((current) => (current !== null && Math.abs(current - next) < 1 ? current : next));
-      }}
-      style={[style, styles.selectable, height === null ? null : { height }]}
+      style={[style, styles.selectable]}
     >
       <Inline spans={spans} color={color} />
     </TextInput>
@@ -205,20 +202,24 @@ export function TextPart({
   );
 }
 
-/** One selectable view holding a run of blocks, newlines and all. */
+/** One selectable view holding a run of blocks, newlines and all.
+ *
+ * It sizes itself — no height is pinned from `onContentSizeChange`. A text
+ * view never reports a content height smaller than its own frame, so a pinned
+ * height can only ratchet up: one transient tall measurement from some later
+ * turn's re-render stuck as a large empty gap above the timestamp, and while a
+ * long reply streamed the pin ran a pass behind the text on every tick, so the
+ * page bounced (the user, 2026-10-01: "go up and down in a flicker"). The pin was
+ * added for list items that were each their own view in a flex row; they are
+ * one view in a plain column now, which is laid out in a single pass. */
 function ProseRun({ blocks, color }: { blocks: ProseBlock[]; color: TokenName }) {
   const { t } = useTheme();
-  const [height, setHeight] = useState<number | null>(null);
   return (
     <TextInput
       editable={false}
       multiline
       scrollEnabled={false}
-      onContentSizeChange={(e) => {
-        const next = Math.ceil(e.nativeEvent.contentSize.height);
-        setHeight((current) => (current !== null && Math.abs(current - next) < 1 ? current : next));
-      }}
-      style={[styles.text, styles.selectable, { color: t(color) }, height === null ? null : { height }]}
+      style={[styles.text, styles.selectable, { color: t(color) }]}
     >
       {blocks.map((block, i) => (
         <Fragment key={i}>

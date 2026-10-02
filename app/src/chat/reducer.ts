@@ -174,6 +174,15 @@ export function chatReducer(state: ChatState, frame: ChatFrame): ChatState {
       });
     }
 
+    case 'message.delete': {
+      const current = getOrCreateThreadState(state, frame.thread_id);
+      // A row the server withdrew — the gateway re-streamed a reply this
+      // thread already holds. A local row is never withdrawn by the server:
+      // it has never seen one, so an id it does not know simply does not match.
+      const messages = current.messages.filter((m) => m.id !== frame.message_id);
+      if (messages.length === current.messages.length) return state;
+      return withThread(state, frame.thread_id, { ...current, messages });
+    }
     case 'message.upsert': {
       const current = getOrCreateThreadState(state, frame.thread_id);
       const existing = current.messages.find((m) => m.id === frame.message_id);

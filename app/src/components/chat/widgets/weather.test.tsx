@@ -107,6 +107,50 @@ describe('the parser', () => {
     const w = parseWidget({ kind: 'forecast', props: { temp: 58 } });
     expect(w && w.kind).toBe('weather');
   });
+
+  it("parses sections, keeping each block's type, label and counts", () => {
+    const w = parseWidget({
+      kind: 'weather',
+      props: {
+        place: 'Boston',
+        temp: 58,
+        hours: [{ label: 'Now', temp: 58, condition: 'clear', day: 0 }],
+        days: [{ label: 'Sat', low: 54, high: 63, condition: 'cloudy' }],
+        sections: [
+          { type: 'days', title: 'Week ahead', days: 3 },
+          { type: 'hourly', title: 'Sat rain', day: 1, metric: 'precip', hours: 12 },
+        ],
+      },
+    }) as WeatherWidgetT;
+    expect(w.sections).toHaveLength(2);
+    expect(w.sections[0]).toEqual({
+      type: 'days', title: 'Week ahead', days: 3, hours: null, from: null, day: null, metric: 'temp', metrics: [],
+    });
+    expect(w.sections[1].type).toBe('hourly');
+    expect(w.sections[1].metric).toBe('precip');
+    expect(w.sections[1].day).toBe(1);
+    expect(w.hours[0].day).toBe(0);
+  });
+
+  it('drops a section whose type it does not know, without dropping the widget', () => {
+    const w = parseWidget({
+      kind: 'weather',
+      props: { temp: 58, sections: [{ type: 'tornado' }, { type: 'days', days: 2 }] },
+    }) as WeatherWidgetT;
+    expect(w.sections.map((s) => s.type)).toEqual(['days']);
+  });
+
+  it('reads a section title under the label spelling too', () => {
+    const w = parseWidget({
+      kind: 'weather',
+      props: { temp: 58, sections: [{ type: 'precip', label: 'Rain' }] },
+    }) as WeatherWidgetT;
+    expect(w.sections[0].title).toBe('Rain');
+  });
+
+  it('has no sections when none were asked for', () => {
+    expect(boston().sections).toEqual([]);
+  });
 });
 
 describe('the widget', () => {
@@ -333,5 +377,67 @@ describe('single-day hourly views', () => {
     const shown = texts(render(<WeatherWidget widget={mixed} />));
     expect(shown).toContain('54°');
     expect(shown).toContain('85%');
+  });
+});
+
+describe('composed sections', () => {
+  // the user, 2026-10-02: "different combinations and customizations for days and
+  // hour counts and labels and hourly views for each day and so on".
+  const composed = () =>
+    parseWidget({
+      kind: 'weather',
+      props: {
+        place: 'Boston',
+        temp: 58,
+        days: [
+          { label: 'Today', low: 54, high: 63, condition: 'cloudy' },
+          { label: 'Sat', low: 56, high: 60, condition: 'rain', precip: 85 },
+          { label: 'Sun', low: 50, high: 58, condition: 'cloudy' },
+        ],
+        hours: [
+          { label: 'Now', temp: 58, condition: 'clear', day: 0, precip: 0 },
+          { label: '1PM', temp: 64, condition: 'clear', day: 0, precip: 10, wind: 9 },
+          { label: 'Now', temp: 60, condition: 'rain', day: 1, precip: 40 },
+          { label: '1PM', temp: 66, condition: 'rain', day: 1, precip: 60, wind: 12 },
+        ],
+        sections: [
+          { type: 'days', title: 'Week ahead', days: 2 },
+          { type: 'hourly', title: 'Sat rain', day: 1, metric: 'precip', hours: 2 },
+        ],
+      },
+    }) as WeatherWidgetT;
+
+  const blocks = (tree: TestRenderer.ReactTestRenderer) =>
+    tree.root.findAll(
+      (n) => typeof n.type === 'string' && String(n.props.testID ?? '').startsWith('weather-section-'),
+    );
+
+  it('draws one block per section, with its title', () => {
+    const tree = render(<WeatherWidget widget={composed()} />);
+    expect(blocks(tree)).toHaveLength(2);
+    const shown = texts(tree);
+    expect(shown).toContain('Week ahead');
+    expect(shown).toContain('Sat rain');
+  });
+
+  it('caps the day list to the section count', () => {
+    const tree = render(<WeatherWidget widget={composed()} />);
+    const rows = tree.root.findAll(
+      (n) => typeof n.type === 'string' && String(n.props.testID ?? '').startsWith('weather-day-'),
+    );
+    expect(rows).toHaveLength(2);
+  });
+
+  it("draws a section's hourly view from that day's hours only", () => {
+    const tree = render(<WeatherWidget widget={composed()} />);
+    const metrics = tree.root.findAll(
+      (n) => typeof n.type === 'string' && n.props.testID === 'weather-metric-precip',
+    );
+    expect(metrics).toHaveLength(1);
+  });
+
+  it('falls back to the single view when no sections are given', () => {
+    const tree = render(<WeatherWidget widget={boston()} />);
+    expect(blocks(tree)).toHaveLength(0);
   });
 });

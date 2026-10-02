@@ -25,7 +25,7 @@ import { Card } from '../../shell';
 import type { WeatherDay, WeatherHour, WeatherWidget as WeatherWidgetT } from '../../../chat/widget';
 import { bar, degrees, heatColor, nowAt, temperatureScale, waterColor } from '../../../chat/weatherLayout';
 import { WeatherGlyph } from './WeatherGlyph';
-import { METRICS, columns, compositeMetrics, hourTick, type MetricId } from '../../../chat/weatherMetrics';
+import { METRICS, columns, compositeMetrics, hourTick, selectDays, selectHours, type MetricId } from '../../../chat/weatherMetrics';
 
 export function WeatherWidget({ widget }: { widget: WeatherWidgetT }) {
   const { t, scheme } = useTheme();
@@ -63,11 +63,47 @@ export function WeatherWidget({ widget }: { widget: WeatherWidgetT }) {
         </View>
       ) : null}
 
-      {widget.view === 'hourly' && widget.hours.length > 0 ? (
+      {widget.sections.length > 0 ? (
+        <View style={styles.sections}>
+          {widget.sections.map((section, i) => {
+            const hrs = selectHours(widget.hours, { day: section.day, from: section.from, count: section.hours });
+            const days = selectDays(widget.days, section.days);
+            return (
+              <View key={`${section.type}-${i}`} style={styles.section} testID={`weather-section-${i}`}>
+                {section.title ? (
+                  <Text style={[styles.sectionTitle, { color: t('fg-2') }]} numberOfLines={1}>
+                    {section.title}
+                  </Text>
+                ) : null}
+                {section.type === 'days'
+                  ? days.map((day, di) => (
+                      <DayRow key={`${day.label}-${di}`} day={day} scale={scale} now={null} />
+                    ))
+                  : null}
+                {section.type === 'precip'
+                  ? days.map((day, di) => <PrecipRow key={`${day.label}-${di}`} day={day} peak={peak} />)
+                  : null}
+                {section.type === 'hourly' && hrs.length > 0 ? (
+                  <HourlyMetric hours={hrs} metric={section.metric} />
+                ) : null}
+                {section.type === 'composite' && hrs.length > 0 ? (
+                  <View style={styles.composite}>
+                    {(section.metrics.length > 0 ? section.metrics : compositeMetrics(hrs)).map((id) => (
+                      <HourlyMetric key={id} hours={hrs} metric={id} compact />
+                    ))}
+                  </View>
+                ) : null}
+              </View>
+            );
+          })}
+        </View>
+      ) : null}
+
+      {widget.sections.length === 0 && widget.view === 'hourly' && widget.hours.length > 0 ? (
         <HourlyMetric hours={widget.hours} metric={widget.metric} />
       ) : null}
 
-      {widget.view === 'composite' && widget.hours.length > 0 ? (
+      {widget.sections.length === 0 && widget.view === 'composite' && widget.hours.length > 0 ? (
         <View style={styles.composite}>
           {compositeMetrics(widget.hours).map((id) => (
             <HourlyMetric key={id} hours={widget.hours} metric={id} compact />
@@ -78,13 +114,15 @@ export function WeatherWidget({ widget }: { widget: WeatherWidgetT }) {
       {/* The rain view's hours are hours of RAIN — a temperature strip above a
           precipitation list is answering a question nobody asked (the user,
           2026-09-23). */}
-      {widget.view === 'precip' && widget.hours.length > 0 ? (
+      {widget.sections.length === 0 && widget.view === 'precip' && widget.hours.length > 0 ? (
         <HourlyMetric hours={widget.hours} metric="precip" />
       ) : null}
 
-      {widget.view === 'conditions' && widget.hours.length > 0 ? <HourStrip hours={widget.hours} /> : null}
+      {widget.sections.length === 0 && widget.view === 'conditions' && widget.hours.length > 0 ? (
+        <HourStrip hours={widget.hours} />
+      ) : null}
 
-      {widget.days.length > 0 ? (
+      {widget.sections.length === 0 && widget.days.length > 0 ? (
         <View style={styles.days}>
           {widget.days.map((day, i) =>
             widget.view === 'precip' ? (
@@ -308,6 +346,9 @@ const styles = StyleSheet.create({
   hourRain: { fontFamily: fonts.mono(400), fontSize: 9 },
 
   composite: { gap: 14 },
+  sections: { gap: 16 },
+  section: { gap: 8 },
+  sectionTitle: { fontFamily: fonts.sans(600), fontSize: 12.5, letterSpacing: -0.1 },
   metric: { gap: 4 },
   metricHead: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
   metricLabel: { fontFamily: fonts.sans(550), fontSize: 12.5 },

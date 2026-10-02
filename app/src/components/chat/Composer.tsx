@@ -19,7 +19,7 @@
 // chat/commands.ts — this file is just the wiring: TextInput selection ->
 // detectSlashContext -> <CommandSheet> -> insertCommandToken -> setValue.
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { Clipboard, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActionSheetIOS, Clipboard, Image, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { api } from '../../lib/api';
 import { usePoll } from '../../lib/query';
 import {
@@ -33,8 +33,12 @@ import { useTheme } from '../../theme/useTheme';
 import { CommandSheet } from './CommandSheet';
 import {
   ATTACH_MESSAGE,
+  attachPastedFile,
   attachPastedImage,
+  formatBytes,
+  isImageMime,
   pasteImage,
+  pickFile,
   pickImage,
   type AttachOutcome,
   type PendingImage,
@@ -207,14 +211,18 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(function Compo
   // pasting, 2026-09-23).
   const attach = async (take: () => Promise<AttachOutcome>) => {
     if (!threadId || attached.length >= MAX_ATTACHMENTS) {
-      if (attached.length >= MAX_ATTACHMENTS) showNotice('hint', `${MAX_ATTACHMENTS} pictures is the limit.`);
+      if (attached.length >= MAX_ATTACHMENTS) showNotice('hint', `${MAX_ATTACHMENTS} attachments is the limit.`);
       return false;
     }
     setAttaching(true);
     try {
       const outcome = await take();
       if (outcome.ok) {
-        setAttached((current) => [...current, outcome.image]);
+        // The gallery can hand back several at once; keep as many as there is
+        // room for, in the order he picked them.
+        const room = MAX_ATTACHMENTS - attached.length;
+        setAttached((current) => [...current, ...outcome.images].slice(0, MAX_ATTACHMENTS));
+        if (outcome.images.length > room) showNotice('hint', `${MAX_ATTACHMENTS} attachments is the limit.`);
         return true;
       }
       const message = ATTACH_MESSAGE[outcome.reason];
@@ -223,6 +231,26 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(function Compo
     } finally {
       setAttaching(false);
     }
+  };
+
+  /** One "+", two sources. A picture comes from the photo library, a file from
+   * the Files app; the sheet is the platform's own, so it needs no design and
+   * behaves the way every other iOS app's does. */
+  const chooseAttachment = (id: string) => {
+    // How many more the message has room for — the gallery allows that many,
+    // so picking a second picture does not mean opening it again.
+    const room = MAX_ATTACHMENTS - attached.length;
+    if (Platform.OS !== 'ios') {
+      void attach(() => pickImage(id, room));
+      return;
+    }
+    ActionSheetIOS.showActionSheetWithOptions(
+      { options: ['Photo', 'File', 'Cancel'], cancelButtonIndex: 2 },
+      (index) => {
+        if (index === 0) void attach(() => pickImage(id, room));
+        else if (index === 1) void attach(() => pickFile(id));
+      },
+    );
   };
 
   const paste = async () => {
@@ -268,12 +296,23 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(function Compo
             <Pressable
               key={image.id}
               accessibilityRole="button"
-              accessibilityLabel="Remove this picture"
+              accessibilityLabel={`Remove ${image.name ?? 'this picture'}`}
               testID={`attachment-${image.id}`}
               onPress={() => setAttached((current) => current.filter((a) => a.id !== image.id))}
-              style={[styles.thumb, { borderColor: t('border-strong') }]}
+              style={[isImageMime(image.mime) ? styles.thumb : styles.fileThumb, { borderColor: t('border-strong') }]}
             >
-              <Image source={{ uri: image.uri }} style={styles.thumbImage} />
+              {isImageMime(image.mime) ? (
+                <Image source={{ uri: image.uri }} style={styles.thumbImage} />
+              ) : (
+                <View style={styles.fileThumbBody}>
+                  <Text numberOfLines={1} style={[styles.fileThumbName, { color: t('fg-1') }]}>
+                    {image.name ?? 'File'}
+                  </Text>
+                  <Text numberOfLines={1} style={[styles.fileThumbSize, { color: t('fg-3') }]}>
+                    {formatBytes(image.bytes)}
+                  </Text>
+                </View>
+              )}
               <View style={[styles.thumbRemove, { backgroundColor: t('bg-0') }]}>
                 <Text style={[styles.thumbRemoveLabel, { color: t('fg-1') }]}>×</Text>
               </View>
@@ -325,9 +364,9 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(function Compo
         {threadId ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Attach a picture"
+            accessibilityLabel="Attach a photo or file"
             disabled={attaching || attached.length >= MAX_ATTACHMENTS}
-            onPress={() => void attach(() => pickImage(threadId))}
+            onPress={() => chooseAttachment(threadId)}
             style={[
               styles.attach,
               { backgroundColor: t('bg-2'), borderColor: t('border-strong') },
@@ -350,7 +389,10 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(function Compo
           <PasteControl
             style={styles.pasteControl}
             onImage={(image) => void attach(() => attachPastedImage(threadId, image))}
-            onFailure={() => showNotice('hint', 'That clipboard item is not a picture.')}
+            onFile={(file) => void attach(() => attachPastedFile(threadId, file))}
+            onFailure={(reason) =>
+              showNotice('hint', reason === 'too_big' ? 'That is over 7 MB. Send a smaller one.' : 'Nothing to paste there — copy a picture or a file first.')
+            }
           />
         ) : (
           <Pressable
@@ -423,6 +465,10 @@ const styles = StyleSheet.create({
   thumbs: { gap: 8, paddingBottom: 8, paddingHorizontal: 2 },
   thumb: { width: 54, height: 54, borderRadius: 10, borderWidth: 1, overflow: 'hidden' },
   thumbImage: { width: '100%', height: '100%' },
+  fileThumb: { height: 54, minWidth: 110, maxWidth: 180, borderRadius: 10, borderWidth: 1, justifyContent: 'center', paddingLeft: 10, paddingRight: 22 },
+  fileThumbBody: { gap: 2 },
+  fileThumbName: { fontFamily: fonts.sans(550), fontSize: 12.5 },
+  fileThumbSize: { fontFamily: fonts.mono(400), fontSize: 10 },
   thumbRemove: { position: 'absolute', top: 2, right: 2, width: 16, height: 16, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   thumbRemoveLabel: { fontFamily: fonts.mono(550), fontSize: 12, lineHeight: 14 },
   modeHint: { flex: 1, minWidth: 0, fontFamily: fonts.mono(400), fontSize: 9.5, letterSpacing: 0.3 },

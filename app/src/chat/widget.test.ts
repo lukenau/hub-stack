@@ -214,6 +214,40 @@ describe('checklist', () => {
   });
 });
 
+describe('timeline', () => {
+  it('reads time, label, detail and tone, keeping the order it was written in', () => {
+    const w = parseWidget({
+      kind: 'timeline',
+      props: {
+        title: 'Order 114-77',
+        items: [
+          { time: 'Mon 9:04 AM', label: 'Placed', detail: 'Amex Gold 1006' },
+          { time: 'Tue 3:12 PM', label: 'Shipped', tone: 'up' },
+        ],
+      },
+    });
+    expect(w).toMatchObject({
+      kind: 'timeline',
+      title: 'Order 114-77',
+      items: [
+        { time: 'Mon 9:04 AM', label: 'Placed', detail: 'Amex Gold 1006', tone: 'neutral' },
+        { time: 'Tue 3:12 PM', label: 'Shipped', detail: null, tone: 'up' },
+      ],
+    });
+  });
+  it('accepts a plain list of strings as the log', () => {
+    expect(parseWidget({ kind: 'log', props: { items: ['Placed', 'Shipped'] } })).toMatchObject({
+      kind: 'timeline',
+      items: [{ label: 'Placed', time: null }, { label: 'Shipped', time: null }],
+    });
+  });
+  it('drops an entry with nothing to say and refuses the widget once none are left', () => {
+    expect(parseWidget({ kind: 'timeline', props: { items: [{ time: 'Mon' }] } })).toBeNull();
+    const w = parseWidget({ kind: 'timeline', props: { items: [{ time: 'Mon' }, { label: 'Shipped' }] } });
+    expect(w).toMatchObject({ items: [{ label: 'Shipped' }] });
+  });
+});
+
 describe('calendar', () => {
   const day = { date: '2026-09-22', events: [{ title: 'Standup', start: '09:30', end: '09:45' }] };
 

@@ -25,6 +25,7 @@ from chat.store import LEGACY_DELIVERY_KINDS, ChatStore
 HUB_TZ = ZoneInfo(os.environ.get("HUB_TZ", "America/New_York"))
 
 UNATTRIBUTED_JOB_ID = "unattributed"
+SKILLS_CURATOR_JOB_ID = "skills-curator"
 MAX_OUTPUT_CHARS = 16_000
 PREVIEW_CHARS = 160
 CONTEXT_NOTE_OUTPUT_CHARS = 6_000
@@ -267,8 +268,8 @@ class AutomationStore:
                 marks = ",".join("?" for _ in ids)
                 self._conn.execute(
                     f"UPDATE automation_jobs SET state='removed', next_run_at=NULL, updated_at=? "
-                    f"WHERE job_id NOT IN ({marks}) AND job_id != ? AND state != 'removed'",
-                    (now, *ids, UNATTRIBUTED_JOB_ID),
+                    f"WHERE job_id NOT IN ({marks}) AND job_id NOT IN (?, ?) AND state != 'removed'",
+                    (now, *ids, UNATTRIBUTED_JOB_ID, SKILLS_CURATOR_JOB_ID),
                 )
             self._conn.commit()
         return len(jobs)
@@ -276,13 +277,14 @@ class AutomationStore:
     def _ensure_job(self, job_id: str, name: str | None) -> None:
         """CALLER MUST HOLD `_lock`. A run whose job the schedule no longer lists
         still belongs to that job."""
+        curator = job_id == SKILLS_CURATOR_JOB_ID
         self._conn.execute(
             "INSERT OR IGNORE INTO automation_jobs (job_id, name, state, category, updated_at) "
             "VALUES (?,?,?,?,?)",
             (
                 job_id,
-                name or ("Unattributed" if job_id == UNATTRIBUTED_JOB_ID else job_id),
-                "removed",
+                name or ("Unattributed" if job_id == UNATTRIBUTED_JOB_ID else "Skills curator" if curator else job_id),
+                "active" if curator else "removed",
                 "ops",
                 _iso(_now()),
             ),

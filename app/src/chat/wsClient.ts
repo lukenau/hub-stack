@@ -34,9 +34,19 @@ export const POLICY_CLOSE_CODE = 1008;
  * which chat/ws.py sends every 15s when idle — for this long is dead. iOS
  * suspends a backgrounded socket without telling the app, and `readyState`
  * keeps saying OPEN until the OS gets round to closing it, which can take
- * minutes ("a reply disappears, then flashes back on reopen", 2026-09-28). */
-export const STALL_MS = 45_000;
-export const STALL_CHECK_MS = 10_000;
+ * minutes ("a reply disappears, then flashes back on reopen", 2026-09-28).
+ *
+ * 25s, not 45s: a reply that stopped partway sat there for up to 55s (45s of
+ * silence plus a check every 10s) before the app reconnected and replayed the
+ * rest — "renders parts of a message, pauses, then doesn't show the rest until
+ * I close and reopen the chat" (the user, 2026-10-01). The event log for that
+ * thread had every delta, in order, with no gaps, and the server logged 15
+ * abnormal (1006) client disconnects in 3 hours, so the words were never lost;
+ * the socket was. A live stream never goes quiet for longer than the 15s
+ * heartbeat, so 25s is a missed beat plus margin, and a reconnect that was not
+ * needed costs one cheap resubscribe from the cursor. */
+export const STALL_MS = 25_000;
+export const STALL_CHECK_MS = 5_000;
 /** On foreground every subscription is re-sent as a probe; the server answers
  * each with `synced`. None within this long and the socket is dead. */
 export const PROBE_MS = 10_000;

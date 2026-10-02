@@ -761,3 +761,35 @@ describe('versions', () => {
     expect(mergeThreadSnapshot(live, thread(), [{ ...row }]).threads[THREAD].messages[0]).toBe(row);
   });
 });
+
+// --- a row the server withdrew ----------------------------------------------
+// The gateway re-streamed a reply the thread already held (run aa2597a8,
+// 2026-10-01, "messages are double sending"); hub-api takes the duplicate back
+// with a `message.delete` rather than leaving two copies standing.
+describe('message.delete', () => {
+  const row = (id: string, seq: number, text: string): MessageUpsertFrame => ({
+    type: 'message.upsert', seq, thread_id: THREAD, message_id: id, role: 'assistant', author_type: 'agent',
+    status: 'complete', run_id: 'run1', parts: [{ type: 'text', text }],
+  });
+  const del = (id: string, seq: number): ChatFrame => ({ type: 'message.delete', seq, thread_id: THREAD, message_id: id, version: seq });
+
+  it('removes the withdrawn row and keeps the one it duplicated', () => {
+    const state = reduceAll([row('m1', 1, 'Fixed.'), row('m2', 2, 'Fixed.'), del('m2', 3)]);
+    expect(state.threads[THREAD].messages.map((m) => m.id)).toEqual(['m1']);
+  });
+
+  it('is the same state, by reference, for a row the client never held', () => {
+    const before = reduceAll([row('m1', 1, 'Fixed.')]);
+    expect(chatReducer(before, del('never-seen', 2))).toBe(before);
+  });
+
+  it('keeps a client-local row: the server has never seen one, so it cannot withdraw it', () => {
+    const local = applyLocalMessage(initialChatState, THREAD, {
+      id: 'local-1', thread_id: THREAD, seq: 0, version: 0, role: 'user', author_type: 'human', run_id: null,
+      status: 'sending', client_msg_id: 'c1', cron_run_id: null, created_at: '2026-10-01T00:00:00Z',
+      updated_at: '2026-10-01T00:00:00Z', parts: [{ type: 'text', text: 'hello' }],
+    } as ChatMessage);
+    const after = chatReducer(local, del('m2', 5));
+    expect(after.threads[THREAD].messages.map((m) => m.id)).toEqual(['local-1']);
+  });
+});

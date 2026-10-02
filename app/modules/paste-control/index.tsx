@@ -2,8 +2,8 @@
 //
 // iOS asks "would like to paste from…" whenever an app READS the pasteboard.
 // It never asks when the user taps a `UIPasteControl`, because the tap is the
-// consent. So this button is the one way to paste a picture into the composer
-// without the dialog (the user, 2026-09-30).
+// consent. So this button is the one way to paste a picture — or a file —
+// into the composer without the dialog (the user, 2026-09-30, then 2026-10-01).
 //
 // On anything but iOS 16+ the native view is absent; `available` says so and
 // the composer keeps its own paste button for those cases.
@@ -17,10 +17,19 @@ export interface PastedImage {
   height: number;
 }
 
-export type PasteFailure = 'not_an_image' | 'unreadable';
+/** A file off the pasteboard. The native side reads it, so the name is the one
+ * it was copied under and the bytes are already base64. */
+export interface PastedFile {
+  base64: string;
+  mime: string;
+  name: string;
+}
+
+export type PasteFailure = 'not_pasteable' | 'unreadable' | 'too_big';
 
 interface NativeProps extends ViewProps {
   onPasteImage?: (event: { nativeEvent: PastedImage }) => void;
+  onPasteFile?: (event: { nativeEvent: PastedFile }) => void;
   onPasteError?: (event: { nativeEvent: { reason: PasteFailure } }) => void;
 }
 
@@ -34,10 +43,12 @@ const NativePasteControl = available
 
 export function PasteControl({
   onImage,
+  onFile,
   onFailure,
   ...rest
 }: ViewProps & {
   onImage: (image: PastedImage) => void;
+  onFile?: (file: PastedFile) => void;
   onFailure?: (reason: PasteFailure) => void;
 }) {
   if (!NativePasteControl) return null;
@@ -45,6 +56,7 @@ export function PasteControl({
     <NativePasteControl
       {...rest}
       onPasteImage={(e) => onImage(e.nativeEvent)}
+      onPasteFile={(e) => onFile?.(e.nativeEvent)}
       onPasteError={(e) => onFailure?.(e.nativeEvent.reason)}
     />
   );

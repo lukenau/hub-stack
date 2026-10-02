@@ -9,7 +9,7 @@
 // Nothing here draws. It turns a day's hours into the `{series, buckets}` shape
 // the app's existing chart components already take, so an hourly view is the
 // chart primitives the rest of the app uses rather than a second way to draw.
-import type { WeatherHour } from './widget';
+import type { WeatherDay, WeatherHour } from './widget';
 
 export type MetricId = 'temp' | 'feels' | 'precip' | 'wind' | 'humidity' | 'uv' | 'cloud';
 
@@ -161,4 +161,22 @@ export function columns(hours: WeatherHour[], metric: Metric): HourColumn[] {
           },
     )
     .filter((c): c is HourColumn => c !== null);
+}
+
+/** The hours a section draws: optionally one day's, optionally a window. */
+export function selectHours(
+  hours: WeatherHour[],
+  opts: { day?: number | null; from?: number | null; count?: number | null },
+): WeatherHour[] {
+  let out = hours;
+  if (opts.day !== undefined && opts.day !== null) out = out.filter((h) => h.day === opts.day);
+  if (opts.from !== undefined && opts.from !== null && opts.from > 0) out = out.slice(opts.from);
+  if (opts.count !== undefined && opts.count !== null && opts.count >= 0) out = out.slice(0, opts.count);
+  return out;
+}
+
+/** The first `count` days, or all of them when count is null. */
+export function selectDays(days: WeatherDay[], count?: number | null): WeatherDay[] {
+  if (count === undefined || count === null || count < 0) return days;
+  return days.slice(0, count);
 }

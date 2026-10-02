@@ -25,6 +25,7 @@ import { MetricWidget } from './MetricWidget';
 import { PollWidget } from './PollWidget';
 import { ProgressWidget } from './ProgressWidget';
 import { TableWidget } from './TableWidget';
+import { TimelineWidget } from './TimelineWidget';
 
 export function WidgetPartView({
   part,
@@ -81,6 +82,8 @@ export function WidgetPartView({
       );
     case 'calendar':
       return <CalendarWidget widget={widget} />;
+    case 'timeline':
+      return <TimelineWidget widget={widget} />;
     case 'weather':
       return <WeatherWidget widget={widget} />;
     case 'form':

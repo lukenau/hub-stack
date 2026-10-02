@@ -5,7 +5,7 @@ public class PasteControlModule: Module {
     Name("PasteControl")
 
     View(PasteControlView.self) {
-      Events("onPasteImage", "onPasteError")
+      Events("onPasteImage", "onPasteFile", "onPasteError")
     }
   }
 }

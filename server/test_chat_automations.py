@@ -346,6 +346,14 @@ def test_the_run_file_replaces_the_delivery_that_beat_it(autos):
     assert len(autos.job_items(OPS)) == 1
 
 
+def test_the_skills_curator_is_a_job_that_stays_active_through_a_schedule_sync(autos):
+    autos.record_delivery(job_id="skills-curator", run_id="skills-curator:d1", text="💾 Self-improvement review: Skill 'x' patched.")
+    autos.upsert_jobs(JOBS, complete=True)
+    jobs = {j["name"]: j for j in autos.list_jobs()["jobs"]}
+    assert jobs["Skills curator"]["state"] == "active"
+    assert jobs["Skills curator"]["last_run"] is not None
+
+
 def test_a_job_the_schedule_dropped_keeps_its_runs(autos):
     autos.upsert_runs([run("bbcef96bc846", "a", 5, "remember the funnel", job_name="tailscale-funnel-reminder")])
     autos.upsert_jobs(JOBS, complete=True)

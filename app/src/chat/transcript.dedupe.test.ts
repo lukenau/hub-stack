@@ -121,3 +121,14 @@ test('a superseded heartbeat never hides the messages after it', () => {
     .map((p) => p.text);
   expect(shownText).toContain(later);
 });
+
+test('the Working card keeps one key across heartbeats, so its pulse is not restarted', () => {
+  const keyOf = (messages: ChatMessage[]) => groupTranscript(messages).find((i) => i.kind === 'progress')?.key;
+  const one = keyOf([beat('⏳ Working — 1 min — iteration 2/60, starting')]);
+  const two = keyOf([
+    beat('⏳ Working — 1 min — iteration 2/60, starting'),
+    beat('⏳ Working — 3 min — iteration 9/60, waiting for provider response'),
+  ]);
+  expect(one).toBeDefined();
+  expect(two).toBe(one);
+});

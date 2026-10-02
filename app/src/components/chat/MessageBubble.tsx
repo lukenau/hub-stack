@@ -17,6 +17,7 @@ import { clockOf } from '../../chat/clock';
 import { useTheme } from '../../theme/useTheme';
 import type { TokenName } from '../../theme/tokens.gen';
 import type { ChatMessage, Part, ToolCallPart as ToolCallPartT } from '../../chat/types';
+import { FileChip } from './parts/FileChip';
 import { ImagePart } from './parts/ImagePart';
 import { ReasoningPart } from './parts/ReasoningPart';
 import { TextPart } from './parts/TextPart';
@@ -84,11 +85,7 @@ function InlinePart({
     case 'image':
       return <ImagePart part={part} />;
     case 'file':
-      return (
-        <Text style={{ color: t('fg-4'), fontFamily: fonts.sans(400), fontSize: 12.5 }}>
-          [file{part.name ? `: ${part.name}` : ''}]
-        </Text>
-      );
+      return <FileChip part={part} />;
     case 'widget':
       return <WidgetPartView part={part} threadId={threadId} messageId={messageId} partIndex={index} />;
     default:
@@ -146,7 +143,16 @@ function MessageBubbleRow({
   const inlineKeys: number[] = [];
   const folded: ToolCallPartT[] = [];
   message.parts.forEach((part, i) => {
-    if (!streaming && isFoldableToolCall(part)) folded.push(part);
+    // `!streaming` used to gate this, so a turn's finished tool calls sat inline
+    // as their own rows until the reply settled — and then vanished into the
+    // fold in the same frame the thinking collapsed. That hard re-layout is the
+    // flicker the user sees going tool → thinking, and it re-drew every skill_view /
+    // skill_manage card in full mid-turn (2026-10-01: "when you go from tool to
+    // thinking it causes a flicker too when the thinking collapses … make sure
+    // anything returned as a message from the skill_manage post hook stays
+    // collapsed"). A finished call is folded from the moment it is finished; a
+    // running one still shows itself until it is.
+    if (isFoldableToolCall(part)) folded.push(part);
     else {
       inline.push(part);
       inlineKeys.push(i);

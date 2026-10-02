@@ -70,6 +70,14 @@ describe('WidgetPartView — every catalog kind reaches a renderer', () => {
   it('draws a checklist', () => {
     expect(texts({ type: 'widget', kind: 'checklist', props: { items: ['ship it'] } })).toContain('ship it');
   });
+  it('draws a timeline', () => {
+    const part: WidgetPart = {
+      type: 'widget',
+      kind: 'timeline',
+      props: { title: 'Order 114-77', items: [{ time: 'Mon 9:04 AM', label: 'Placed' }, { label: 'Shipped' }] },
+    };
+    expect(texts(part)).toEqual(expect.arrayContaining(['Order 114-77', 'Mon 9:04 AM', 'Placed', 'Shipped']));
+  });
   it('draws a calendar', () => {
     const part: WidgetPart = {
       type: 'widget',

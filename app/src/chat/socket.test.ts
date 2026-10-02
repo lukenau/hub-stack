@@ -76,3 +76,30 @@ it('asks for the snapshot when the server says the log cannot replay', () => {
   jest.advanceTimersByTime(20);
   expect(mockInvalidate).toHaveBeenCalledWith({ queryKey: ['chat-thread', 't1'] }, { cancelRefetch: false });
 });
+
+// The stall (the user, 2026-10-01): "it renders parts of a message, pauses, then
+// doesn't show the rest until I close and reopen the chat." The repair used to
+// be asked for only for threads named in the batch just applied, so it needed
+// MORE frames to arrive — which is exactly what a stalled stream stops doing.
+it('keeps asking for the snapshot when the stream stalls and no frames follow', () => {
+  opts!.onFrame(opened);
+  opts!.onFrame(delta(2, ' Ok.', 99));
+  jest.advanceTimersByTime(20);
+  expect(mockInvalidate).toHaveBeenCalledTimes(1);
+
+  // Not one frame more. The row must still be repaired.
+  jest.advanceTimersByTime(REFETCH_DEBOUNCE_MS * 3);
+  expect(mockInvalidate.mock.calls.length).toBeGreaterThan(1);
+  expect(mockInvalidate).toHaveBeenLastCalledWith(
+    { queryKey: ['chat-thread', 't1'] },
+    { cancelRefetch: false },
+  );
+});
+
+it('stops asking once nothing is stale, so a healthy thread has no timer running', () => {
+  opts!.onFrame(opened);
+  opts!.onFrame(delta(2, ' Ok.', 14));
+  jest.advanceTimersByTime(20);
+  jest.advanceTimersByTime(REFETCH_DEBOUNCE_MS * 3);
+  expect(mockInvalidate).not.toHaveBeenCalled();
+});

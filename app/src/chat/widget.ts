@@ -34,6 +34,7 @@ export type WidgetKind =
   | 'button_row'
   | 'poll'
   | 'checklist'
+  | 'timeline'
   | 'calendar'
   | 'weather'
   | 'form';
@@ -217,6 +218,23 @@ export interface ChecklistWidget {
   items: ChecklistItem[];
 }
 
+/** A timestamped event log — packages, orders, deploys, anything that reads
+ *  as a history. Distinct from a checklist, which carries a state to tick and
+ *  no clock: a timeline item says when it happened, not whether it is done. */
+export interface TimelineItem {
+  id: string;
+  time: string | null;
+  label: string;
+  detail: string | null;
+  tone: Tone;
+}
+export interface TimelineWidget {
+  kind: 'timeline';
+  title: string | null;
+  caption: string | null;
+  items: TimelineItem[];
+}
+
 export interface CalendarEvent {
   id: string;
   title: string;
@@ -253,6 +271,9 @@ export interface WeatherHour {
   humidity: number | null;
   uv: number | null;
   cloud: number | null;
+  /** Index into `days` for the day this hour belongs to, when the forecast
+   * says so — lets a section draw one day's hours alone. */
+  day: number | null;
 }
 
 export interface WeatherDay {
@@ -285,6 +306,30 @@ export interface WeatherWidget {
   feels_like: number | null;
   hours: WeatherHour[];
   days: WeatherDay[];
+  /** Compose the card from blocks instead of the single `view`. Empty means
+   * the `view` path, exactly as before — a payload with no sections is
+   * unchanged. */
+  sections: WeatherSection[];
+}
+
+export type WeatherSectionType = 'days' | 'precip' | 'hourly' | 'composite';
+
+/** One block of a composed weather widget: the day count, the hour count, the
+ * label and the measure are each the section's own, so a payload can stack
+ * "5-day list, then Saturday hour by hour, then Saturday's rain" in one card. */
+export interface WeatherSection {
+  type: WeatherSectionType;
+  title: string | null;
+  /** days | precip: how many days to draw. null = all. */
+  days: number | null;
+  /** hourly | composite: how many hours to draw. null = all. */
+  hours: number | null;
+  /** hourly | composite: start offset into the selected hours. */
+  from: number | null;
+  /** hourly | composite: restrict to this day index. null = every hour. */
+  day: number | null;
+  metric: MetricId;
+  metrics: MetricId[];
 }
 
 export interface FormField {
@@ -312,6 +357,7 @@ export type Widget =
   | ButtonRowWidget
   | PollWidget
   | ChecklistWidget
+  | TimelineWidget
   | CalendarWidget
   | WeatherWidget
   | FormWidget;
@@ -541,6 +587,31 @@ function parseChecklist(p: Record<string, unknown>): ChecklistWidget | null {
   return { kind: 'checklist', title: str(p.title), items };
 }
 
+function parseTimeline(p: Record<string, unknown>): TimelineWidget | null {
+  const items = arr(p.items ?? p.events ?? p.entries ?? p.log)
+    .map((it, i) => {
+      const o = obj(it);
+      if (o) {
+        const label = str(o.label) ?? str(o.text) ?? str(o.title) ?? str(o.what);
+        if (!label) return null;
+        return {
+          id: str(o.id) ?? `t${i}`,
+          // A timeline written without a clock is still a sequence, so the
+          // time is optional — the row just has no stamp to sit against.
+          time: str(o.time) ?? str(o.at) ?? str(o.when) ?? str(o.timestamp) ?? str(o.date),
+          label,
+          detail: str(o.detail) ?? str(o.note) ?? str(o.description),
+          tone: asTone(o.tone),
+        };
+      }
+      const s = str(it);
+      return s ? { id: `t${i}`, time: null, label: s, detail: null, tone: 'neutral' as Tone } : null;
+    })
+    .filter((it): it is TimelineItem => it !== null);
+  if (items.length === 0) return null;
+  return { kind: 'timeline', title: str(p.title), caption: str(p.caption), items };
+}
+
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 /** `"14:30"`, `"2026-09-22T14:30:00Z"`, or `870` — all mean 14:30. */
@@ -619,6 +690,7 @@ function parseWeather(p: Record<string, unknown>): WeatherWidget | null {
         humidity: num(o.humidity ?? o.rh),
         uv: num(o.uv ?? o.uv_index ?? o.uvIndex),
         cloud: num(o.cloud ?? o.cloud_cover ?? o.cloudCover),
+        day: num(o.day ?? o.day_index ?? o.dayIndex),
       };
     })
     .filter((h): h is WeatherHour => h !== null);
@@ -666,6 +738,29 @@ function parseWeather(p: Record<string, unknown>): WeatherWidget | null {
         : asked === 'hourly' || (asked === undefined && false)
           ? 'hourly'
           : 'conditions';
+  const SECTION_TYPES = new Set<WeatherSectionType>(['days', 'precip', 'hourly', 'composite']);
+  const sections = arr(p.sections)
+    .map((s) => {
+      const o = obj(s);
+      if (!o) return null;
+      const kind = (str(o.type) ?? str(o.kind) ?? '').toLowerCase() as WeatherSectionType;
+      if (!SECTION_TYPES.has(kind)) return null;
+      const metrics = arr(o.metrics)
+        .map((m) => metricOf(m))
+        .filter((m): m is MetricId => m !== null);
+      return {
+        type: kind,
+        title: str(o.title) ?? str(o.label),
+        days: num(o.days ?? o.count ?? o.limit),
+        hours: num(o.hours ?? o.count ?? o.limit),
+        from: num(o.from ?? o.offset),
+        day: num(o.day ?? o.day_index ?? o.dayIndex),
+        metric: metricOf(o.metric) ?? 'temp',
+        metrics,
+      };
+    })
+    .filter((s): s is WeatherSection => s !== null);
+
   return {
     kind: 'weather',
     view,
@@ -676,6 +771,7 @@ function parseWeather(p: Record<string, unknown>): WeatherWidget | null {
     feels_like: num(p.feels_like ?? p.feelsLike ?? p.apparent),
     hours,
     days,
+    sections,
   };
 }
 
@@ -706,6 +802,7 @@ const PARSERS: Record<WidgetKind, (p: Record<string, unknown>) => Widget | null>
   button_row: parseButtonRow,
   poll: parsePoll,
   checklist: parseChecklist,
+  timeline: parseTimeline,
   calendar: parseCalendar,
   weather: parseWeather,
   form: parseForm,
@@ -727,6 +824,9 @@ export function normaliseKind(raw: unknown): WidgetKind | null {
     todos: 'checklist',
     plan: 'checklist',
     tasks: 'checklist',
+    log: 'timeline',
+    history: 'timeline',
+    activity: 'timeline',
     schedule: 'calendar',
     forecast: 'weather',
     agenda: 'calendar',

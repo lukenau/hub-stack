@@ -5,8 +5,8 @@
 // exactly like a stopwatch a person would run watching it, not a value the
 // server hands us. Re-collapses are just local UI state; the timer itself
 // never resets while this part instance lives.
-import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { LayoutAnimation, Pressable, StyleSheet, Text, View } from 'react-native';
 import { fonts } from '../../../theme/fonts';
 import { useTheme } from '../../../theme/useTheme';
 import { PRESSED_OPACITY } from '../../shell';
@@ -29,6 +29,16 @@ export function ReasoningPart({
 }) {
   const { t } = useTheme();
   const [open, setOpen] = useState(false);
+  // Thinking streams as a four-line tail and then folds to a one-line label the
+  // moment the answer starts. That hard cut — five lines to one, in a single
+  // frame — is the "flicker" the user sees as a turn goes tool → thinking (2026-10-01).
+  // Animate the collapse so it shrinks instead of snapping. A no-op wherever the
+  // animation API is unavailable, so it can never break the transcript.
+  const wasStreaming = useRef(streaming);
+  if (wasStreaming.current !== streaming) {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    wasStreaming.current = streaming;
+  }
   const live = useElapsedSeconds(streaming, startedAt);
   const settled = !streaming && startedAt && endedAt ? elapsedSecondsBetween(startedAt, endedAt) : null;
   const seconds = settled ?? live;

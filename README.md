@@ -24,9 +24,8 @@ name on the app's home screen.
   <img src="app/assets/xavier/triumph.jpg" width="118" alt="Xavier, triumphant">
 </p>
 
-Xavier has moods, and the app shows them: he sleeps when nothing is happening,
-turns up when a job lands, and there's a pose for when something breaks. The
-art is the same set the app ships with, not a README-only illustration.
+The pose tracks what the hub is actually doing — idle, working a job, done, or
+broken. These are the app's own assets, not illustrations drawn for the README.
 
 **Bring your own model.** hub-stack talks to [OpenRouter](https://openrouter.ai),
 so you point it at one key and pick whichever frontier model you want — Claude,
@@ -89,9 +88,13 @@ Tailscale, Headscale, WireGuard, Cloudflare Tunnel, or LAN-only — see
 
 ---
 
-## What's in the box
-
 ## What it looks like
+
+<p align="center">
+  <img src="app/assets/xavier/party.jpg" width="96" alt="">
+  <img src="app/assets/xavier/bow.jpg" width="96" alt="">
+  <img src="app/assets/xavier/tilt.jpg" width="96" alt="">
+</p>
 
 Real screenshots of the app (rendered from the app's own web target at iPhone
 dimensions — 1170x2532), dark theme:
@@ -164,6 +167,11 @@ degrade instead of crashing. Full breakdown: **[docs/INTEGRATIONS.md](docs/INTEG
 ---
 
 ## Privacy — plainly
+
+<p align="center">
+  <img src="app/assets/xavier/asleep.jpg" width="96" alt="">
+</p>
+
 
 - **Your data never leaves your machine.** Everything the hub knows lives in
   `${HUB_DATA_DIR:-./data}` on the box you installed it on. There is no hub-stack

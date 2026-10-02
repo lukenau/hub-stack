@@ -367,7 +367,7 @@ def _bridge_write(argv: list[str], timeout: float | None = None) -> dict[str, An
 def _bridge_spend(cutoff_epoch: int, split_epoch: int, granularity: str, timeout: float | None = None) -> dict[str, Any]:
     """Fetch computed spend from the hub-bridge /spend capability (Cost tab pivot).
 
-    hub-api is non-root, has no docker socket and does NOT mount /srv/hub-data, so it cannot
+    hub-api is non-root, has no docker socket and does NOT mount the agent's data directory, so it cannot
     read the gateway's state.db directly. The bridge holds the socket and runs a FIXED,
     SELECT-only query (see hub-bridge/bridge.py SPEND_SCRIPT) that computes dollars from
     tokens via the embedded pricing map. Rows in [cutoff_epoch, split_epoch) feed ONLY
@@ -402,7 +402,7 @@ def _bridge_spend(cutoff_epoch: int, split_epoch: int, granularity: str, timeout
 def _bridge_config_raw(timeout: float | None = None) -> dict[str, Any]:
     """Fetch the full masked config tree from the hub-bridge /config-raw capability.
 
-    hub-api is non-root, has no docker socket and does NOT mount /srv/hub-data, so it cannot
+    hub-api is non-root, has no docker socket and does NOT mount the agent's data directory, so it cannot
     read config.yaml directly (and `hermes config show` only emits a curated summary). The
     bridge holds the socket and runs a FIXED dump script (see hub-bridge/bridge.py
     CONFIG_DUMP_SCRIPT) that yaml.safe_loads the file and redacts every secret leaf. Returns
@@ -427,8 +427,8 @@ def _bridge_config_raw(timeout: float | None = None) -> dict[str, Any]:
 def _bridge_cron_logs(limit: int, timeout: float | None = None) -> dict[str, Any]:
     """Fetch recent cron run-logs from the hub-bridge /cron-logs capability (Ops Logs view).
 
-    hub-api is non-root, has no docker socket and does NOT mount /srv/hub-data, so it cannot read
-    the gateway's archived cron run outputs (cron/output/<job_id>/<timestamp>.md)
+    hub-api is non-root, has no docker socket and does NOT mount the agent's data directory, so it cannot read
+    the gateway's archived cron run outputs (its `cron/output/<job_id>/<timestamp>.md` archive)
     directly. The bridge holds the socket and runs a FIXED script (see hub-bridge/bridge.py
     CRON_LOGS_SCRIPT) that globs the archive, takes the `limit` most-recent runs by mtime, and
     parses each into {job_id, name, run_time, mode, status, output, truncated}. `limit` is
@@ -459,7 +459,7 @@ def _bridge_cron_logs(limit: int, timeout: float | None = None) -> dict[str, Any
 def _bridge_cron_costs(timeout: float | None = None) -> dict[str, Any]:
     """Fetch per-cron-job cost/tokens from the hub-bridge /cron-costs capability.
 
-    hub-api is non-root, has no docker socket and does NOT mount /srv/hub-data, so it cannot
+    hub-api is non-root, has no docker socket and does NOT mount the agent's data directory, so it cannot
     read state.db or cron/jobs.json directly. The bridge holds the socket and runs a FIXED,
     parameterless script (see hub-bridge/bridge.py CRON_COSTS_SCRIPT) that joins
     sessions(source='cron') to the cron store's names and returns per-job last-run +
@@ -1699,7 +1699,7 @@ _BRIEFING_PAGE_HEADERS = _IMESSAGE_PAGE_HEADERS
 # --- briefing dismiss / snooze ------------------------------------------------
 # The store lives under the hub mount because that is the ONLY writable path
 # hub-api shares with the gateway (`sites` is ro, `workspace` isn't mounted at
-# all). The generator reads the same file at hub-data/… and drops
+# all). The generator reads the same file at the hub data mount and drops
 # hidden items at render time; this module hides them at SERVE time, so a
 # dismissal takes effect on the very next page load instead of tomorrow.
 BRIEFING_DISMISSALS = Path(os.environ.get(
@@ -3600,7 +3600,7 @@ def config() -> dict[str, Any]:
 # Full config tree (Config tab: every section/leaf, not just the curated ~10).
 #
 # `hermes config show` is a CURATED summary (~6 groups / ~10 keys). The REAL
-# config is 27 top-level sections / ~140 leaves in config.yaml. This
+# config is 27 top-level sections / ~140 leaves in the agent's config.yaml. This
 # endpoint reads the WHOLE file via the bridge's /config-raw dump (secrets
 # already redacted there — the real bytes never reach hub-api) and walks it into
 # a UI-friendly shape: an ordered list of sections, each with its scalar leaves
@@ -4814,7 +4814,7 @@ def cron_costs() -> dict[str, Any]:
 @app.get("/api/cron/logs")
 def cron_logs(limit: int = 30) -> dict[str, Any]:
     """Ops Logs view: the most-recent scheduled-job run outputs, archived by Hermes at
-    cron/output/<job_id>/<timestamp>.md and read via the hub-bridge /cron-logs
+    its `cron/output/<job_id>/<timestamp>.md` archive and read via the hub-bridge /cron-logs
     capability. `limit` (default 30) is clamped to [1, 200] before the bridge call. Honest
     failures: 503 when the bridge is down or the query errors (mirrors the spend surfaces);
     no runs is an honest empty list, never faked."""

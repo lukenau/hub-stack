@@ -377,8 +377,8 @@ once per version, Beta App Review.
 Before any build that leaves your machine, run the repo checks:
 
 ```bash
-cd hub-stack/app && npm run check
-/srv/hub-data/scripts/hub-stack-gate.sh workspace/hub-stack
+cd app && npm run check
+cd .. && ./scripts/hub-stack-gate.sh .
 ```
 
 ---

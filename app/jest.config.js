@@ -25,4 +25,10 @@ module.exports = {
     ...expoPreset.setupFiles,
     '<rootDir>/jest.setup.js',
   ],
+  // Same for the after-env hooks: the preset ships none, but keep the merge
+  // symmetric so a future preset entry isn't silently dropped.
+  setupFilesAfterEnv: [
+    ...(expoPreset.setupFilesAfterEnv ?? []),
+    '<rootDir>/jest.teardown.js',
+  ],
 };

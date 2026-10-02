@@ -1,5 +1,8 @@
 # hub-stack
 
+[![ci](https://github.com/lukenau/hub-stack/actions/workflows/ci.yml/badge.svg)](https://github.com/lukenau/hub-stack/actions/workflows/ci.yml)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 <img src="assets/img/xavier-icon.png" alt="Xavier: a personal AI agent you host yourself" width="200">
 
 **Self-host a private AI hub: one server you own, plus the app that talks to it.**

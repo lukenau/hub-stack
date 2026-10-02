@@ -49,7 +49,6 @@ export const KNOWN_ROUTES: readonly string[] = [
   '/feed',
   '/finance',
   '/decisions',
-  '/trading',
   '/chat',
   // The Automations tab root. Its job and run screens are param-driven and
   // stay internal-only below.
@@ -125,6 +124,10 @@ export const INTERNAL_ONLY_ROUTES: readonly string[] = [
   // one-time enrol code is typed to mint this app's write credential, so the
   // only way to reach it is a deliberate tap inside Config -> Security.
   '/config/pair',
+  // The runtime server-address setting. No PWA twin (the PWA is its own
+  // origin) and nothing to deep-link to; it re-points every request and
+  // websocket in the app, so reaching it is a deliberate in-app tap only.
+  '/config/server',
   // The thread transcript. A static route (`/chat/thread`), not
   // `/chat/[threadId]` — same shape as `/sheet` above and for the same
   // reason: `threadId` rides as a search param instead of a dynamic segment,

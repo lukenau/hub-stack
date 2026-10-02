@@ -282,7 +282,7 @@ describe('BucketHead', () => {
 describe('SourceBanner', () => {
   test('the live brief names its one degraded input, and says the brief is incomplete', () => {
     const rendered = texts(render(<SourceBanner brief={LIVE_BRIEF} />));
-    expect(rendered.join(' ')).toContain('trading');
+    expect(rendered.join(' ')).toContain('finance');
     expect(rendered.join(' ')).toContain('incomplete');
   });
 

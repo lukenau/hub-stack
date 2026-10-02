@@ -1,12 +1,9 @@
-// The money surface, two stories tall. Top: the trading agent — plain-language
-// status, the paper account and its equity curve, holdings, decisions waiting
-// on the user (money domains only), the ETF look-through, and recent orders.
-// Bottom: personal money exactly as before — spend, flows, accounts, every
-// movement. Net worth stays deliberately last and small.
+// The money surface. Personal money exactly as before — spend, flows,
+// accounts, every movement. Net worth stays deliberately last and small.
 //
 // 1:1 port of apps/hub/src/routes/Finance.tsx. (Its header comment describes an
-// earlier two-story layout; the trading half moved to its own route long ago —
-// what this file renders is the personal-money half plus money decisions.)
+// earlier two-story layout; the personal-money half is what this file renders,
+// plus money decisions.)
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlowSankey } from '../../src/components/finance/FlowSankey';

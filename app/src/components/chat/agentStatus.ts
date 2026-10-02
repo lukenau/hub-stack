@@ -1,9 +1,9 @@
-// The line under the Chat title: is Assistant up, is he working, and is this
+// The line under the Chat title: is Xavier up, is he working, and is this
 // screen still hearing from him. Both halves are state the app already holds —
-// `/api/vitals` (the same read Home's AssistantCard uses) and the chat socket's
+// `/api/vitals` (the same read Home's XavierCard uses) and the chat socket's
 // own connection status — so nothing here is a guess about a thread.
 //
-// Pure, for the same reason home/assistantState.ts is: the rule is worth testing
+// Pure, for the same reason home/xavierState.ts is: the rule is worth testing
 // without mounting the screen.
 import type { ChatConnStatus } from '../../chat/wsClient';
 import type { Vitals } from '../../lib/types';
@@ -24,7 +24,7 @@ const CONNECTION_NOTE: Record<ChatConnStatus, string | null> = {
 };
 
 export function agentStatus(vitals: Vitals | undefined, connection: ChatConnStatus): AgentStatus {
-  const name = vitals?.agent.name ?? 'Assistant';
+  const name = vitals?.agent.name ?? 'Xavier';
   const status = vitals?.agent.status;
   const note = CONNECTION_NOTE[connection];
   const say = (agent: string) => (note ? `${agent} · ${note}` : agent);

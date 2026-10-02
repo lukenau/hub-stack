@@ -75,7 +75,7 @@ export interface MyPagesResponse {
 }
 
 // --- Feed (GET /api/feed) — agent artifacts, newest first ---------------------
-export type FeedKind = 'brief' | 'report' | 'alert' | 'run' | 'status' | 'trading';
+export type FeedKind = 'brief' | 'report' | 'alert' | 'run' | 'status';
 
 export interface FeedItem {
   id: string;
@@ -633,7 +633,6 @@ export interface WriteRequest {
     | 'murmur.drain_now'
     | 'murmur.capture_pause'
     | 'murmur.capture_resume'
-    | 'trading.resume'
     // Native-app pairing: mints the one-time enrol code the iPhone app posts to
     // /api/devicekey/register. Server-side it never reaches the bridge and is
     // reserved to a real passkey assertion (app.py _DEVICEKEY_ADMIN_ACTIONS).
@@ -743,7 +742,7 @@ export interface Decision {
   answer?: DecisionAnswer | null;
   // Stakes grouping (queue writer): required | tradeoff | frozen | info.
   category?: 'required' | 'tradeoff' | 'frozen' | 'info' | string;
-  domain?: 'finance' | 'ops' | 'memory' | 'trading' | string;
+  domain?: 'finance' | 'ops' | 'memory' | string;
   // Full sentence ("Blocks: …" / "Nothing blocked — …") — render verbatim,
   // never badge on mere presence.
   blocking?: string | null;
@@ -766,310 +765,6 @@ export type ApplyErrorCode =
   | 'bridge_error'
   | 'network'
   | 'unknown';
-
-// --- Trading (GET /api/trading/status — hub-api proxy to spindle) ---------------
-export interface TradingStatus {
-  status: 'ok' | 'stale' | 'offline';
-  mode: 'sim' | 'dryrun' | 'live' | string;
-  halted: string | null;
-  halted_since?: string | null; // journal-derived (spindle-derive.sh), present only while halted
-  last_order?: {
-    ts: string;
-    side: string | null;
-    qty: string | number | null;
-    symbol: string | null;
-    status?: string | null;
-    value?: number | null; // journal-derived notional (qty x last marked price)
-    value_display?: number | null; // value / display_divisor
-  } | null;
-  broker?: string;
-  equity?: number | null;
-  cash?: number | null;
-  positions?: { symbol: string; qty: number; value: number | null }[];
-  last_iteration?: string | null;
-  next_tick?: string | null;
-  last_tick_age_s?: number | null;
-  iterations?: number | null;
-  allowed_total?: number | null;
-  gated_streak?: number | null;
-  spent_today?: number | null;
-  trades_today?: number | null;
-  // Display divisor (spindle config display.divisor): presentation-only scaling
-  // of money fields — trading itself stays at full account scale.
-  display_divisor?: number | null;
-  spent_today_display?: number | null;
-  // Second-strategy summary (spindle 0.0.6 runs two strategies in one book).
-  // Wire shape varies: {"mode":"off"} with NO name/weight when the loop isn't
-  // running (sim mode, startup window) or the book has a single entry — render
-  // nothing for that shape.
-  second_strategy?: {
-    mode: 'live' | 'practice' | 'off' | string;
-    name?: string;
-    weight?: number;
-    last_targets?: Record<string, number> | null;
-  } | null;
-}
-
-export interface TradingPerf {
-  curve: { date: string; equity: number }[];
-  day_pnl: number | null;
-  total_pnl: number | null;
-  since?: string;
-  equity?: number;
-  cash?: number;
-  positions?: Record<string, number>;
-  prices?: Record<string, number>;
-  // *_display fields (spindle display.divisor): headline the scaled values, keep
-  // the raw ones secondary. Absent when the divisor is unset/1.
-  display_divisor?: number | null;
-  equity_display?: number | null;
-  day_pnl_display?: number | null;
-  total_pnl_display?: number | null;
-  cash_display?: number | null;
-  position_values_display?: Record<string, number>;
-  curve_display?: { date: string; equity: number }[];
-  // Per-strategy attribution (journaled strategy_targets, marked at close):
-  // each strategy's own daily target vector, so individual performance stays
-  // measurable while fills remain book-level. return_pct is already percent
-  // (2.157 = +2.16%). Absent until the second strategy's first journaled day.
-  attribution?: {
-    strategies: Record<
-      string,
-      {
-        weight: number | null;
-        mode: 'live' | 'practice' | string;
-        targets: Record<string, number> | null;
-        return_pct: number;
-      }
-    >;
-    since: string;
-    sessions: number;
-  } | null;
-  // Present only while a second strategy runs with enabled: false — what it
-  // would hold and its close-marked hypothetical return.
-  practice?: {
-    strategy: string | null;
-    mode: 'practice';
-    would_hold: Record<string, number> | null;
-    hypothetical_return_pct: number;
-    since: string;
-    sessions: number;
-  } | null;
-}
-
-export interface TradingExplain {
-  asof: number;
-  equity: number;
-  cash: number;
-  positions: Record<string, number>;
-  targets: { symbol: string; weight: number }[];
-  ranks: { strategy: string; symbol: string; thesis: string; score: number }[];
-}
-
-// --- Trading log (GET /api/trading/log — journal-derived, spindle-derive.sh) ----
-// The denial layer: spindle's /events deliberately drops gate denials as
-// high-volume noise, which is why a stalled sleeve stayed invisible for two
-// days. Every field here is derived host-side from the journal.
-export interface BlockedOrder {
-  ts: string;
-  day: string;
-  symbol: string | null;
-  side: string | null;
-  qty: string | number | null;
-  reason_plain: string; // already plain language; never render a raw reason
-  value: number | null; // full account scale
-  value_display: number | null; // value / display_divisor
-}
-
-export interface BlockedSymbol {
-  days: { day: string; reason_plain: string }[]; // each day carries its OWN reason
-  resolved_on: string | null; // first later day an order for it went through
-  count: number;
-}
-
-export interface TradingBudget {
-  // "today" here is the New York trading date (derive-side), not UTC — and
-  // market_day is false on weekends. Older spindle.json lacks the flag.
-  market_day?: boolean;
-  trades_today: number;
-  spent_today: number;
-  max_trades_per_day: number | null;
-  daily_limit: number | null;
-  daily_limit_display: number | null;
-  // Recomputed from the close series. The stored counter lags a session by
-  // design, so it is carried only for reference and must not be rendered.
-  consecutive_losing_days: number;
-  consecutive_losing_days_stored: number | null;
-  halt_at_losing_days: number | null;
-  breaker_mode: string | null;
-  halted: boolean;
-}
-
-export interface TradingSessionTrade {
-  ts: string;
-  symbol: string;
-  side: string;
-  qty: number | null;
-  price: number | null; // actual fill price when reconciled, null before
-  status: string | null;
-  value: number | null;
-  value_display: number | null;
-}
-
-// The advisor's daily output, keyed by session day — feeds the activity
-// feed's expandable advisory rows.
-export interface TradingAdvisoryNote {
-  ts: string;
-  status: string | null;
-  reason: string | null;
-  model: string | null;
-  provider: string | null;
-  action: string | null;
-  confidence: number | null;
-  rationale: string | null;
-  would_apply: { symbol: string; weight: number }[] | null;
-}
-
-export interface TradingSession {
-  day: string;
-  verb: 'frozen' | 'blocked' | 'traded' | 'held' | 'quiet' | string;
-  ticks: number;
-  placed: number;
-  refused: number;
-  reasons: string[];
-  equity_open: number | null;
-  equity_close: number | null;
-  trades?: TradingSessionTrade[];
-}
-
-export interface TradingDecisionDay {
-  day: string;
-  strategies: Record<
-    string,
-    { weight: number | null; enabled: boolean | null; targets: Record<string, number> | null }
-  >;
-  changed: { added: string[]; dropped: string[] };
-}
-
-export interface TradingLog {
-  generated_at: string | null;
-  blocked: BlockedOrder[] | null;
-  blocked_days: Record<string, BlockedSymbol> | null;
-  blocked_by_reason: Record<string, number> | null;
-  budget: TradingBudget | null;
-  sessions: TradingSession[] | null;
-  decisions: TradingDecisionDay[] | null;
-  advisory?: Record<string, TradingAdvisoryNote> | null;
-}
-
-// --- Trading events (GET /api/trading/events — order + advisory feed) -----------
-export interface TradingEvent {
-  ts: number; // epoch seconds
-  title: string; // "Sold 5.7570 EEM" / "Advisory: skipped"
-  status?: string | null; // "pending_new" | "skipped" | …
-  summary?: string | null; // "order <uuid>" | "disabled" — internal, not shown
-}
-
-export interface ExposureVia {
-  etf: string;
-  contrib_pct: number;
-  // The issuer's own weight. Never re-derive it from contrib_pct / position:
-  // both are rounded, and the quotient disagreed with the issuer at 2dp.
-  weight_pct?: number;
-}
-
-export interface ExposureRow {
-  ticker: string | null;
-  name: string | null;
-  book_pct: number;
-  via: ExposureVia[];
-}
-
-export interface ExposureHolding {
-  ticker: string;
-  name: string;
-  weight_pct: number;
-}
-
-export interface ExposurePerEtf {
-  position_pct_of_book: number;
-  as_of: string | null;
-  top10: ExposureHolding[];
-  // Optional: a bundle can outlive the hub-api that fed it. Absent means
-  // "unknown", which the card renders as silence rather than as zero.
-  names?: number;
-  fund_pct?: number;
-  explains_pct?: number;
-  max_name_pct?: number;
-  in_top?: number;
-}
-
-export interface ExposureCoverage {
-  shown: number;
-  names: number;
-  shown_pct: number;
-  explained_pct: number;
-}
-
-export interface TradingExposure {
-  generated_at: string | null;
-  equity: number | null;
-  book: ExposureRow[];
-  per_etf: Record<string, ExposurePerEtf>;
-  non_equity: { etf: string; describes: string; position_pct_of_book?: number }[];
-  coverage?: ExposureCoverage;
-  notes: string[];
-}
-
-// --- Self-improvement proposal ledger (GET /trading/proposals) -------------------
-// Derived from the append-only meta ledger; killed proposals are kept forever.
-export interface ProposalAwaiting {
-  id: string;
-  ts: string | null;
-  param: string | null;
-  param_plain: string;
-  status: string;
-  current: number | null;
-  proposed: number | null;
-  change_plain: string;
-  reasoning: string;
-  expectation: {
-    metric: string | null;
-    metric_plain: string;
-    direction: 'increase' | 'decrease' | null;
-    horizon_days: number | null;
-  };
-  confidence: number | null;
-  survived: string[];
-  decision_id: string | null;
-}
-
-export interface ProposalKilled {
-  id: string;
-  ts: string | null;
-  param: string | null;
-  param_plain: string;
-  status: string;
-  cause: string;
-}
-
-export interface ProposalResolved {
-  id: string;
-  ts: string | null;
-  param: string | null;
-  param_plain: string;
-  status: string;
-  detail: string;
-}
-
-export interface TradingProposals {
-  generated_at: string | null;
-  entries_total: number;
-  awaiting: ProposalAwaiting[];
-  killed: ProposalKilled[];
-  resolved: ProposalResolved[];
-  errors: string[];
-}
 
 // --- Murmur (GET /api/murmur — hub-api file-reader, hub-server/scripts/murmur-derive.sh) ---
 export interface MurmurPendant {
@@ -1111,6 +806,10 @@ export interface MurmurStatus {
   pipeline: MurmurPipeline;
   memory: MurmurMemory;
   chain_last_complete_at: string | null;
+  /** Chronicle's web UI, as the server reports it (murmur.json). Optional and
+   * null-able: the service is optional, so an absent URL is the "not
+   * configured" state the Murmur page renders instead of a dead link. */
+  chronicle_url?: string | null;
 }
 
 // --- Files (GET /files/*) --------------------------------------------------------

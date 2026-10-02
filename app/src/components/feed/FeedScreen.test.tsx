@@ -200,9 +200,9 @@ describe('filter chips', () => {
     (usePoll as jest.Mock).mockReturnValue(feedState([item({ id: 'r', kind: 'run', summary: 'l' })]));
     const renderer = await render();
 
-    act(() => pressable(renderer, 'Trading').props.onPress());
+    act(() => pressable(renderer, 'Alerts').props.onPress());
 
-    expect(renderer.root.findByType(StatePanel).props.title).toBe('No tradings');
+    expect(renderer.root.findByType(StatePanel).props.title).toBe('No alerts');
   });
 });
 
@@ -285,10 +285,10 @@ describe('page states', () => {
     expect(panel.props.detail).toBe('GET /feed → 503');
   });
 
-  test('the status line renders "assistant" + text only when the server sends one', async () => {
+  test('the status line renders "xavier" + text only when the server sends one', async () => {
     (usePoll as jest.Mock).mockReturnValue(feedState([]));
     let renderer = await render();
-    expect(renderer.root.findAllByType(Text).some((n) => n.props.children === 'assistant')).toBe(false);
+    expect(renderer.root.findAllByType(Text).some((n) => n.props.children === 'xavier')).toBe(false);
 
     (usePoll as jest.Mock).mockReturnValue(
       feedState([], {
@@ -300,7 +300,7 @@ describe('page states', () => {
       }),
     );
     renderer = await render();
-    expect(renderer.root.findAllByType(Text).some((n) => n.props.children === 'assistant')).toBe(true);
+    expect(renderer.root.findAllByType(Text).some((n) => n.props.children === 'xavier')).toBe(true);
     expect(
       renderer.root.findAllByType(Text).some((n) => n.props.children === 'mac is asleep'),
     ).toBe(true);

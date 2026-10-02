@@ -83,7 +83,7 @@ describe('server → client decoding', () => {
   it("'1' is a UTF-8 title", () => {
     expect(decodeServerFrame(new Uint8Array([49, 88, 97, 118, 105, 101, 114]))).toEqual({
       kind: 'title',
-      title: 'Assistant',
+      title: 'Xavier',
     });
   });
 

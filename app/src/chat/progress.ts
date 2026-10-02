@@ -1,7 +1,7 @@
 // The gateway's long-running heartbeats — "⏳ Working — 3 min — iteration 9/60,
 // waiting for provider response (streaming)" — arrive as ordinary assistant
 // text and pile up in the transcript as prose. They are status, not something
-// Assistant said: one live row, not a stack of stale ones (the user, 2026-09-22).
+// Xavier said: one live row, not a stack of stale ones (the user, 2026-09-22).
 //
 // Matching is deliberately loose on the prose and strict on the numbers: the
 // wording comes from the gateway's own notification strings and can change,

@@ -226,7 +226,7 @@ function TerminalSurface({ onLock }: { onLock: () => void }) {
             <View style={[styles.dot, { backgroundColor: toneColor }]} />
           </View>
           <Text numberOfLines={1} style={[styles.headerName, { color: t('fg-1') }]}>
-            assistant · tmux hub-term
+            xavier · tmux hub-term
           </Text>
           {live ? (
             <Text style={[styles.statusLabel, { color: toneColor }]}>{tone.label}</Text>

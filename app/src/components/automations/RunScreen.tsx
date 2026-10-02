@@ -2,7 +2,7 @@
 //
 // Opening a run reads it and makes sure its follow-up thread exists
 // (`POST /chat/automations/runs/{id}/open`), so this is always the chat's own
-// thread surface with the run drawn above the first message. Assistant receives
+// thread surface with the run drawn above the first message. Xavier receives
 // the run's output with the user's first message — hub-api parks it as a note on
 // the thread — which is why a reply here is answered with the run in hand and
 // a reply in one of the old catch-all threads was not.
@@ -28,7 +28,7 @@ import { BackToAutomations } from './JobScreen';
 import { Pills } from './parts';
 
 /** The run as the one message it is, so it is drawn by the same renderer that
- * draws everything else Assistant says — markdown, images and files included. */
+ * draws everything else Xavier says — markdown, images and files included. */
 export function runAsMessage(run: RunDetail, threadId: string): ChatMessage {
   return {
     id: `run_${run.run_id}`,

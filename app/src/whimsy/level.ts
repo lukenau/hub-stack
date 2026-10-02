@@ -1,4 +1,4 @@
-// How much Assistant the app shows. Full is the default; Calm keeps him to the
+// How much Xavier the app shows. Full is the default; Calm keeps him to the
 // moments that matter (empty, success, error); Off is the app as it was.
 // The OS reduce-motion switch clamps motion independently of the level.
 import AsyncStorage from '@react-native-async-storage/async-storage';

@@ -6,9 +6,9 @@ import { haptic } from './haptics';
 import { useWhimsyStore, type WhimsyLevel } from './level';
 
 const OPTIONS: { value: WhimsyLevel; label: string; caption: string }[] = [
-  { value: 'off', label: 'Off', caption: 'Assistant stays out of sight' },
-  { value: 'calm', label: 'Calm', caption: 'Assistant appears when it matters' },
-  { value: 'full', label: 'Full', caption: 'Assistant everywhere, at your service' },
+  { value: 'off', label: 'Off', caption: 'Xavier stays out of sight' },
+  { value: 'calm', label: 'Calm', caption: 'Xavier appears when it matters' },
+  { value: 'full', label: 'Full', caption: 'Xavier everywhere, at your service' },
 ];
 
 export function WhimsyToggle() {
@@ -19,7 +19,7 @@ export function WhimsyToggle() {
 
   return (
     <View>
-      <View accessibilityRole="radiogroup" accessibilityLabel="Assistant" style={styles.row}>
+      <View accessibilityRole="radiogroup" accessibilityLabel="Xavier" style={styles.row}>
         {OPTIONS.map((o) => {
           const on = o.value === level;
           return (

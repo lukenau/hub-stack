@@ -41,3 +41,46 @@ jest.mock('./src/whimsy/level', () => {
     useWhimsy: () => ({ level: actual.useWhimsyStore((s) => s.level), motion: false }),
   };
 });
+
+// react-test-renderer reports every uncaught error via reportGlobalError,
+// which branches on `typeof window.ErrorEvent === 'function'` and then calls
+// `window.dispatchEvent(event)`. This environment has the first half and not
+// the second: the react-native preset points `window` at the sandbox global
+// (window === global), Node 26 defines a global ErrorEvent, and nothing
+// defines the EventTarget methods. So the branch is taken and every uncaught
+// error raised inside a React tree dies as
+//   TypeError: window.dispatchEvent is not a function
+// instead of being reported — and because React raises these while flushing
+// work that outlived its test, the TypeError also lands at teardown time
+// ("Cannot log after tests are done"), which is what makes the flake look like
+// a Jest environment problem rather than the error it actually is.
+//
+// Restoring the two EventTarget methods makes that branch behave the way it
+// does under jsdom. With no listener the error is re-raised so it still fails
+// the suite that produced it, with its own stack; a suite that wants to
+// intercept global errors can addEventListener('error', …) itself.
+if (typeof globalThis.dispatchEvent !== 'function') {
+  const listeners = new Map();
+  globalThis.addEventListener = (type, fn) => {
+    const list = listeners.get(type) ?? [];
+    list.push(fn);
+    listeners.set(type, list);
+  };
+  globalThis.removeEventListener = (type, fn) => {
+    const list = listeners.get(type);
+    if (!list) return;
+    const at = list.indexOf(fn);
+    if (at !== -1) list.splice(at, 1);
+  };
+  globalThis.dispatchEvent = (event) => {
+    const list = listeners.get(event?.type ?? '') ?? [];
+    list.forEach((fn) => fn(event));
+    if (list.length === 0 && event?.type === 'error') {
+      const error = event.error ?? new Error(String(event.message ?? 'unknown error'));
+      setTimeout(() => {
+        throw error;
+      }, 0);
+    }
+    return true;
+  };
+}

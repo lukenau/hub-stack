@@ -7,7 +7,7 @@ import { fonts } from '../../theme/fonts';
 import { useTheme } from '../../theme/useTheme';
 import type { TokenName } from '../../theme/tokens.gen';
 import { useSpinRotation } from './motion';
-import { TickRule, useMoment, AssistantPose, type MomentId } from '../../whimsy';
+import { TickRule, useMoment, XavierPose, type MomentId } from '../../whimsy';
 
 export type StatePanelTone = 'neutral' | 'pending' | 'error';
 
@@ -23,7 +23,7 @@ const TONES: Record<StatePanelTone, ToneTokens> = {
   neutral: { color: 'fg-3', border: 'border', bg: 'bg-1' },
 };
 
-// Native-only (whimsy layer, not in the PWA): Assistant stands beside the panel.
+// Native-only (whimsy layer, not in the PWA): Xavier stands beside the panel.
 const TONE_MOMENT: Record<StatePanelTone, MomentId> = {
   pending: 'loading',
   error: 'error',
@@ -34,7 +34,7 @@ export interface StatePanelProps {
   tone?: StatePanelTone;
   title: string;
   detail?: string;
-  /** Which Assistant moment to show; defaults by tone, `false` for none. */
+  /** Which Xavier moment to show; defaults by tone, `false` for none. */
   moment?: MomentId | false;
 }
 
@@ -44,22 +44,22 @@ export function StatePanel({ tone = 'neutral', title, detail, moment }: StatePan
   const rotate = useSpinRotation();
   const resolved = useMoment(moment === false ? undefined : (moment ?? TONE_MOMENT[tone]));
   // Panels mount and remount with every refetch; a buzz on each would nag.
-  const assistant = resolved && moment === undefined ? { ...resolved, haptic: undefined } : resolved;
+  const xavier = resolved && moment === undefined ? { ...resolved, haptic: undefined } : resolved;
   return (
     <View
       accessibilityRole={tone === 'error' ? 'alert' : undefined}
       style={[
         styles.panel,
         { backgroundColor: t(tokens.bg), borderColor: t(tokens.border) },
-        assistant && styles.panelWithAssistant,
+        xavier && styles.panelWithXavier,
       ]}
     >
-      {assistant ? <AssistantPose moment={assistant} size="inline" /> : null}
-      <View style={assistant ? styles.body : undefined}>
+      {xavier ? <XavierPose moment={xavier} size="inline" /> : null}
+      <View style={xavier ? styles.body : undefined}>
         <View style={styles.titleRow}>
-          {/* Assistant's scan band is the loading animation when it runs;
+          {/* Xavier's scan band is the loading animation when it runs;
               the ring stays for Off, and for Reduce Motion (no scan). */}
-          {tone === 'pending' && assistant?.motion !== 'scan' && (
+          {tone === 'pending' && xavier?.motion !== 'scan' && (
             <Animated.View
               accessibilityElementsHidden
               importantForAccessibility="no-hide-descendants"
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 1,
   },
-  panelWithAssistant: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingLeft: 10 },
+  panelWithXavier: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingLeft: 10 },
   body: { flex: 1, minWidth: 0 },
   titleRow: { flexDirection: 'row', alignItems: 'center', gap: 9 },
   spinner: { width: 12, height: 12, borderRadius: 6, borderWidth: 1.5 },

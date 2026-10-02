@@ -20,7 +20,7 @@ const PRESSED_GIVE: ViewStyle = { transform: [{ scale: 0.985 }] };
 
 /**
  * `default` = `--border` (most cards); `strong` = `--border-strong` (BriefCard,
- * AssistantCard); `accent` = the `--accent-soft`/`--accent-border` call-to-action
+ * XavierCard); `accent` = the `--accent-soft`/`--accent-border` call-to-action
  * card (Home.tsx:119-122).
  */
 export type CardTone = 'default' | 'strong' | 'accent';

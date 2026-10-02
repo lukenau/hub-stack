@@ -40,7 +40,6 @@ describe('resolveDeepLink', () => {
       '/feed',
       '/finance',
       '/decisions',
-      '/trading',
       '/chat',
       '/ops',
       '/ops/cost',

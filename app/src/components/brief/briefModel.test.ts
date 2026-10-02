@@ -109,7 +109,7 @@ describe('sourceStrip / degradedSources exclude pipeline stages', () => {
   test('the nine real inboxes, never carry or money', () => {
     const names = sourceStrip(LIVE_BRIEF).map((s) => s.name);
     expect(names).toContain('email');
-    expect(names).toContain('trading');
+    expect(names).toContain('finance');
     expect(names).not.toContain('carry');
     expect(names).not.toContain('money');
   });
@@ -123,11 +123,11 @@ describe('sourceStrip / degradedSources exclude pipeline stages', () => {
   });
 
   test('the live brief names exactly its one degraded input', () => {
-    expect(degradedSources(LIVE_BRIEF)).toEqual(['trading']);
+    expect(degradedSources(LIVE_BRIEF)).toEqual(['finance']);
   });
 
   test('isStale is per-item, off the item’s own origin', () => {
-    expect(isStale(LIVE_BRIEF, item({ origin: 'trading' }))).toBe(true);
+    expect(isStale(LIVE_BRIEF, item({ origin: 'finance' }))).toBe(true);
     expect(isStale(LIVE_BRIEF, item({ origin: 'calendar' }))).toBe(false);
     // An origin the brief does not report on at all is not "stale".
     expect(isStale(LIVE_BRIEF, item({ origin: 'nowhere' }))).toBe(false);
@@ -174,7 +174,7 @@ describe('chipsFor — a chip means "unusual"', () => {
   });
 
   test('a stale source is NOT a chip — the banner owns that', () => {
-    expect(chipsFor(item({ origin: 'trading' }))).toEqual([]);
+    expect(chipsFor(item({ origin: 'finance' }))).toEqual([]);
   });
 
   test('the chip count is exactly the server’s own carried count', () => {
@@ -209,7 +209,6 @@ describe('originSymbol / metaLine', () => {
     ['murmur', 'waveform'],
     ['packages', 'shippingbox'],
     ['oura', 'bed.double'],
-    ['trading', 'chart.line.uptrend.xyaxis'],
     ['finance', 'dollarsign.circle'],
   ])('%s → %s', (origin, symbol) => {
     expect(originSymbol(origin)).toBe(symbol);
@@ -233,17 +232,15 @@ describe('originSymbol / metaLine', () => {
 });
 
 describe('linkTarget — a closed allowlist', () => {
-  test('the two hub routes', () => {
+  test('the one hub route, and a stale hub path resolves to null, not a route', () => {
     expect(linkTarget(item({ url: '/oura/' }))).toEqual({
       kind: 'route',
       href: '/oura',
       label: 'Open Oura',
     });
-    expect(linkTarget(item({ url: '/trading' }))).toEqual({
-      kind: 'route',
-      href: '/trading',
-      label: 'Open trading',
-    });
+    // A hub path whose route left the tree (deep-linkable surfaces only) is
+    // the allowlist returning null, never a dead route push.
+    expect(linkTarget(item({ url: '/brief' }))).toBeNull();
   });
 
   test('a my-pages path goes to the reader route, not the browser', () => {

@@ -546,7 +546,7 @@ describe('unconfirmed', () => {
 });
 
 describe('what is hidden by default', () => {
-  const shared = 'c_4a2b8590ce@group.calendar.google.com';
+  const shared = 'c_test2@group.calendar.google.com';
   const base = timed('x', at('2026-09-29', '10:00', -240), at('2026-09-29', '11:00', -240));
 
   test('anything from a shared team or company calendar', () => {

@@ -14,8 +14,8 @@
 // and the stack opens on it. `unstable_settings = { initialRouteName: 'index' }`
 // does NOT rescue this: it only reorders the appended remainder.
 //
-// Shipped in builds 5 and 6: tapping Config landed on the "Restart the Hermes
-// gateway?" sheet, and dismissing it emptied the stack and fell back to tab 0.
+// Shipped in builds 5 and 6: tapping Config landed on the "Restart the gateway?"
+// sheet, and dismissing it emptied the stack and fell back to tab 0.
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 

@@ -13,12 +13,11 @@ export const LAST_SEEN_KEY = 'hub-feed-seen-ts';
 
 export type FeedFilter = FeedKind | 'all';
 
-/** Feed.tsx:16-22. Five chips for six kinds: `report` and `status` have none,
+/** Feed.tsx:16-22. Four chips for five kinds: `report` and `status` have none,
  * so those cards are reachable only under All (PARITY-INVENTORY FEED-03). */
 export const FILTERS: { id: FeedFilter; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'brief', label: 'Briefs' },
-  { id: 'trading', label: 'Trading' },
   { id: 'run', label: 'Runs' },
   { id: 'alert', label: 'Alerts' },
 ];
@@ -28,7 +27,7 @@ export function filterItems(items: FeedItem[], filter: FeedFilter): FeedItem[] {
   return filter === 'all' ? items : items.filter((i) => i.kind === filter);
 }
 
-/** Feed.tsx:181 — literal `No ${filter}s`, pluralisation included ("No tradings"). */
+/** Feed.tsx:181 — literal `No ${filter}s`, pluralisation included ("No runs"). */
 export function emptyTitle(filter: FeedFilter): string {
   return filter === 'all' ? 'Nothing yet' : `No ${filter}s`;
 }
@@ -69,7 +68,6 @@ export const KIND_SYMBOL: Record<FeedKind, SFSymbol> = {
   alert: 'exclamationmark.triangle',
   report: 'doc.text',
   status: 'checkmark.circle',
-  trading: 'chart.line.uptrend.xyaxis',
 };
 
 /**

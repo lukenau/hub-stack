@@ -1,6 +1,5 @@
 // Provenance strip: when the snapshot landed, whether either source is limping.
-// Amounts render on the Hub only — never in Telegram — and the Robinhood agentic
-// trading account is ring-fenced out of every number upstream.
+// Amounts render on the Hub only — never in Telegram.
 // 1:1 port of apps/hub/src/components/finance/SourcesFooter.tsx.
 import { StyleSheet, Text, View } from 'react-native';
 import type { FinanceSnapshot } from '../../lib/types';
@@ -50,8 +49,7 @@ export function SourcesFooter({ snap }: { snap: FinanceSnapshot }) {
         </Text>
       ) : null}
       <Text style={[styles.note, { color: t('fg-4') }]}>
-        Robinhood agentic trading is ring-fenced out of every number here — it belongs to the
-        trading surface. Amounts show only on the Hub, never in Telegram.
+        Amounts show only on the Hub, never in Telegram.
       </Text>
     </View>
   );

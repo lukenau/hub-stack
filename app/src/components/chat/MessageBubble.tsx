@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   row: { marginBottom: 14, flexDirection: 'row' },
   rowUser: { justifyContent: 'flex-end' },
   rowAssistant: { justifyContent: 'flex-start' },
-  // Assistant's replies are bubbled too, in the ground colour rather than the
+  // Xavier's replies are bubbled too, in the ground colour rather than the
   // accent — "put the agent response text in a message bubble the same way my
   // messages are, just a diff color; makes them easier to read" (the user,
   // 2026-09-22). The tight corner marks the speaker's side.

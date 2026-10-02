@@ -11,9 +11,18 @@
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { hasPwa, skipPwa } from './pwa.mjs';
 
 const APP = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PWA = resolve(APP, '../hub');
+
+// Every pair below compares a file in this repo against its PWA original, and
+// the PWA is not part of this repo. With no PWA there is nothing to compare —
+// say so and pass, rather than reporting every copy as "cannot read".
+if (!hasPwa()) {
+  skipPwa('shared-copy parity (src/shared/* and src/lib/types.ts vs the PWA originals)');
+  process.exit(0);
+}
 
 // [copy under apps/hub-app, source under apps/hub, optional line slice]
 const PAIRS = [

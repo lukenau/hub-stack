@@ -40,7 +40,7 @@ export interface BriefItem {
   /** Days the brief has been carrying it (Ruling 76). This is the chip, never age_days. */
   carry_days: number | null;
   /**
-   * '' | '/oura/' | '/trading' | '/my-pages/…', or an https URL: _link() folds
+   * '' | '/oura/' | '/my-pages/…', or an https URL: _link() folds
    * the candidate's `source_url` in here when there is no hub path, so this
    * field is NOT always a path. There is no separate `source_url` on an
    * emitted item — the spec's §3 listing of one is stale.

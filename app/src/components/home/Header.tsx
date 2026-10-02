@@ -87,7 +87,7 @@ export function Header({
                 : null,
             ]}
           >
-            Hermes
+            Xavier
           </Text>
           <View
             accessibilityLabel={dot.label}

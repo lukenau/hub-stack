@@ -54,13 +54,6 @@ describe('GET reads: exact path + query', () => {
     ['openrouterCredits', () => api.openrouterCredits(), '/cost/openrouter'],
     ['murmur', () => api.murmur(), '/murmur'],
     ['finance', () => api.finance(), '/finance'],
-    ['trading', () => api.trading(), '/trading/status'],
-    ['tradingPerf', () => api.tradingPerf(), '/trading/perf'],
-    ['tradingExplain', () => api.tradingExplain(), '/trading/explain'],
-    ['tradingEvents', () => api.tradingEvents(), '/trading/events'],
-    ['tradingExposure', () => api.tradingExposure(), '/trading/exposure'],
-    ['tradingLog', () => api.tradingLog(), '/trading/log'],
-    ['tradingProposals', () => api.tradingProposals(), '/trading/proposals'],
   ];
 
   it.each(cases)('%s hits GET %s', async (_name, call, path) => {
@@ -158,11 +151,6 @@ describe('response unwrapping', () => {
     mockFetchOnce(jsonResponse({ data }));
     await expect(api.chatModels()).resolves.toBe(data as never);
   });
-
-  it('tradingEvents() unwraps { events } and defaults to [] when absent', async () => {
-    mockFetchOnce(jsonResponse({}));
-    await expect(api.tradingEvents()).resolves.toEqual([]);
-  });
 });
 
 describe('null-on-error normalization', () => {
@@ -220,51 +208,6 @@ describe('null-on-error normalization', () => {
   });
 });
 
-// OQ-21: api.trading must distinguish "endpoint doesn't exist" (404/405 → hidden
-// entirely, null) from "the network call itself failed" (offline line).
-describe('api.trading: 404/405-vs-network-error distinction (OQ-21)', () => {
-  it('404 → null (hidden entirely, not an offline line)', async () => {
-    mockFetchOnce(jsonResponse({ detail: 'no route' }, { status: 404 }));
-    await expect(api.trading()).resolves.toBeNull();
-  });
-
-  it('405 → null (hidden entirely)', async () => {
-    mockFetchOnce(jsonResponse({ detail: 'method not allowed' }, { status: 405 }));
-    await expect(api.trading()).resolves.toBeNull();
-  });
-
-  it('a non-404/405 ApiError (e.g. 502) renders the synthetic offline status, never throws', async () => {
-    mockFetchOnce(jsonResponse({ detail: 'bad gateway' }, { status: 502 }));
-    await expect(api.trading()).resolves.toEqual({ status: 'offline', mode: 'unknown', halted: null });
-  });
-
-  it('a network-level failure (fetch rejects, not an ApiError) also renders the synthetic offline status', async () => {
-    (global.fetch as jest.Mock).mockRejectedValueOnce(new TypeError('Network request failed'));
-    await expect(api.trading()).resolves.toEqual({ status: 'offline', mode: 'unknown', halted: null });
-  });
-});
-
-describe('other trading sub-reads: any error, network or ApiError, degrades to null', () => {
-  const reads: [string, () => Promise<unknown>][] = [
-    ['tradingPerf', () => api.tradingPerf()],
-    ['tradingExplain', () => api.tradingExplain()],
-    ['tradingEvents', () => api.tradingEvents()],
-    ['tradingExposure', () => api.tradingExposure()],
-    ['tradingLog', () => api.tradingLog()],
-    ['tradingProposals', () => api.tradingProposals()],
-  ];
-
-  it.each(reads)('%s: ApiError → null', async (_name, call) => {
-    mockFetchOnce(jsonResponse({ detail: 'down' }, { status: 500 }));
-    await expect(call()).resolves.toBeNull();
-  });
-
-  it.each(reads)('%s: network failure → null', async (_name, call) => {
-    (global.fetch as jest.Mock).mockRejectedValueOnce(new TypeError('Network request failed'));
-    await expect(call()).resolves.toBeNull();
-  });
-});
-
 describe('write requests post canonical JSON', () => {
   it('connectorConnect POSTs an empty JSON body to the exact path', async () => {
     mockFetchOnce(jsonResponse({ stage: 'pending' }));
@@ -295,15 +238,6 @@ describe('write requests post canonical JSON', () => {
     expect(global.fetch).toHaveBeenCalledWith(
       `${BASE}/action/challenge`,
       expect.objectContaining({ body: JSON.stringify({ request: { action: 'advisor.preset', preset: 'cost' } }) }),
-    );
-  });
-
-  it('resumeTrading builds the canonical trading.resume WriteRequest', async () => {
-    mockFetchOnce(jsonResponse({ detail: 'boom' }, { status: 400 }));
-    await expect(api.resumeTrading()).rejects.toBeInstanceOf(ApplyError);
-    expect(global.fetch).toHaveBeenCalledWith(
-      `${BASE}/action/challenge`,
-      expect.objectContaining({ body: JSON.stringify({ request: { action: 'trading.resume' } }) }),
     );
   });
 
@@ -433,14 +367,14 @@ describe('write requests post canonical JSON', () => {
 describe('the gate seam (requestActionAssertion has no native implementation yet)', () => {
   it('applyWrite: a successful challenge still fails past the assertion step', async () => {
     mockFetchOnce(jsonResponse({ challenge: 'c', rp_id: 'r', user_verification: 'required', allowed_credentials: [], timeout_ms: 60000 }));
-    await expect(api.applyWrite({ action: 'trading.resume' })).rejects.toBeInstanceOf(GateNotWiredError);
+    await expect(api.applyWrite({ action: 'murmur.drain_now' })).rejects.toBeInstanceOf(GateNotWiredError);
     // Only the challenge call fired — no /action/apply without an assertion.
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
   it('applyWrite: a challenge-step ApiError still maps through toApplyCode, never reaching the gate', async () => {
     mockFetchOnce(jsonResponse({ detail: { detail: 'no key enrolled', code: 'no_passkey' } }, { status: 400 }));
-    await expect(api.applyWrite({ action: 'trading.resume' })).rejects.toMatchObject({
+    await expect(api.applyWrite({ action: 'murmur.drain_now' })).rejects.toMatchObject({
       code: 'no_passkey',
       message: 'no key enrolled',
     });
@@ -448,32 +382,32 @@ describe('the gate seam (requestActionAssertion has no native implementation yet
 
   it('applyWrite: a 412 challenge status maps to challenge_expired', async () => {
     mockFetchOnce(jsonResponse({ detail: 'gone' }, { status: 412 }));
-    await expect(api.applyWrite({ action: 'trading.resume' })).rejects.toMatchObject({ code: 'challenge_expired' });
+    await expect(api.applyWrite({ action: 'murmur.drain_now' })).rejects.toMatchObject({ code: 'challenge_expired' });
   });
 
   it('applyWrite: a 403 challenge status maps to assertion_invalid', async () => {
     mockFetchOnce(jsonResponse({ detail: 'gone' }, { status: 403 }));
-    await expect(api.applyWrite({ action: 'trading.resume' })).rejects.toMatchObject({ code: 'assertion_invalid' });
+    await expect(api.applyWrite({ action: 'murmur.drain_now' })).rejects.toMatchObject({ code: 'assertion_invalid' });
   });
 
   it('applyWrite: a 502 challenge status maps to bridge_error', async () => {
     mockFetchOnce(jsonResponse({ detail: 'gone' }, { status: 502 }));
-    await expect(api.applyWrite({ action: 'trading.resume' })).rejects.toMatchObject({ code: 'bridge_error' });
+    await expect(api.applyWrite({ action: 'murmur.drain_now' })).rejects.toMatchObject({ code: 'bridge_error' });
   });
 
   it('applyWrite: a 405 challenge status maps to phase_2_pending', async () => {
     mockFetchOnce(jsonResponse({ detail: 'gone' }, { status: 405 }));
-    await expect(api.applyWrite({ action: 'trading.resume' })).rejects.toMatchObject({ code: 'phase_2_pending' });
+    await expect(api.applyWrite({ action: 'murmur.drain_now' })).rejects.toMatchObject({ code: 'phase_2_pending' });
   });
 
   it('applyWrite: an unrecognized challenge status maps to unknown', async () => {
     mockFetchOnce(jsonResponse({ detail: 'gone' }, { status: 418 }));
-    await expect(api.applyWrite({ action: 'trading.resume' })).rejects.toMatchObject({ code: 'unknown' });
+    await expect(api.applyWrite({ action: 'murmur.drain_now' })).rejects.toMatchObject({ code: 'unknown' });
   });
 
   it('applyWrite: a plain 400 with no server code maps to bad_request', async () => {
     mockFetchOnce(jsonResponse({ detail: 'validation failed' }, { status: 400 }));
-    await expect(api.applyWrite({ action: 'trading.resume' })).rejects.toMatchObject({ code: 'bad_request' });
+    await expect(api.applyWrite({ action: 'murmur.drain_now' })).rejects.toMatchObject({ code: 'bad_request' });
   });
 });
 

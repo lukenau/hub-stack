@@ -19,6 +19,11 @@ import type { TokenName } from '../theme/tokens.gen';
 
 /** Cold to hot, as fills rather than as text.
  *
+ * theme-exempt (whole block below): the stops are hex literals on purpose
+ * rather than theme tokens, and the doc line naming `accent`'s value quotes a
+ * colour for context instead of rendering one. The `theme-exempt` markers are
+ * what check-no-raw-color.mjs reads; the reasoning is in this paragraph.
+ *
  * The first cut took these from the theme's own tokens, and in light mode they
  * came out muddy — `accent` is #834b00 there, a brown, because it is chosen to
  * be READ on a pale ground (the user, 2026-09-23: "the colors are too dark in light
@@ -27,8 +32,8 @@ import type { TokenName } from '../theme/tokens.gen';
  * values, which were already vivid.
  */
 const RAMP: Record<'light' | 'dark', string[]> = {
-  light: ['#2e86c8', '#2e9e57', '#e0a032', '#dd5b2a'],
-  dark: ['#5cc4f2', '#4ade80', '#f0ab5e', '#ff8350'],
+  light: ['#2e86c8', '#2e9e57', '#e0a032', '#dd5b2a'], // theme-exempt: the ramp itself, see above
+  dark: ['#5cc4f2', '#4ade80', '#f0ab5e', '#ff8350'], // theme-exempt: the ramp itself, see above
 };
 
 /** The colour of one point on the ramp, 0 (coldest) to 1 (hottest). */
@@ -42,12 +47,12 @@ export function heatColor(fraction: number, scheme: 'light' | 'dark'): string {
 
 /** Water, for a chance of rain and a snowflake — the same rule as the ramp. */
 export function waterColor(scheme: 'light' | 'dark'): string {
-  return scheme === 'light' ? '#2e86c8' : '#5cc4f2';
+  return scheme === 'light' ? '#2e86c8' : '#5cc4f2'; // theme-exempt: the ramp's cold stop, see RAMP
 }
 
 /** The sun and moon. `accent` is a brown in light mode, which is not a sun. */
 export function sunColor(scheme: 'light' | 'dark'): string {
-  return scheme === 'light' ? '#e0a032' : '#f0ab5e';
+  return scheme === 'light' ? '#e0a032' : '#f0ab5e'; // theme-exempt: the ramp's warm stop, see RAMP
 }
 
 /** Blend two resolved hex colours. The caller resolves the tokens, because

@@ -51,14 +51,14 @@ export const PASTE_FLASH_MS = 1600;
 export type ComposerMode = 'queue' | 'steer' | 'redirect';
 
 const PLACEHOLDER = {
-  ready: 'Message Assistant',
+  ready: 'Message Xavier',
   loading: 'Loading conversation…',
   error: 'Thread unavailable',
 } as const;
 
 // The three are the gateway's own vocabulary, and they differ in a way worth
 // one line: `steer()` injects at the next TOOL boundary and never interrupts,
-// so a message sent while Assistant is only thinking sits there until the turn
+// so a message sent while Xavier is only thinking sits there until the turn
 // ends — which reads as queueing unless the difference is on screen (the user,
 // 2026-09-22, who chose to keep the semantics and show them).
 export const COMPOSER_MODES: { id: ComposerMode; label: string; hint: string }[] = [

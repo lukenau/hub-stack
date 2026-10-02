@@ -1,4 +1,4 @@
-// Ops.tsx:127-261 — Hermes AGENT sessions (what Assistant has been doing), and
+// Ops.tsx:127-261 — Hermes AGENT sessions (what Xavier has been doing), and
 // the transcript sheet behind each row. Not to be confused with ShellsSection,
 // which lists host tmux sessions running the `claude` CLI.
 import { useState } from 'react';
@@ -102,7 +102,7 @@ export function SessionsSection({ q }: { q: UseQueryResult<AgentSession[], Error
       {q.isLoading ? <StatePanel tone="pending" title="Loading sessions…" detail="gateway session store" /> : null}
       {q.isError ? <StatePanel tone="error" title="Sessions unavailable" detail={q.error?.message ?? ''} /> : null}
       {q.data && sessions.length === 0 ? (
-        <StatePanel tone="neutral" title="No sessions yet" detail="Assistant hasn't run any sessions." />
+        <StatePanel tone="neutral" title="No sessions yet" detail="Xavier hasn't run any sessions." />
       ) : null}
       {q.data && sessions.length > 0 ? (
         <OpsCard>

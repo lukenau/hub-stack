@@ -188,7 +188,7 @@ test('the timeline is by day, names each run, and counts the quiet ones on one l
     days: [
       {
         day: '2026-09-28',
-        runs: [run(), run({ run_id: 'c:a', job_id: 'c', job_name: 'trading-summary', category: 'money', severity: 'info', items: 0 })],
+        runs: [run(), run({ run_id: 'c:a', job_id: 'c', job_name: 'finance-snapshot', category: 'money', severity: 'info', items: 0 })],
         quiet: [{ job_id: 'q', name: 'imessage-draft-dequeue', count: 121, silent: 121 }],
       },
     ],
@@ -197,10 +197,10 @@ test('the timeline is by day, names each run, and counts the quiet ones on one l
   const tree = mount(<AutomationsScreen />);
   press(tree, 'Timeline');
   const seen = texts(tree);
-  expect(seen).toEqual(expect.arrayContaining(['ops-watch', 'trading-summary']));
+  expect(seen).toEqual(expect.arrayContaining(['ops-watch', 'finance-snapshot']));
   expect(seen).toContain('121 runs with nothing to report');
   expect(seen).toContain('imessage-draft-dequeue ×121');
-  press(tree, 'trading-summary');
+  press(tree, 'finance-snapshot');
   expect(mockPush).toHaveBeenCalledWith({ pathname: '/automations/run', params: { runId: 'c:a' } });
 });
 

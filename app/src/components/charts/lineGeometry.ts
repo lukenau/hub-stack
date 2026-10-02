@@ -2,8 +2,8 @@
 // geometry.ts is: every number LineChart.tsx draws is computed and unit-tested
 // here, and the component is a thin mapping onto Skia nodes.
 //
-// EquityChart's maths lives in geometry.ts but is bound to a trading curve
-// (`CurvePoint[]`, a fixed 360×150 viewBox, dollar labels). This is the same
+// EquityChart's maths lives in geometry.ts (`CurvePoint[]`, a fixed 360×150
+// viewBox, dollar labels). This is the same
 // approach over the widget catalog's `{series, buckets}` shape: many series,
 // measured width, no idea what the numbers mean.
 import { niceTicks } from './geometry';

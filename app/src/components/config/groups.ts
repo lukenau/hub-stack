@@ -18,7 +18,7 @@ export const CONFIG_GROUPS: ConfigGroup[] = [
   {
     id: 'model',
     label: 'Model & routing',
-    sub: 'Which brain Assistant runs — default, fallbacks, aux models, advisor',
+    sub: 'Which brain Xavier runs — default, fallbacks, aux models, advisor',
     sections: ['model', 'fallback_providers', 'auxiliary', 'advisor', 'delegation', 'prompt_caching'],
   },
   {
@@ -30,7 +30,7 @@ export const CONFIG_GROUPS: ConfigGroup[] = [
   {
     id: 'memory',
     label: 'Memory & sessions',
-    sub: 'What Assistant remembers and when chats reset',
+    sub: 'What Xavier remembers and when chats reset',
     sections: ['memory', 'curator', 'session_reset', 'sessions', 'group_sessions_per_user'],
   },
   {
@@ -81,7 +81,7 @@ export function configGroupLabel(groupId: string): string {
  * the group's own settings row. */
 export const PAGE_ROWS: Record<string, { href: string; label: string; sub: string }[]> = {
   model: [{ href: '/config/advisor', label: 'Advisor presets', sub: 'executor + reviewer pairing · applies live' }],
-  memory: [{ href: '/config/memory', label: 'Memory status (live)', sub: 'provider · what Assistant holds right now' }],
+  memory: [{ href: '/config/memory', label: 'Memory status (live)', sub: 'provider · what Xavier holds right now' }],
   channels: [{ href: '/config/routing', label: 'Telegram routing', sub: 'where cron + alert deliveries land · topics' }],
   security: [{ href: '/config/security', label: 'Passkeys & Face ID', sub: 'device credentials for the write gate' }],
   gateway: [

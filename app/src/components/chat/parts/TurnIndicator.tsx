@@ -30,7 +30,7 @@ export const TurnIndicator = memo(function TurnIndicator({ state }: { state: Tur
   const spin = useRef(new Animated.Value(0)).current;
   const moving = state === 'waiting' || state === 'working';
   const { level } = useWhimsy();
-  const withAssistant = level === 'full';
+  const withXavier = level === 'full';
   const rotate = useMemo(() => spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] }), [spin]);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export const TurnIndicator = memo(function TurnIndicator({ state }: { state: Tur
 
   return (
     <View style={styles.row} accessibilityRole="progressbar" accessibilityLabel={copy.label}>
-      {moving && withAssistant ? (
+      {moving && withXavier ? (
         <DotScanner />
       ) : moving ? (
         <Animated.View

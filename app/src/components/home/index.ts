@@ -3,7 +3,7 @@
 // from there, not through here).
 export { Rise } from './Rise';
 export { Header } from './Header';
-export { AssistantCard } from './AssistantCard';
+export { XavierCard } from './XavierCard';
 export { DecisionsBanner } from './DecisionsBanner';
 export { BrowserCard } from './BrowserCard';
 export { BriefCard } from './BriefCard';
@@ -11,8 +11,7 @@ export { CalendarCard } from './CalendarCard';
 export { MoneyEntryCard } from './MoneyEntryCard';
 export { OuraRow } from './OuraRow';
 export { PagesShelf } from './PagesShelf';
-export { TradingCard } from './TradingCard';
 export { SpendCard } from './SpendCard';
 export { DiscordRow } from './DiscordRow';
 export { AttentionChips } from './AttentionChips';
-export { failedRunCount } from './assistantState';
+export { failedRunCount } from './xavierState';

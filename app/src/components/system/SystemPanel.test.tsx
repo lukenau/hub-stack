@@ -36,9 +36,9 @@ const SKILLS = {
   builtin: null,
   hub: null,
   local: null,
-  categories: [{ name: 'trading', count: 2 }],
+  categories: [{ name: 'finance', count: 2 }],
   skills: [
-    { name: 'spindle-runbook', category: 'trading', source: 'hub', trust: 'trusted', status: 'enabled' },
+    { name: 'runbook', category: 'finance', source: 'hub', trust: 'trusted', status: 'enabled' },
     { name: 'oura-sync', category: 'health', source: 'local', trust: 'untrusted', status: 'disabled' },
   ],
 };
@@ -129,7 +129,7 @@ test('Skills is open by default and Plugins is collapsed', async () => {
   const renderer = await render();
   let t = texts(renderer);
   // Skills body is rendered...
-  expect(t).toContain('spindle-runbook');
+  expect(t).toContain('runbook');
   expect(t).toContain('installed · 1 enabled · 1 disabled');
   // ...and both counts are on their headers even though one body is hidden.
   expect(t).toContain('1/2');

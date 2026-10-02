@@ -2,8 +2,8 @@
 //
 // `OpsCard` is deliberately NOT the shell `Card`: apps/hub carries four card
 // paddings, and Ops.tsx:31-40 / SystemPanel.tsx:24-33 / Murmur.tsx:19-28 all
-// use radius 14 with 16/14 padding, while shell/Card is the trading card's
-// radius 16 with 18/14. app/ops/murmur.tsx declares the same local card.
+// use radius 14 with 16/14 padding, while shell/Card is radius 16 with 18/14.
+// app/ops/murmur.tsx declares the same local card.
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { SymbolView } from 'expo-symbols';

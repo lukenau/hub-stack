@@ -136,7 +136,7 @@ test('fill() REPLACES the draft — a runbook is not appended to what was typed'
 
 describe('the paste button', () => {
   test('appends the clipboard to the draft', async () => {
-    clipboard.getString.mockResolvedValue('/opt/hub-data');
+    clipboard.getString.mockResolvedValue('/srv/hub-data');
     tree = render(<Composer onSend={jest.fn()} />);
 
     act(() => field(tree!).props.onChangeText('ls '));
@@ -144,7 +144,7 @@ describe('the paste button', () => {
       await pasteButton(tree!).props.onPress();
     });
 
-    expect(field(tree).props.value).toBe('ls /opt/hub-data');
+    expect(field(tree).props.value).toBe('ls /srv/hub-data');
   });
 
   test('an empty read flashes the hint — RN resolves \'\' where the web rejects', async () => {

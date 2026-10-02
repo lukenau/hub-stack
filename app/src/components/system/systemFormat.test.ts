@@ -18,7 +18,7 @@ import {
 import type { McpServer, SkillRow } from '../../lib/types';
 
 function skill(over: Partial<SkillRow> = {}): SkillRow {
-  return { name: 'trading', category: 'finance', source: 'hub', trust: 'trusted', status: 'enabled', ...over };
+  return { name: 'cost-watch', category: 'finance', source: 'hub', trust: 'trusted', status: 'enabled', ...over };
 }
 
 describe('statusToneColor (DetailSheet.tsx:7-15)', () => {

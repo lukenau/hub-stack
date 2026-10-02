@@ -836,11 +836,11 @@ describe('SourcesFooter', () => {
     expect(v.lines.some((l) => l.startsWith('plaid items needing relink'))).toBe(false);
   });
 
-  it('carries the ring-fence note verbatim', () => {
+  it('carries the note verbatim', () => {
     const v = view(<SourcesFooter snap={snapshot()} />);
     expect(
       v.has(
-        'Robinhood agentic trading is ring-fenced out of every number here — it belongs to the trading surface. Amounts show only on the Hub, never in Telegram.',
+        'Amounts show only on the Hub, never in Telegram.',
       ),
     ).toBe(true);
   });
@@ -1114,7 +1114,7 @@ describe('Money screen', () => {
       snapshot: snapshot(),
       decisions: [
         decision(),
-        decision({ id: 'd2', title: 'Rebalance the sleeve', domain: 'trading' }),
+        decision({ id: 'd2', title: 'Rebalance the sleeve', domain: 'ops' }),
         decision({ id: 'd3', title: 'Domainless card', domain: undefined }),
       ],
     });

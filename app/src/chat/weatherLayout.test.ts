@@ -74,8 +74,8 @@ describe('the temperature ramp', () => {
   // mode — `accent` is a brown there, because it is chosen to be read rather
   // than seen (the user, 2026-09-23: "the colors are too dark in light mode").
   it('runs cold to hot, and holds at both ends', () => {
-    expect(heatColor(0, 'dark')).toBe('#5cc4f2');
-    expect(heatColor(1, 'dark')).toBe('#ff8350');
+    expect(heatColor(0, 'dark')).toBe('#5cc4f2'); // theme-exempt: asserts the ramp stop itself
+    expect(heatColor(1, 'dark')).toBe('#ff8350'); // theme-exempt: asserts the ramp stop itself
     expect(heatColor(-3, 'dark')).toBe(heatColor(0, 'dark'));
     expect(heatColor(9, 'dark')).toBe(heatColor(1, 'dark'));
     expect(heatColor(NaN, 'light')).toBe(heatColor(0, 'light'));
@@ -96,13 +96,13 @@ describe('the temperature ramp', () => {
   });
 
   it('blends two resolved colours', () => {
-    expect(mixHex('#000000', '#ffffff', 0.5)).toBe('#808080');
-    expect(mixHex('#ff0000', '#00ff00', 0)).toBe('#ff0000');
-    expect(mixHex('#ff0000', '#00ff00', 1)).toBe('#00ff00');
+    expect(mixHex('#000000', '#ffffff', 0.5)).toBe('#808080'); // theme-exempt: mixHex inputs, never rendered directly
+    expect(mixHex('#ff0000', '#00ff00', 0)).toBe('#ff0000'); // theme-exempt: mixHex inputs, never rendered directly
+    expect(mixHex('#ff0000', '#00ff00', 1)).toBe('#00ff00'); // theme-exempt: mixHex inputs, never rendered directly
   });
 
   it('returns something drawable when a colour is not a hex value', () => {
-    expect(mixHex('rgba(0,0,0,0.1)', '#ffffff', 0.5)).toBe('rgba(0,0,0,0.1)');
+    expect(mixHex('rgba(0,0,0,0.1)', '#ffffff', 0.5)).toBe('rgba(0,0,0,0.1)'); // theme-exempt: the unparseable input mixHex must pass through
   });
 });
 

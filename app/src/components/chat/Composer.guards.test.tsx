@@ -71,7 +71,7 @@ test('the latch releases for the next message, even with identical text', () => 
 
 test('the placeholder speaks to a person, not a terminal', () => {
   const { r } = render();
-  expect(input(r).props.placeholder).toBe('Message Assistant');
+  expect(input(r).props.placeholder).toBe('Message Xavier');
 });
 
 test('a loading thread does not claim the chat is locked', () => {

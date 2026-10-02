@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Export chosen candidates and build contact sheets.
 
-Usage: python export.py <id>=<cand.png> [...]   export picks to assets/assistant/<id>.jpg
+Usage: python export.py <id>=<cand.png> [...]   export picks to assets/xavier/<id>.jpg
        python export.py --sheet                  rebuild out/contact-sheet.png
 Needs: pillow. Poses keep their own dark backdrop — they are shown as LED tiles.
 """
@@ -11,7 +11,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = Path(__file__).resolve().parent
-ASSETS = HERE.parent.parent / "assets" / "assistant"
+ASSETS = HERE.parent.parent / "assets" / "xavier"
 OUT = HERE / "out"
 SIZE = 600
 ORDER = ["portrait", "bow", "tray-empty", "tray-offer", "sniffing", "ledger", "ears-up",

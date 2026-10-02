@@ -6,9 +6,11 @@
 // only ever read the media block here, so we don't independently notice if
 // that block's extraction regex ever truncated early (which would silently
 // merge dark colours into "light"). Two guards cover that:
-//   1. `npm run check:theme` chains apps/hub/scripts/check-theme-parity.mjs
-//      first — the PWA's own checker that asserts the media block and the
-//      `[data-theme="light"]` twin are name-and-value identical.
+//   1. The first step of `npm run check` (scripts/check-pwa-theme-parity.mjs)
+//      chains the PWA's own checker, apps/hub/scripts/check-theme-parity.mjs —
+//      the PWA's checker that asserts the media block and the
+//      `[data-theme="light"]` twin are name-and-value identical. With no PWA
+//      checked out, both that step and this one skip (see scripts/pwa.mjs).
 //   2. Below, we hard-fail if the parsed override count drops under 100 —
 //      a regex that stopped early would produce a suspiciously small count.
 //
@@ -23,13 +25,31 @@
 //
 //   node scripts/gen-tokens.mjs         # write src/theme/tokens.gen.ts
 //   node scripts/gen-tokens.mjs --check # exit 1 if the committed file is stale
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { skipPwa } from './pwa.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const cssPath = join(root, '..', 'hub', 'src', 'styles', 'tokens.css');
 const outPath = join(root, 'src', 'theme', 'tokens.gen.ts');
+const checkMode = process.argv.includes('--check');
+
+// The source of truth is the PWA's stylesheet, and the PWA is not part of this
+// repo. With no PWA beside the app there is nothing to regenerate from and
+// nothing to compare the committed table against — say so rather than dying on
+// an ENOENT that reads like a broken repo.
+if (!existsSync(cssPath)) {
+  if (checkMode) {
+    skipPwa("token freshness (src/theme/tokens.gen.ts vs the PWA's tokens.css)");
+    process.exit(0);
+  }
+  console.error(`FAIL: ${cssPath} is missing.`);
+  console.error(
+    "tokens.gen.ts is generated from the PWA's tokens.css — check the PWA (apps/hub) out beside the app first.",
+  );
+  process.exit(1);
+}
 
 const css = readFileSync(cssPath, 'utf8');
 
@@ -108,8 +128,6 @@ export const light = ${objectLiteral(light)} as const;
 
 export type TokenName = keyof typeof dark;
 `;
-
-const checkMode = process.argv.includes('--check');
 
 if (checkMode) {
   let current;

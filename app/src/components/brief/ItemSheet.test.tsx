@@ -103,9 +103,9 @@ describe('ItemSheet body', () => {
   });
 
   test('a degraded source shows as the sheet status, not as a chip', () => {
-    const trading: BriefItem = { ...ITEM, origin: 'trading' };
-    expect(texts(render(<ItemSheet item={trading} brief={LIVE_BRIEF} onClose={() => {}} onOpenRelated={() => {}} actions={actionsStub()} />))).toContain(
-      'trading is degraded',
+    const finance: BriefItem = { ...ITEM, origin: 'finance' };
+    expect(texts(render(<ItemSheet item={finance} brief={LIVE_BRIEF} onClose={() => {}} onOpenRelated={() => {}} actions={actionsStub()} />))).toContain(
+      'finance is degraded',
     );
     expect(texts(render(<ItemSheet item={ITEM} brief={LIVE_BRIEF} onClose={() => {}} onOpenRelated={() => {}} actions={actionsStub()} />))).not.toContain(
       `${ITEM.origin} is degraded`,

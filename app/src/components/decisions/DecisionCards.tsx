@@ -1,7 +1,7 @@
 // Shared Decision Inbox pieces, ported from
 // apps/hub/src/components/decisions/DecisionCards.tsx (docs/inventory/feed.md
 // §2). One implementation for every surface that renders cards — the Decisions
-// screen today, the Money and Trading sections when those tasks land.
+// screen today, the Money sections when those tasks land.
 //
 // Cards answer through the Face-ID gate (challenge bound to
 // {id, option_key, note} → assertion → apply); answers land in the card file

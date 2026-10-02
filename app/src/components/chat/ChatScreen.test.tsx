@@ -64,7 +64,7 @@ function thread(id: string, kind: Thread['kind'], updated_at: string, overrides:
 
 let active: TestRenderer.ReactTestRenderer | null = null;
 beforeEach(() => {
-  mockVitals = { agent: { name: 'Assistant', status: 'up', busy: false } };
+  mockVitals = { agent: { name: 'Xavier', status: 'up', busy: false } };
 });
 afterEach(() => {
   act(() => active?.unmount());
@@ -203,9 +203,9 @@ test('an origin this client has never seen still earns a pill, unnamed', () => {
 
 test('the agent-status line reports the gateway, not a guess', () => {
   mockQuery.data = { threads: [] };
-  mockVitals = { agent: { name: 'Assistant', status: 'down', busy: false } };
+  mockVitals = { agent: { name: 'Xavier', status: 'down', busy: false } };
   const shown = mount()
     .root.findAllByType(Text)
     .map((n) => String(n.props.children));
-  expect(shown).toContain('Assistant is unreachable · connecting to chat…');
+  expect(shown).toContain('Xavier is unreachable · connecting to chat…');
 });

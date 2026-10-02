@@ -10,7 +10,7 @@
 // 2. Colours are token NAMES, never free strings. `scripts/check-no-raw-color`
 //    is a static grep over this repo's own source — it cannot see a hex string
 //    an agent emits at run time (v2-decision-rich-components §4). The
-//    `asColor` gate below is the only thing standing between Assistant and an
+//    `asColor` gate below is the only thing standing between Xavier and an
 //    unthemed hex literal, so it validates against the real token key set.
 import { dark, type TokenName } from '../theme/tokens.gen';
 import { normaliseCondition, type Condition } from './weatherLayout';

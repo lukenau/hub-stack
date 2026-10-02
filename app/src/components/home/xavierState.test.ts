@@ -9,8 +9,8 @@ import {
   RING_STOPS,
   RING_STROKE,
   shortModel,
-  assistantState,
-} from './assistantState';
+  xavierState,
+} from './xavierState';
 import { dark, light } from '../../theme/tokens.gen';
 import type { AgentSession, CronRun, PairingReport, Vitals } from '../../lib/types';
 
@@ -20,7 +20,7 @@ function vitals(over: Partial<Vitals['agent']> = {}, rest: Partial<Vitals> = {})
   return {
     agent: {
       id: 'hermes',
-      name: 'Assistant',
+      name: 'Xavier',
       status: 'up',
       model: null,
       gateway_state: 'running',
@@ -46,7 +46,7 @@ const run = (over: Partial<CronRun> = {}): CronRun =>
 const pairing = (pending_count: number): PairingReport =>
   ({ pending: [], approved: [], pending_count, approved_count: 0 }) as PairingReport;
 
-describe('model naming (AssistantCard.tsx:9-12)', () => {
+describe('model naming (XavierCard.tsx:9-12)', () => {
   test('strips only the two prefixes the PWA strips', () => {
     expect(shortModel('claude-opus-4-5')).toBe('opus-4-5');
     expect(shortModel('openai/gpt-5')).toBe('gpt-5');
@@ -55,7 +55,7 @@ describe('model naming (AssistantCard.tsx:9-12)', () => {
   });
 });
 
-describe('cron run selection (AssistantCard.tsx:30-33)', () => {
+describe('cron run selection (XavierCard.tsx:30-33)', () => {
   test('a failure anywhere beats a newer silent success', () => {
     const runs = [run({ name: 'newest', status: 'ok' }), run({ name: 'older', status: 'FAILED' })];
     expect(pickLastRun(runs)?.name).toBe('older');
@@ -92,21 +92,21 @@ describe('discord state (inventory OQ-4)', () => {
   });
 });
 
-describe('liveness state → ring colour and presence (AssistantCard.tsx:40-51)', () => {
+describe('liveness state → ring colour and presence (XavierCard.tsx:40-51)', () => {
   test('gateway down is red and says so, even while Discord is fine', () => {
-    const s = assistantState(vitals({ status: 'down' }), [session()], undefined, undefined, NOW);
+    const s = xavierState(vitals({ status: 'down' }), [session()], undefined, undefined, NOW);
     expect(s.ring).toBe('status-down');
     expect(s.presence).toBe('gateway unreachable');
   });
 
   test('Discord down is amber — it runs, it just cannot hear the user', () => {
-    const s = assistantState(vitals({ discord_state: null }), [session()], undefined, undefined, NOW);
+    const s = xavierState(vitals({ discord_state: null }), [session()], undefined, undefined, NOW);
     expect(s.ring).toBe('status-warn');
     expect(s.presence).toBe('Discord disconnected — gateway up');
   });
 
   test('Discord down outranks busy — the broken thing is what the user needs to see', () => {
-    const s = assistantState(
+    const s = xavierState(
       vitals({ busy: true, discord_state: null }),
       [session()],
       undefined,
@@ -118,14 +118,14 @@ describe('liveness state → ring colour and presence (AssistantCard.tsx:40-51)'
   });
 
   test('busy beats a recent session', () => {
-    const s = assistantState(vitals({ busy: true }), [session()], undefined, undefined, NOW);
+    const s = xavierState(vitals({ busy: true }), [session()], undefined, undefined, NOW);
     expect(s.ring).toBe('status-up');
     expect(s.busy).toBe(true);
     expect(s.presence).toBe('working right now');
   });
 
   test('idle with a session reports when, from where, and on what', () => {
-    const s = assistantState(
+    const s = xavierState(
       vitals(),
       [session({ source: 'discord', model: 'claude-opus-4-5' })],
       undefined,
@@ -136,54 +136,54 @@ describe('liveness state → ring colour and presence (AssistantCard.tsx:40-51)'
   });
 
   test('a session with no model drops the model clause entirely', () => {
-    const s = assistantState(vitals(), [session({ source: 'cli' })], undefined, undefined, NOW);
+    const s = xavierState(vitals(), [session({ source: 'cli' })], undefined, undefined, NOW);
     expect(s.presence).toBe('active 5m ago · cli');
   });
 
   test('no sessions at all is idle, and unknown status is amber', () => {
-    const s = assistantState(vitals({ status: 'unknown' }), [], undefined, undefined, NOW);
+    const s = xavierState(vitals({ status: 'unknown' }), [], undefined, undefined, NOW);
     expect(s.ring).toBe('status-warn');
     expect(s.presence).toBe('idle · no recent sessions');
   });
 
   test('no vitals at all: unknown, amber, and en-dashes rather than zeros', () => {
-    const s = assistantState(undefined, undefined, undefined, undefined, NOW);
-    expect(s).toMatchObject({ status: 'unknown', ring: 'status-warn', name: 'Assistant' });
+    const s = xavierState(undefined, undefined, undefined, undefined, NOW);
+    expect(s).toMatchObject({ status: 'unknown', ring: 'status-warn', name: 'Xavier' });
     expect(s.todayLine).toBe('– sessions · – turns · – tools');
   });
 });
 
 describe('the today line and the needs-you strip', () => {
   test('spend is appended only when the gateway reported one', () => {
-    expect(assistantState(vitals(), [], undefined, undefined, NOW).todayLine).toBe(
+    expect(xavierState(vitals(), [], undefined, undefined, NOW).todayLine).toBe(
       '3 sessions · 12 turns · 40 tools · $1.50',
     );
     const noSpend = vitals({}, { spend: { today_usd: null, mtd_usd: null, cap_usd: null } });
-    expect(assistantState(noSpend, [], undefined, undefined, NOW).todayLine).toBe(
+    expect(xavierState(noSpend, [], undefined, undefined, NOW).todayLine).toBe(
       '3 sessions · 12 turns · 40 tools',
     );
   });
 
   test('needs-you counts pairings plus failed runs, and names what it is', () => {
     const runs = [run({ status: 'FAILED' }), run({ status: 'ok' })];
-    expect(assistantState(vitals(), [], pairing(2), runs, NOW)).toMatchObject({
+    expect(xavierState(vitals(), [], pairing(2), runs, NOW)).toMatchObject({
       needsYou: 3,
       needsYouDetail: 'pairing + failed runs →',
     });
-    expect(assistantState(vitals(), [], pairing(2), [], NOW)).toMatchObject({
+    expect(xavierState(vitals(), [], pairing(2), [], NOW)).toMatchObject({
       needsYou: 2,
       needsYouDetail: 'pairing approval →',
     });
-    expect(assistantState(vitals(), [], pairing(0), runs, NOW)).toMatchObject({
+    expect(xavierState(vitals(), [], pairing(0), runs, NOW)).toMatchObject({
       needsYou: 1,
       needsYouDetail: 'failed cron runs →',
     });
-    expect(assistantState(vitals(), [], undefined, [], NOW).needsYou).toBe(0);
+    expect(xavierState(vitals(), [], undefined, [], NOW).needsYou).toBe(0);
   });
 
   test('the last-run row knows whether it is reporting a failure', () => {
-    expect(assistantState(vitals(), [], undefined, [run({ status: 'FAILED' })], NOW).lastRunFailed).toBe(true);
-    expect(assistantState(vitals(), [], undefined, [run({ status: 'ok' })], NOW).lastRunFailed).toBe(false);
+    expect(xavierState(vitals(), [], undefined, [run({ status: 'FAILED' })], NOW).lastRunFailed).toBe(true);
+    expect(xavierState(vitals(), [], undefined, [run({ status: 'ok' })], NOW).lastRunFailed).toBe(false);
   });
 });
 

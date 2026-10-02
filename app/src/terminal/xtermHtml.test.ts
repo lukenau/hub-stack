@@ -38,18 +38,26 @@ const THEME: XtermTheme = {
 const html = buildTerminalHtml({ theme: THEME, fontSize: 13 });
 
 describe('what is vendored', () => {
-  test('is the version range the PWA renders with', () => {
-    const pwa = JSON.parse(
-      readFileSync(join(__dirname, '..', '..', '..', 'hub', 'package.json'), 'utf8'),
-    ) as { dependencies: Record<string, string> };
-    // Same major.minor the PWA declares. Not the whole string: the generator
-    // reads the version actually INSTALLED under that caret, so a patch bump
-    // (6.0.0 → 6.0.1) is a correctly regenerated bundle, not drift.
+  test('is the version range the notices declare for the vendored xterm', () => {
+    // The PWA this bundle was originally copied from (apps/hub) is not part of
+    // this repo, so there is no sibling package.json to compare against. The
+    // declaration the vendored constants must stay in step with is the
+    // release's own third-party notices, which name the ranges the bundle was
+    // vendored from. The check is unchanged in substance: declared major.minor
+    // vs vendored major.minor, so a patch bump is a correctly re-vendored
+    // bundle rather than drift.
+    const notices = readFileSync(join(__dirname, '..', '..', '..', 'THIRD-PARTY-NOTICES.md'), 'utf8');
+    const declared = (name: string): string => {
+      const at = notices.indexOf(`**${name}**`);
+      const m = at === -1 ? null : notices.slice(at + name.length + 4).match(/^ \(`\^([0-9]+\.[0-9]+\.[0-9]+)`\)/);
+      if (!m) throw new Error(`THIRD-PARTY-NOTICES.md no longer pins a version range for ${name}`);
+      return m[1];
+    };
     const minor = (v: string) => v.replace(/^[^0-9]*/, '').split('.').slice(0, 2).join('.');
-    expect(minor(pwa.dependencies['@xterm/xterm'])).toBe(minor(XTERM_VERSION));
-    expect(minor(pwa.dependencies['@xterm/addon-fit'])).toBe(minor(FIT_ADDON_VERSION));
+    expect(minor(declared('@xterm/xterm'))).toBe(minor(XTERM_VERSION));
+    expect(minor(declared('@xterm/addon-fit'))).toBe(minor(FIT_ADDON_VERSION));
     // …and a major bump is still caught.
-    expect(minor('^7.0.0')).not.toBe(minor(XTERM_VERSION));
+    expect(minor('7.0.0')).not.toBe(minor(XTERM_VERSION));
   });
 
   test('is a real bundle, not a placeholder', () => {

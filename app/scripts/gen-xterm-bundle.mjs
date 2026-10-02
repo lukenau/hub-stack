@@ -11,17 +11,35 @@
 // also cannot depend on @xterm/* directly: the port ships no bundler step of
 // its own and the package list is frozen, so the bytes are copied out of the
 // PWA's node_modules (the SAME versions the PWA renders with — that is the
-// parity claim, pinned by xtermBundle.test.ts against apps/hub/package.json).
+// parity claim). The PWA is not part of this repo, so the claim is pinned
+// against THIRD-PARTY-NOTICES.md by xtermHtml.test.ts, and this generator skips
+// (see scripts/pwa.mjs) when there is no PWA to vendor from.
 //
 //   node scripts/gen-xterm-bundle.mjs         # write the generated module
 //   node scripts/gen-xterm-bundle.mjs --check # exit 1 if it is stale
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { skipPwa } from './pwa.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const pwa = join(root, '..', 'hub');
 const outPath = join(root, 'src', 'terminal', 'xtermBundle.gen.ts');
+const checkMode = process.argv.includes('--check');
+
+// The vendored bytes are read out of the PWA's node_modules, and the PWA is not
+// part of this repo. Without it there is nothing to re-vendor from and nothing
+// to prove the committed bundle fresh against — skip rather than die on a path
+// that was never here. (`--check` is the mode the `check` script runs.)
+if (!existsSync(join(pwa, 'package.json'))) {
+  if (checkMode) {
+    skipPwa('xterm bundle freshness (src/terminal/xtermBundle.gen.ts vs the PWA node_modules)');
+    process.exit(0);
+  }
+  console.error(`FAIL: the PWA is not checked out beside the app (looked for ${pwa}).`);
+  console.error("The vendored bytes are copied from the PWA's node_modules — check the PWA out and run `npm install` in it first.");
+  process.exit(1);
+}
 
 const XTERM = join(pwa, 'node_modules', '@xterm', 'xterm');
 const FIT = join(pwa, 'node_modules', '@xterm', 'addon-fit');
@@ -106,7 +124,7 @@ export const MONO_FONT_BASE64 = ${JSON.stringify(fontBase64)};
 
 const sizes = `xterm ${version(XTERM)} ${xtermJs.length}B, fit ${version(FIT)} ${fitJs.length}B, css ${xtermCss.length}B, font ${fontBase64.length}B b64`;
 
-if (process.argv.includes('--check')) {
+if (checkMode) {
   let current;
   try {
     current = readFileSync(outPath, 'utf8');

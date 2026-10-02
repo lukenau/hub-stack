@@ -37,43 +37,53 @@ afterEach(() => {
   tree = null;
 });
 
-test('the runbook commands are the PWA\'s, verbatim', () => {
-  // These are shell commands run against a live VPS: a mistyped one is a
-  // wrong command in the user's composer, so they are pinned here as data.
-  expect(RUNBOOKS.map((g) => g.section)).toEqual(['Assistant', 'Box', 'Trading', 'tmux', 'MacBook']);
+test('the shipped runbooks are generic examples, pinned as data', () => {
+  // These are shell commands run against a live box: a mistyped one is a wrong
+  // command in the user's composer, so they are pinned here.
+  expect(RUNBOOKS.map((g) => g.section)).toEqual(['Host', 'Docker', 'Logs']);
   expect(RUNBOOKS.flatMap((g) => g.items.map((i) => i.cmd))).toEqual([
-    'hermes doctor',
-    'hermes cron list',
-    'hermes cron run ',
-    'docker logs example-gateway --tail 50 -f',
-    'hermes sessions list --limit 10',
-    'docker ps',
-    'df -h /',
+    'uname -a',
+    'df -h',
     'free -h && uptime',
-    'docker logs hub-api --tail 40',
-    'curl -s http://127.0.0.1:8788/healthz',
-    'tail -20 /opt/hub-data/trading/journal.jsonl',
-    'tmux switch-client -t claude-',
-    'tmux ls',
-    'tmux switch-client -t hub-term',
-    "tmux new-window -d -n claude 'claude'",
-    'tmux list-windows',
-    'tmux select-window -t ',
-    "tmux new-window -n mac 'ssh -t mac /opt/homebrew/bin/tmux attach -t claude-'",
-    'ssh mac /opt/homebrew/bin/tmux ls',
-    'ssh mac',
-    'tailscale ping -c 1 mac.internal.example',
+    'ss -lntup',
+    'docker ps',
+    'docker compose ps',
+    'docker logs -f ',
+    'docker exec -it ',
+    'tail -f ',
+    'grep -i error ',
+    'journalctl -u ',
   ]);
+});
+
+test("no runbook leaks the owner's own estate", () => {
+  // The list ships in a public repo; every entry must be honest to a stranger.
+  const all = RUNBOOKS.flatMap((g) => g.items.map((i) => `${i.label} ${i.cmd}`)).join('\n');
+  for (const leak of [
+    'agent-data',
+    'tailscale',
+    'mac.internal.example',
+    'hub-term',
+    'example-gateway',
+    'hub-api',
+    'hermes cron',
+    'ssh mac',
+  ]) {
+    expect(all).not.toContain(leak);
+  }
 });
 
 test('the trailing-space commands keep it — they are completions, not commands', () => {
   const trailing = RUNBOOKS.flatMap((g) => g.items).filter((i) => i.cmd.endsWith(' '));
   expect(trailing.map((i) => i.label)).toEqual([
-    'Run a cron job now',
-    'Jump to window',
+    'Follow a container log',
+    'Shell into a container',
+    'Tail a file',
+    'Search a log for errors',
+    'Journal for a unit',
   ]);
-  expect(RUNBOOKS[3].items.find((i) => i.label === 'Jump to window')?.cmd).toBe(
-    'tmux select-window -t ',
+  expect(RUNBOOKS[1].items.find((i) => i.label === 'Shell into a container')?.cmd).toBe(
+    'docker exec -it ',
   );
 });
 
@@ -110,7 +120,7 @@ test('tapping a runbook fills the composer and closes — it never executes', ()
     );
   act(() => row?.props.onPress());
 
-  expect(onSnippet.mock.calls).toEqual([['df -h /']]);
+  expect(onSnippet.mock.calls).toEqual([['df -h']]);
   expect(onClose).toHaveBeenCalledTimes(1);
 });
 

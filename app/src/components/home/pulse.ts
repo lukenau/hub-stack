@@ -17,7 +17,7 @@
 // `Animated.loop` resets the value before each iteration, which is the CSS's
 // own 100%→0% wrap: both ends are a zero-spread, full-colour ring.
 //
-// Two call sites, two rates: the Assistant avatar (2.4s) and the BrowserCard
+// Two call sites, two rates: the Xavier avatar (2.4s) and the BrowserCard
 // live dot (1.8s). Frozen under reduced motion (globals.css:51-57).
 import { useEffect, useRef } from 'react';
 import { Animated, Easing } from 'react-native';

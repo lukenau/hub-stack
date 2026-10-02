@@ -25,7 +25,7 @@ import { TurnIndicator } from './parts/TurnIndicator';
 import { fonts } from '../../theme/fonts';
 import { useTheme } from '../../theme/useTheme';
 import { PRESSED_OPACITY, StatePanel, Toast, useHideTabBar } from '../shell';
-import { AssistantMoment } from '../../whimsy';
+import { XavierMoment } from '../../whimsy';
 import type { ToastKind } from '../shell';
 import { ChatLockGate } from './ChatLockGate';
 import { Composer, type ComposerHandle, type ComposerMode } from './Composer';
@@ -36,7 +36,7 @@ import { RunningAgentsStrip } from './parts/RunningAgentsStrip';
 import { WorkingRow } from './parts/WorkingRow';
 import { ApprovalCard } from './parts/ApprovalCard';
 import { ThreadStatusRing } from './parts/ThreadStatusRing';
-import { shortModel } from '../home/assistantState';
+import { shortModel } from '../home/xavierState';
 import { ThreadMenuButton } from './ThreadMenu';
 import { KIND_LABEL } from './ThreadRow';
 
@@ -258,8 +258,8 @@ export function ThreadSurface({ threadId, lead, asks }: ThreadSurfaceProps) {
               // too — it rendered upside down on the user's phone. Cells get their own
               // counter-flip from RN; an empty component does not, so it needs this.
               <View style={styles.unflip}>
-                <View style={styles.assistantHero}>
-                  <AssistantMoment id="chat.empty" size="hero" />
+                <View style={styles.xavierHero}>
+                  <XavierMoment id="chat.empty" size="hero" />
                 </View>
                 <StatePanel
                   moment={false}
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   headerModel: { fontFamily: fonts.mono(400), fontSize: 10, letterSpacing: 0.2, marginTop: 1 },
   column: { flex: 1 },
   unflip: { transform: [{ scaleY: -1 }] },
-  assistantHero: { alignItems: 'center', paddingTop: 24, paddingBottom: 8 },
+  xavierHero: { alignItems: 'center', paddingTop: 24, paddingBottom: 8 },
   // No flexGrow: on an INVERTED list it makes the container stretch to the
   // viewport and then re-lay out as rows measure, which is the jump the user
   // filmed — the messages flick up and settle back a beat after the push.

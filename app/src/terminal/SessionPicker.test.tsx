@@ -73,7 +73,7 @@ const HISTORY: TmuxHistory = {
       host: 'vps',
       session_id: 'aaaabbbb-1111-4111-8111-111111111111',
       title: null,
-      cwd: '/home/agent/ai',
+      cwd: '/home/user/projects',
       last_active: NOW / 1000 - 3600,
       live: false,
     },
@@ -285,7 +285,7 @@ describe('gated writes', () => {
         {
           action: 'tmux.spawn',
           resume: 'aaaabbbb-1111-4111-8111-111111111111',
-          cwd: '/home/agent/ai',
+          cwd: '/home/user/projects',
         },
       ],
     ]);

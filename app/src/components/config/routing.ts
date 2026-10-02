@@ -10,8 +10,6 @@ export const FRIENDLY: Record<string, { label: string; sub: string }> = {
   'insights-weekly': { label: 'Weekly insights', sub: 'Mondays 8:00' },
   'security-monthly': { label: 'Security review', sub: 'monthly · 1st 8:00' },
   'advisor-tool-upstream-watch': { label: 'Advisor upstream watch', sub: 'Mondays 10:00' },
-  'trading-watch': { label: 'Trading watch', sub: 'market hours · every 15m' },
-  'trading-summary': { label: 'Trading summary', sub: 'market close · 16:10' },
   'notes-sync-supermemory': { label: 'Notes-sync → Supermemory', sub: 'daily 18:00' },
   'ambient-capture': { label: 'Ambient capture', sub: 'every 2h · 8–22' },
   'finance-snapshot': { label: 'Finance snapshot', sub: '3×/day' },

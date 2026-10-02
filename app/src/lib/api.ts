@@ -56,13 +56,6 @@ import type {
   TmuxInventory,
   TopicsConfig,
   TopicsReport,
-  TradingEvent,
-  TradingExplain,
-  TradingExposure,
-  TradingLog,
-  TradingPerf,
-  TradingProposals,
-  TradingStatus,
   Vitals,
   WriteRequest,
   WriteResult,
@@ -77,6 +70,8 @@ import type {
 } from './briefTypes';
 import type { CalendarResponse } from './calendarTypes';
 import Constants from 'expo-constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { validateServerUrl, type ServerUrlCheck } from './serverUrl';
 import type {
   ApprovalApplyResponse,
   ApprovalDecisionInput,
@@ -101,16 +96,89 @@ import type {
 
 const DEFAULT_API_BASE = 'https://hub.example.com';
 
-function resolveApiBase(): string {
+/** AsyncStorage key holding the user-set server override (Config › Server
+ * address, ServerPage.tsx). */
+export const API_BASE_STORAGE_KEY = 'hub.apiBase';
+
+/** Where the effective server address came from. 'user' beats 'build' beats
+ * the shipped default — the order resolveApiBase() implements and
+ * ServerPage.tsx renders so the state is never ambiguous. */
+export type ApiBaseSource = 'user' | 'build' | 'default';
+
+/** The user-set override, in memory. Null until loadStoredApiBase() /
+ * setUserApiBase() put one there; AsyncStorage is read at startup
+ * (app/_layout.tsx), never at import time, so importing this module in a
+ * test stays side-effect-free. */
+let userApiBase: string | null = null;
+
+/** Effective server base, resolved at call time in this order:
+ *
+ *   1. the user-set value (Config › Server address) — beats everything,
+ *   2. the build-time `expo.extra.apiBase` (app.json; the EAS profile),
+ *   3. DEFAULT_API_BASE, what a build with no extra configured talks to.
+ */
+export function resolveApiBase(): { base: string; source: ApiBaseSource } {
+  if (userApiBase) return { base: userApiBase, source: 'user' };
   const extra = Constants.expoConfig?.extra as { apiBase?: string } | undefined;
-  return extra?.apiBase ?? DEFAULT_API_BASE;
+  return { base: extra?.apiBase ?? DEFAULT_API_BASE, source: extra?.apiBase ? 'build' : 'default' };
 }
 
-const BASE = `${resolveApiBase()}/api`;
+/** The raw user-set override (null when there is none) — ServerPage.tsx
+ * prefills the field with it; every caller that wants an address should read
+ * resolveApiBase() instead. */
+export function getUserApiBase(): string | null {
+  return userApiBase;
+}
+
+/** Every call path is resolved against the CURRENT effective base, not a
+ * module-load snapshot — a server change takes effect on the next call
+ * without a relaunch. */
+function apiPath(path: string): string {
+  return `${resolveApiBase().base}/api${path}`;
+}
 
 /** The hub host with no path — Task 19's WebView components resolve
- * `/my-pages/...` and `/oura/...` against this, same host `BASE` uses. */
-export const HUB_ORIGIN = resolveApiBase();
+ * `/my-pages/...` and `/oura/...` against this, same host `BASE` used to.
+ * Live binding: reassigned whenever the effective base changes, so importers
+ * (WebView screens, wsClients) pick up a user-set server too. */
+export let HUB_ORIGIN = resolveApiBase().base;
+
+function refreshDerivedBase(): void {
+  HUB_ORIGIN = resolveApiBase().base;
+}
+
+/** Reads the persisted override into effect. A stored value that no longer
+ * validates (scheme rules tightened, hand-edited store) is ignored rather
+ * than trusted — it fails closed to the build-time base. Idempotent: called
+ * once at startup and again whenever ServerPage mounts. */
+export async function loadStoredApiBase(): Promise<void> {
+  const stored = await AsyncStorage.getItem(API_BASE_STORAGE_KEY);
+  if (!stored) return;
+  const check = validateServerUrl(stored);
+  if (!check.ok) return;
+  userApiBase = check.url;
+  refreshDerivedBase();
+}
+
+/** Validates first, then persists and applies. The returned check is what
+ * ServerPage renders: `{ ok: false, error }` becomes the inline message and
+ * nothing is stored or applied. */
+export async function setUserApiBase(url: string): Promise<ServerUrlCheck> {
+  const check = validateServerUrl(url);
+  if (!check.ok) return check;
+  userApiBase = check.url;
+  refreshDerivedBase();
+  await AsyncStorage.setItem(API_BASE_STORAGE_KEY, check.url);
+  return check;
+}
+
+/** Drops the override — the app falls back to the build-time base
+ * immediately and after the next relaunch. */
+export async function clearUserApiBase(): Promise<void> {
+  userApiBase = null;
+  refreshDerivedBase();
+  await AsyncStorage.removeItem(API_BASE_STORAGE_KEY);
+}
 
 /** Uniform error for every hub-api failure: carries HTTP status + server code. */
 export class ApiError extends Error {
@@ -132,13 +200,13 @@ async function parseError(res: Response, path: string): Promise<ApiError> {
 }
 
 async function get<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { credentials: 'include' });
+  const res = await fetch(`${apiPath(path)}`, { credentials: 'include' });
   if (!res.ok) throw await parseError(res, `GET ${path}`);
   return res.json() as Promise<T>;
 }
 
 async function post<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
+  const res = await fetch(`${apiPath(path)}`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
@@ -360,64 +428,6 @@ export const api = {
   // --- models (config picker; endpoint keeps its legacy /chat/models path) -------
   chatModels: async (): Promise<ChatModel[]> => (await get<{ data: ChatModel[] }>('/chat/models')).data,
 
-  // --- trading (proxy; absent endpoint reads as offline, never an error card) ---------
-  trading: async (): Promise<TradingStatus | null> => {
-    try {
-      return await get<TradingStatus>('/trading/status');
-    } catch (err) {
-      if (err instanceof ApiError && (err.status === 404 || err.status === 405)) return null;
-      return { status: 'offline', mode: 'unknown', halted: null };
-    }
-  },
-
-  tradingPerf: async (): Promise<TradingPerf | null> => {
-    try {
-      return await get<TradingPerf>('/trading/perf');
-    } catch {
-      return null; // route lands with the hub-api rebuild; card degrades to /status fields
-    }
-  },
-
-  tradingExplain: async (): Promise<TradingExplain | null> => {
-    try {
-      return await get<TradingExplain>('/trading/explain');
-    } catch {
-      return null;
-    }
-  },
-
-  tradingEvents: async (): Promise<TradingEvent[] | null> => {
-    try {
-      return (await get<{ events: TradingEvent[] }>('/trading/events')).events ?? [];
-    } catch {
-      return null; // spindle down — section self-hides
-    }
-  },
-
-  tradingExposure: async (): Promise<TradingExposure | null> => {
-    try {
-      return await get<TradingExposure>('/trading/exposure');
-    } catch {
-      return null; // spindle down or holdings absent — section self-hides
-    }
-  },
-
-  tradingLog: async (): Promise<TradingLog | null> => {
-    try {
-      return await get<TradingLog>('/trading/log');
-    } catch {
-      return null; // derive cron dead or stale — the sections say so themselves
-    }
-  },
-
-  tradingProposals: async (): Promise<TradingProposals | null> => {
-    try {
-      return await get<TradingProposals>('/trading/proposals');
-    } catch {
-      return null; // ledger not derived yet — section shows its quiet empty state
-    }
-  },
-
   // --- murmur (pendant capture pipeline; 503 = derive cron dead/stale → self-hides) ---
   murmur: async (): Promise<MurmurStatus | null> => {
     try {
@@ -480,9 +490,6 @@ export const api = {
 
   applyAdvisorPreset: async (preset: AdvisorPreset): Promise<WriteResult> =>
     api.applyWrite({ action: 'advisor.preset', preset }),
-
-  /** Clear spindle's breaker latch (hub-api forwards to spindle POST /resume). */
-  resumeTrading: async (): Promise<WriteResult> => api.applyWrite({ action: 'trading.resume' }),
 
   // --- Host tmux sessions (hub-tmuxd; spawn/kill go through applyWrite) -----------
   tmuxSessions: async (): Promise<TmuxInventory> => get('/tmux/sessions'),
@@ -773,7 +780,7 @@ export const api = {
     get(`/chat/threads/${encodeURIComponent(threadId)}/subagent/${encodeURIComponent(childSessionId)}`),
 
   /** Tick a checklist item. The state is written into the widget itself, so it
-   * is what every client reads back, and Assistant is told with the next message
+   * is what every client reads back, and Xavier is told with the next message
    * rather than woken for a checkbox. */
   chatTickChecklist: (
     threadId: string,

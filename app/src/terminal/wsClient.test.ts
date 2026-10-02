@@ -420,7 +420,7 @@ describe('output path', () => {
     sock.deliver(new Uint8Array([48, 104, 105]));
     sock.deliver(new Uint8Array([49, 88, 97, 118, 105, 101, 114]));
     expect(h.data).toEqual([[[104, 105], false]]);
-    expect(h.titles).toEqual(['Assistant']);
+    expect(h.titles).toEqual(['Xavier']);
   });
 
   it('ignores preference frames and empty frames', async () => {

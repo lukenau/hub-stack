@@ -2,7 +2,7 @@
 // grouped by stakes ("Needs your answer" first, frozen last). Ported from
 // apps/hub/src/routes/Decisions.tsx (docs/inventory/feed.md §2). Card rendering
 // and the Face-ID answer flow live in ./DecisionCards.tsx, shared with the
-// Money and Trading decision sections.
+// Money decision sections.
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { api } from '../../lib/api';
@@ -82,7 +82,7 @@ export default function DecisionsScreen() {
   // Pushed detail route: the tab bar drops while this screen is focused.
   useHideTabBar();
   const { t } = useTheme();
-  // 60s here; Home/Trading/Money observe the SAME ['decisions'] key at 120s
+  // 60s here; Home/Money observe the SAME ['decisions'] key at 120s
   // (QUERY_TUNING['decisions-shared']), so the effective cadence depends on
   // which screens are mounted — the PWA's behaviour (inventory §2.1 OQ-10).
   const report = usePoll(['decisions'], api.decisions, QUERY_TUNING['decisions-page']);

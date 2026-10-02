@@ -1,8 +1,11 @@
 {
   "name": "hub-app",
   "version": "1.0.0",
+  "author": "Luke Nau",
+  "license": "MIT",
   "main": "expo-router/entry",
   "dependencies": {
+    "@expo/metro-runtime": "~57.0.16",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/netinfo": "12.0.1",
     "@react-native/jest-preset": "^0.86.3",
@@ -32,12 +35,14 @@
     "jest": "~29.7.0",
     "jest-expo": "~57.0.5",
     "react": "19.2.3",
+    "react-dom": "19.2.3",
     "react-native": "0.86.3",
     "react-native-gesture-handler": "~2.32.0",
     "react-native-keyboard-controller": "1.21.9",
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
+    "react-native-web": "^0.21.2",
     "react-native-webview": "13.16.1",
     "react-native-worklets": "0.10.1",
     "zustand": "^5.0.15"
@@ -53,7 +58,7 @@
     "web": "expo start --web",
     "test": "npm run check && jest",
     "typecheck": "tsc --noEmit",
-    "check": "node ../hub/scripts/check-theme-parity.mjs && node scripts/gen-tokens.mjs --check && node scripts/gen-xterm-bundle.mjs --check && node scripts/check-no-raw-color.mjs && node scripts/check-shared-parity.mjs"
+    "check": "node scripts/check-pwa-theme-parity.mjs && node scripts/gen-tokens.mjs --check && node scripts/gen-xterm-bundle.mjs --check && node scripts/check-no-raw-color.mjs && node scripts/check-shared-parity.mjs"
   },
   "private": true
 }

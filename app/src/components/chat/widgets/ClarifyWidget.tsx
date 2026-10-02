@@ -1,4 +1,4 @@
-// The one way Assistant asks the user a question.
+// The one way Xavier asks the user a question.
 //
 // The answer does NOT go back as a chat message. The gateway's clarify call is
 // parked on an event waiting for exactly this id, and resolving it returns the

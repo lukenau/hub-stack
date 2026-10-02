@@ -14,8 +14,8 @@ export interface Egg {
 }
 
 export const EGGS = {
-  // Pet Assistant five times and he rings the bell for you.
-  'pet-assistant': { id: 'pet-assistant', taps: 5, windowMs: 2000, pose: 'triumph', holdMs: 2600 },
+  // Pet Xavier five times and he rings the bell for you.
+  'pet-xavier': { id: 'pet-xavier', taps: 5, windowMs: 2000, pose: 'triumph', holdMs: 2600 },
 } satisfies Record<string, Egg>;
 
 export type EggId = keyof typeof EGGS;

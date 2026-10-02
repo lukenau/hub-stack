@@ -1,4 +1,4 @@
-// "Assistant is browsing" (BrowserCard.tsx:127-199) — a presence card that
+// "Xavier is browsing" (BrowserCard.tsx:127-199) — a presence card that
 // exists only while a Browserbase session is RUNNING, plus a fading entry
 // point for two hours after one ends. Live = the vendor's own view; past = an
 // itinerary of the pages visited, which is the phone-native replay.

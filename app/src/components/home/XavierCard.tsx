@@ -1,4 +1,4 @@
-// The "is Assistant alive" card (AssistantCard.tsx:57-163). One tap target: the
+// The "is Xavier alive" card (XavierCard.tsx:57-163). One tap target: the
 // whole card opens Ops.
 //
 // Two liveness states, and they mean different things. Busy → the conic ring
@@ -18,7 +18,7 @@ import type { AgentSession, CronRun, PairingReport, Vitals } from '../../lib/typ
 import { fonts, MONO_FEATURES } from '../../theme/fonts';
 import { useTheme } from '../../theme/useTheme';
 import { Card } from '../shell';
-import { useWhimsy, AssistantAvatar } from '../../whimsy';
+import { useWhimsy, XavierAvatar } from '../../whimsy';
 import { pulseScale, usePulseRing, useSpin } from './pulse';
 import {
   AVATAR_SIZE,
@@ -29,8 +29,8 @@ import {
   RING_STOPS,
   RING_STROKE,
   ringColors,
-  assistantState,
-} from './assistantState';
+  xavierState,
+} from './xavierState';
 
 function StatRow({ label, children }: { label: string; children: ReactNode }) {
   const { t } = useTheme();
@@ -42,7 +42,7 @@ function StatRow({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-export function AssistantCard({
+export function XavierCard({
   vitals,
   sessions,
   pairing,
@@ -54,7 +54,7 @@ export function AssistantCard({
   runs?: CronRun[];
 }) {
   const { t } = useTheme();
-  const s = assistantState(vitals, sessions, pairing, runs);
+  const s = xavierState(vitals, sessions, pairing, runs);
   const { level } = useWhimsy();
   const up = s.status === 'up';
   const spin = useSpin(s.busy, RING_SPIN_MS);
@@ -128,7 +128,7 @@ export function AssistantCard({
               <Text style={[styles.avatarLetter, { color: ringColor }]}>X</Text>
             </View>
           ) : (
-            <AssistantAvatar size={AVATAR_SIZE} state={!up ? 'down' : s.busy ? 'busy' : 'idle'} />
+            <XavierAvatar size={AVATAR_SIZE} state={!up ? 'down' : s.busy ? 'busy' : 'idle'} />
           )}
         </View>
 

@@ -192,7 +192,7 @@ describe('the lock screen', () => {
     const t = await mount();
 
     expect(texts(t)).not.toContain('Unlock terminal');
-    expect(texts(t)).toContain('assistant · tmux hub-term');
+    expect(texts(t)).toContain('xavier · tmux hub-term');
   });
 
   test('does not flash while the stamp is still being read', async () => {
@@ -211,7 +211,7 @@ describe('the lock screen', () => {
     expect(texts(tree!)).toEqual([]);
 
     await act(async () => {});
-    expect(texts(tree!)).toContain('assistant · tmux hub-term');
+    expect(texts(tree!)).toContain('xavier · tmux hub-term');
   });
 
   test('an expired stamp does not', async () => {
@@ -230,7 +230,7 @@ describe('the lock screen', () => {
 
     expect(unlock).toHaveBeenCalledTimes(1);
     expect(await AsyncStorage.getItem(UNLOCK_KEY)).not.toBeNull();
-    expect(texts(t)).toContain('assistant · tmux hub-term');
+    expect(texts(t)).toContain('xavier · tmux hub-term');
   });
 
   test('a refused mint leaves the gate up and stamps nothing', async () => {
@@ -386,7 +386,7 @@ describe('the unlocked surface', () => {
     act(() => byLabel(t, 'Command snippets')());
     expect(texts(t)).toContain('Runbooks');
 
-    act(() => byText(t, 'Agent health')());
+    act(() => byText(t, 'System info')());
 
     // The sheet closes first and the composer is still untouched: fill()
     // focuses, and iOS drops a focus requested from behind a presenting modal.
@@ -395,7 +395,7 @@ describe('the unlocked surface', () => {
 
     act(() => dismissModal(t));
 
-    expect(t.root.findAllByType(TextInput)[0].props.value).toBe('hermes doctor');
+    expect(t.root.findAllByType(TextInput)[0].props.value).toBe('uname -a');
   });
 
   test('the padlock re-locks, and so does the transport\'s own expiry', async () => {

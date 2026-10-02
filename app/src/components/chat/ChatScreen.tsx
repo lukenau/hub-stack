@@ -19,7 +19,7 @@ import { useChatStore, selectNeedsYouThreadIds, selectThreadList } from '../../c
 import type { Thread } from '../../chat/types';
 import { turnStateOf } from '../../chat/turnState';
 import { PRESSED_OPACITY, PageTitle, RefreshControl, Screen, SectionHead, SkeletonCard, StatePanel } from '../shell';
-import { AssistantMoment } from '../../whimsy';
+import { XavierMoment } from '../../whimsy';
 import { agentStatus } from './agentStatus';
 import { AttentionInbox } from './AttentionInbox';
 import { ChatLockGate } from './ChatLockGate';
@@ -190,14 +190,14 @@ function ThreadList() {
       ) : null}
       {query.data && needsYou.length + pinned.length + recent.length === 0 ? (
         <>
-          <View style={styles.assistantHero}>
-            <AssistantMoment id="welcome" size="hero" />
+          <View style={styles.xavierHero}>
+            <XavierMoment id="welcome" size="hero" />
           </View>
           <StatePanel
             moment={false}
             tone="neutral"
             title="No threads yet"
-            detail="Tap New to start one. Brief, Ops, Money and Cron open themselves the first time Assistant writes to them."
+            detail="Tap New to start one. Brief, Ops, Money and Cron open themselves the first time Xavier writes to them."
           />
         </>
       ) : null}
@@ -246,7 +246,7 @@ function ThreadList() {
 }
 
 const styles = StyleSheet.create({
-  assistantHero: { alignItems: 'center', paddingTop: 8, paddingBottom: 4 },
+  xavierHero: { alignItems: 'center', paddingTop: 8, paddingBottom: 4 },
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   agentRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: -2, marginBottom: 4 },
   agentDot: { width: 6, height: 6, borderRadius: 3 },

@@ -1,4 +1,4 @@
-// Assistant's pages, front and centre (PagesShelf.tsx:17-79): a horizontal shelf
+// Xavier's pages, front and centre (PagesShelf.tsx:17-79): a horizontal shelf
 // of everything he has published, newest first. Cards open the brief reader
 // sheet — the native stand-in for the PWA's zero-privilege `<iframe sandbox="">`
 // (Task 19's BriefWebView: JS off, locked to the hub origin).

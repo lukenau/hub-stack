@@ -1,4 +1,4 @@
-// Assistant/user prose, rendered from the markdown Assistant actually writes.
+// Assistant/user prose, rendered from the markdown Xavier actually writes.
 //
 // The first cut printed the raw string, so bold came through as literal
 // asterisks (the user, 2026-09-22). VERDICT-V2 §2 put `react-native-enriched-

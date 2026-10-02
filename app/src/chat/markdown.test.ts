@@ -1,4 +1,4 @@
-// Assistant's replies came through with literal asterisks (the user, 2026-09-22).
+// Xavier's replies came through with literal asterisks (the user, 2026-09-22).
 // These pin the subset the transcript renders, and the cases that must stay
 // literal rather than being half-parsed.
 import { parseInline, parseMarkdown } from './markdown';

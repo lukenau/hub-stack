@@ -1,4 +1,4 @@
-// Occasions dress Assistant for the time and date. Rules are plain data so they
+// Occasions dress Xavier for the time and date. Rules are plain data so they
 // could later be served from hub-api; first match wins.
 import type { MomentId } from './moments';
 import type { PoseId } from './poses';
@@ -13,7 +13,7 @@ export interface Occasion {
 
 const md = (now: Date) => (now.getMonth() + 1) * 100 + now.getDate();
 
-// Poses that are "Assistant idling"; an occasion shouldn't turn an error into a party.
+// Poses that are "Xavier idling"; an occasion shouldn't turn an error into a party.
 const RESTING: MomentId[] = ['empty', 'all-clear', 'welcome', 'chat.empty', 'offline', 'loading'];
 
 export const OCCASIONS: Occasion[] = [

@@ -46,14 +46,14 @@ describe('StatePanel', () => {
   afterEach(() => act(() => useWhimsyStore.setState({ level: 'full' })));
 
   const poses = (r: TestRenderer.ReactTestRenderer) =>
-    r.root.findAll((n) => typeof n.props.testID === 'string' && n.props.testID.startsWith('assistant-pose-') && typeof n.type === 'string');
+    r.root.findAll((n) => typeof n.props.testID === 'string' && n.props.testID.startsWith('xavier-pose-') && typeof n.type === 'string');
 
-  test('brings Assistant by tone, and the level can send him away', () => {
+  test('brings Xavier by tone, and the level can send him away', () => {
     let r!: TestRenderer.ReactTestRenderer;
     act(() => {
       r = TestRenderer.create(<StatePanel tone="error" title="Feed unavailable" />);
     });
-    expect(poses(r).map((n) => n.props.testID)).toEqual(['assistant-pose-oops']);
+    expect(poses(r).map((n) => n.props.testID)).toEqual(['xavier-pose-oops']);
     act(() => useWhimsyStore.setState({ level: 'off' }));
     expect(poses(r)).toHaveLength(0);
     expect(r.root.findByProps({ children: 'Feed unavailable' })).toBeTruthy();

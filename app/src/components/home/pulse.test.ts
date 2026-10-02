@@ -11,7 +11,7 @@ test('the grow-and-fade occupies the first half of the cycle, not all of it', ()
 });
 
 test('a halo scales to (radius + spread) / radius — the CSS spread is 6px', () => {
-  expect(pulseScale(23)).toBeCloseTo(29 / 23, 10); // the 46px Assistant avatar
+  expect(pulseScale(23)).toBeCloseTo(29 / 23, 10); // the 46px Xavier avatar
   expect(pulseScale(3.5)).toBeCloseTo(9.5 / 3.5, 10); // the 7px live dot
   expect(pulseScale(10, 5)).toBe(1.5);
 });

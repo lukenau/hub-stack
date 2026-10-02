@@ -25,8 +25,6 @@ import { fonts, MONO_FEATURES } from '../../src/theme/fonts';
 import { useTheme } from '../../src/theme/useTheme';
 import type { MurmurStatus } from '../../src/lib/types';
 
-const CHRONICLE_URL = 'https://hub.example.com:8444';
-
 /** Page-local card idiom: radius 14, 16/14 padding — distinct from the shell
  * Card's 16/18-14 (the same duplication the PWA carries between Murmur and Ops). */
 function Card({ children }: { children: ReactNode }) {
@@ -85,6 +83,10 @@ function BridgeCard({ data }: { data: MurmurStatus }) {
 function PipelineCard({ data }: { data: MurmurStatus }) {
   const { t } = useTheme();
   const { pipeline } = data;
+  // The Chronicle dashboard is optional and self-hosted, so its address has to
+  // come from the server (murmur.json) rather than ship as a constant — a
+  // placeholder host is a dead link a stranger cannot fix without editing code.
+  const chronicleUrl = data.chronicle_url?.trim() || null;
   return (
     <View style={styles.section}>
       <SectionHead label="Pipeline" />
@@ -110,20 +112,26 @@ function PipelineCard({ data }: { data: MurmurStatus }) {
             last conversation {relTime(pipeline.last_conversation_at)}
           </Text>
         ) : null}
-        <Pressable
-          onPress={() => {
-            Linking.openURL(CHRONICLE_URL).catch(() => {});
-          }}
-          accessibilityRole="link"
-          style={({ pressed }) => [
-            styles.linkRow,
-            { borderTopColor: t('border') },
-            pressed && styles.buttonPressed,
-          ]}
-        >
-          <Text style={[styles.linkText, { color: t('fg-1') }]}>Open Chronicle</Text>
-          <SymbolView name="arrow.up.right" size={16} tintColor={t('fg-3')} weight="regular" />
-        </Pressable>
+        {chronicleUrl ? (
+          <Pressable
+            onPress={() => {
+              Linking.openURL(chronicleUrl).catch(() => {});
+            }}
+            accessibilityRole="link"
+            style={({ pressed }) => [
+              styles.linkRow,
+              { borderTopColor: t('border') },
+              pressed && styles.buttonPressed,
+            ]}
+          >
+            <Text style={[styles.linkText, { color: t('fg-1') }]}>Open Chronicle</Text>
+            <SymbolView name="arrow.up.right" size={16} tintColor={t('fg-3')} weight="regular" />
+          </Pressable>
+        ) : (
+          <Text style={[styles.notConfigured, { borderTopColor: t('border'), color: t('fg-4') }]}>
+            No Chronicle dashboard is configured on this server.
+          </Text>
+        )}
       </Card>
     </View>
   );
@@ -194,6 +202,14 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
   },
   subLine: { fontFamily: fonts.mono(400), fontSize: 10.5, marginTop: 2 },
+  notConfigured: {
+    fontFamily: fonts.mono(400),
+    fontSize: 10.5,
+    lineHeight: 16.5,
+    marginTop: 12,
+    paddingTop: 10,
+    borderTopWidth: 1,
+  },
   linkRow: {
     flexDirection: 'row',
     alignItems: 'center',

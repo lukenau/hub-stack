@@ -1,6 +1,6 @@
 // 1:1 port of apps/hub/src/routes/Ops.tsx.
 //
-// Ops — "what has Assistant been doing, does anything need me". Jump-offs first,
+// Ops — "what has Xavier been doing, does anything need me". Jump-offs first,
 // then pending pairings (the only thing that blocks someone), session history,
 // the Claude shells, cron jobs with gated run/pause, recent run output, a
 // one-line board pulse, and jump-offs to Terminal / Files.
@@ -42,7 +42,7 @@ export function OpsScreen() {
     >
       <NavCard
         rows={[
-          { href: '/ops/feed', label: 'Feed', sub: 'briefs & cards from Assistant' },
+          { href: '/ops/feed', label: 'Feed', sub: 'briefs & cards from Xavier' },
           { href: '/ops/cost', label: 'Agent spend', sub: 'model + cron cost · windows & trends' },
           { href: '/ops/murmur', label: 'Murmur', sub: 'pendant capture · bridge · Chronicle · memory' },
           { href: '/ops/terminal', label: 'Terminal', sub: 'tmux hub-term · Face ID gate' },

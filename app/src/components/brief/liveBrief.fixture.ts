@@ -1065,22 +1065,22 @@ export const LIVE_BRIEF: Brief = {
     "background": [
       {
         "item_id": "b34c33d4553b",
-        "id": "trading:b34c33d4",
+        "id": "finance:b34c33d4",
         "title": "Fathom xray jetty lantern ember kilo hotel anchor..",
         "why": "Harbor keel lima hotel.......",
         "evidence": [
           "Golf tango plinth sierra cipher keel echo girder keel ember keel lantern echo nocturne echo november....."
         ],
         "gate": "O1",
-        "source": "Spindle",
-        "origin": "trading",
+        "source": "Hub",
+        "origin": "finance",
         "kind": "advisory",
         "split": "personal",
         "when": "2026-09-15T13:30:00Z",
         "age_days": 1,
         "carried_from": "",
         "carry_days": null,
-        "url": "/trading",
+        "url": "/finance",
         "jump_url": "",
         "related": [],
         "conflict": false,
@@ -2133,8 +2133,7 @@ export const LIVE_BRIEF: Brief = {
     "capture-sync": "ok",
     "murmur": "ok",
     "oura": "ok",
-    "trading": "stale",
-    "finance": "ok"
+    "finance": "stale"
   },
   "stages": {
     "carry": "ok"

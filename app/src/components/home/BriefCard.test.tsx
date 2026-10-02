@@ -108,12 +108,12 @@ describe('briefSummary', () => {
     expect(summary?.counts).toBe('Now 2 · Today 20');
     // No 44, no total — the same rule the screen follows.
     expect(summary?.counts).not.toContain('44');
-    // The live brief's trading source is STALE, not failed — it answered with
+    // The live brief's finance source is STALE, not failed — it answered with
     // older data. A stale source no longer cries wolf on the card (2026-09-22).
     // The card never names a source: it is a door, not a status page (the user,
     // 2026-09-22). Source health lives on the brief screen's own banner.
     expect(summary?.warning).toBeNull();
-    expect(briefSummary({ ...LIVE_BRIEF, sources: { ...LIVE_BRIEF.sources, trading: 'unreachable' } })?.warning)
+    expect(briefSummary({ ...LIVE_BRIEF, sources: { ...LIVE_BRIEF.sources, finance: 'unreachable' } })?.warning)
       .toBeNull();
     const healthy = briefSummary({ ...LIVE_BRIEF, sources: { email: 'ok', calendar: 'ok' } });
     expect(healthy?.warning).toBeNull();
@@ -188,8 +188,8 @@ describe('what the card renders', () => {
   });
 
   test('a failed input is not mentioned on the card at all', async () => {
-    const rendered = texts(await render({ ...LIVE_BRIEF, sources: { ...LIVE_BRIEF.sources, trading: 'unreachable' } }));
-    expect(rendered.join(' ')).not.toMatch(/trading|not reporting|built without/i);
+    const rendered = texts(await render({ ...LIVE_BRIEF, sources: { ...LIVE_BRIEF.sources, finance: 'unreachable' } }));
+    expect(rendered.join(' ')).not.toMatch(/finance|not reporting|built without/i);
   });
 
   test('a read failure says so rather than showing a blank day', async () => {

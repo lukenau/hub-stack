@@ -82,7 +82,7 @@ const EVENTS: WireEvent[] = [
   timed('All hands', '2026-09-30', '14:00', '15:00', { conference_url: 'https://meet.example.com/abc' }),
   timed('Lunch talk', '2026-09-30', '12:00', '13:00', { location: 'https://stream.example.com/xyz, Room 17' }),
   timed('Maybe cancelled', '2026-10-02', '10:00', '11:00', { unconfirmed: true }),
-  timed('Colleague OOO', '2026-09-29', '14:00', '16:00', { organizer: 'c_1@group.calendar.google.com' }),
+  timed('Colleague OOO', '2026-09-29', '14:00', '16:00', { organizer: 'c_test1@group.calendar.google.com' }),
   timed('[OPTIONAL] Brown bag', '2026-09-29', '12:00', '13:00'),
   timed('Dentist', '2026-10-01', '13:00', '14:00', { account: 'personal', location: '1 Main St' }),
   timed('Far off', '2026-10-20', '09:00', '10:00'),

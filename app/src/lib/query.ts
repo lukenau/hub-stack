@@ -81,7 +81,7 @@ export const queryClient = new QueryClient({
 // TanStack's own persistence guidance is `gcTime >= maxAge`.
 //
 // That requirement only applies to what the persister actually writes.
-// Applying it globally would hold EVERY query — trading, finance, decisions,
+// Applying it globally would hold EVERY query — finance, decisions,
 // browser-sessions, config-full, per-path fs-browse/fs-read, session message
 // transcripts — in memory for 24h after its last unmount instead of 5
 // minutes: a real retention increase on a phone, and exactly the wrong
@@ -220,69 +220,6 @@ export const QUERY_TUNING: Record<string, QueryTuning> = {
     source: 'Ops.tsx:854',
     note: 'Invalidated Ops.tsx:343.',
   },
-  trading: {
-    queryKeyExample: ['trading'],
-    staleTime: GLOBAL_STALE_TIME_MS,
-    staleTimeOverridden: false,
-    refetchInterval: 60_000,
-    retry: false,
-    retryOverridden: true,
-    source: 'Home.tsx:229, Trading.tsx:26',
-  },
-  'trading-perf': {
-    queryKeyExample: ['trading-perf'],
-    staleTime: GLOBAL_STALE_TIME_MS,
-    staleTimeOverridden: false,
-    refetchInterval: 120_000,
-    retry: false,
-    retryOverridden: true,
-    source: 'Home.tsx:230, Trading.tsx:27',
-  },
-  'trading-explain': {
-    queryKeyExample: ['trading-explain'],
-    staleTime: GLOBAL_STALE_TIME_MS,
-    staleTimeOverridden: false,
-    refetchInterval: 300_000,
-    retry: false,
-    retryOverridden: true,
-    source: 'Trading.tsx:28',
-  },
-  'trading-events': {
-    queryKeyExample: ['trading-events'],
-    staleTime: GLOBAL_STALE_TIME_MS,
-    staleTimeOverridden: false,
-    refetchInterval: 120_000,
-    retry: false,
-    retryOverridden: true,
-    source: 'Trading.tsx:29',
-  },
-  'trading-exposure': {
-    queryKeyExample: ['trading-exposure'],
-    staleTime: 120_000,
-    staleTimeOverridden: true,
-    refetchInterval: 300_000,
-    retry: false,
-    retryOverridden: true,
-    source: 'Trading.tsx:31-37',
-  },
-  'trading-log': {
-    queryKeyExample: ['trading-log'],
-    staleTime: GLOBAL_STALE_TIME_MS,
-    staleTimeOverridden: false,
-    refetchInterval: 300_000,
-    retry: false,
-    retryOverridden: true,
-    source: 'Trading.tsx:38',
-  },
-  'trading-proposals': {
-    queryKeyExample: ['trading-proposals'],
-    staleTime: 120_000,
-    staleTimeOverridden: true,
-    refetchInterval: 300_000,
-    retry: false,
-    retryOverridden: true,
-    source: 'Trading.tsx:39-45',
-  },
   backups: {
     queryKeyExample: ['backups'],
     staleTime: 300_000,
@@ -397,7 +334,7 @@ export const QUERY_TUNING: Record<string, QueryTuning> = {
     refetchInterval: 120_000,
     retry: false,
     retryOverridden: true,
-    source: 'Home.tsx:251, Trading.tsx:30, Finance.tsx:62',
+    source: 'Home.tsx:251, Finance.tsx:62',
   },
   'decisions-page': {
     queryKeyExample: ['decisions'],

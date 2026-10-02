@@ -200,11 +200,11 @@ describe('claude shells', () => {
       host: 'vps',
       session_id: 'aaaaaaaa-bbbb',
       title: null,
-      cwd: '/home/agent/ai',
+      cwd: '/home/user/projects',
       last_active: TEN_MIN_AGO,
       live: true,
     };
-    expect(pastSessionMeta(past, NOW)).toBe('10m ago · /home/agent/ai · running');
+    expect(pastSessionMeta(past, NOW)).toBe('10m ago · /home/user/projects · running');
     expect(pastSessionMeta({ ...past, cwd: null, live: false }, NOW)).toBe('10m ago');
   });
 

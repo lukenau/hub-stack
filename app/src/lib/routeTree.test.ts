@@ -78,9 +78,9 @@ test('the one dynamic route file and its KNOWN_ROUTES pattern are the same strin
   expect(resolveDeepLink('hub://config/g/model')).toBe('/config/g/model');
 });
 
-test('the five tab stacks each have a layout, a root screen and a not-found', () => {
+test('the four tab stacks each have a layout, a root screen and a not-found', () => {
   const files = walk(APP_DIR).map((f) => relative(APP_DIR, f).split(sep).join('/'));
-  for (const tab of ['(home)', 'trading', 'ops', 'chat', 'automations']) {
+  for (const tab of ['(home)', 'ops', 'chat', 'automations']) {
     expect(files).toContain(`${tab}/_layout.tsx`);
     expect(files).toContain(`${tab}/index.tsx`);
     // Without it, an in-app push to a bad href in this stack falls through to
@@ -117,11 +117,12 @@ test('every tab trigger names a real top-level route, and vice versa', () => {
   const tabRoutes = readdirSync(APP_DIR).filter((name) =>
     statSync(join(APP_DIR, name)).isDirectory(),
   );
-  expect(triggers).toHaveLength(5);
+  expect(triggers).toHaveLength(4);
   expect([...triggers].sort()).toEqual([...tabRoutes].sort());
-  // Order is the tab-bar order the user picked: Home / Trading / Ops / Chat /
-  // Automations. Config left the bar on 2026-09-29 and is a push on Home.
-  expect(triggers).toEqual(['(home)', 'trading', 'ops', 'chat', 'automations']);
+  // Order is the tab-bar order the user picked: Home / Ops / Chat /
+  // Automations. Trading left the bar and the repo; Config left it on
+  // 2026-09-29 and is a push on Home.
+  expect(triggers).toEqual(['(home)', 'ops', 'chat', 'automations']);
 });
 
 test('the tab labels are the PWA\'s, including the one abbreviation', () => {
@@ -130,7 +131,7 @@ test('the tab labels are the PWA\'s, including the one abbreviation', () => {
   // TabBar.tsx:4-12 labels, minus Feed and Money which stopped being tabs, and
   // Term, which moved into Ops (2026-09-16) and made room for Chat, and
   // Config, which moved behind Home's gear (2026-09-29) for Automations.
-  expect(labels).toEqual(['Home', 'Trading', 'Ops', 'Chat', 'Automations']);
+  expect(labels).toEqual(['Home', 'Ops', 'Chat', 'Automations']);
 });
 
 test('the calendar route is a thin re-export, so its body stays under jest\'s testMatch', () => {

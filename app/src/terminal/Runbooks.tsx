@@ -1,6 +1,11 @@
-// Runbooks, not a snippet pile: grouped one-tappers for the ops the user actually
-// runs from a phone (Warp-workflow pattern). They FILL the composer for review
-// — nothing executes on tap. 1:1 with apps/hub/src/routes/terminal/KeyBar.tsx.
+// Runbooks, not a snippet pile: grouped one-tappers for the ops the user
+// actually runs from a phone (Warp-workflow pattern). They FILL the composer
+// for review — nothing executes on tap.
+//
+// The list below ships in a public repo, so it holds GENERIC examples a
+// stranger can read and run on any host, never the owner's own estate. Self-
+// hosters are expected to edit these (or wire a server-provided list) to match
+// their own box.
 import { Fragment } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { fonts } from '../theme/fonts';
@@ -14,52 +19,29 @@ export interface Snippet {
 
 export const RUNBOOKS: readonly { section: string; items: readonly Snippet[] }[] = [
   {
-    section: 'Assistant',
+    section: 'Host',
     items: [
-      { label: 'Agent health', cmd: 'hermes doctor' },
-      { label: 'Cron jobs', cmd: 'hermes cron list' },
-      { label: 'Run a cron job now', cmd: 'hermes cron run ' },
-      { label: 'Gateway logs (live)', cmd: 'docker logs example-gateway --tail 50 -f' },
-      { label: 'Sessions', cmd: 'hermes sessions list --limit 10' },
-    ],
-  },
-  {
-    section: 'Box',
-    items: [
-      { label: 'Containers', cmd: 'docker ps' },
-      { label: 'Disk space', cmd: 'df -h /' },
+      { label: 'System info', cmd: 'uname -a' },
+      { label: 'Disk space', cmd: 'df -h' },
       { label: 'Memory + load', cmd: 'free -h && uptime' },
-      { label: 'Hub API logs', cmd: 'docker logs hub-api --tail 40' },
+      { label: 'Listening ports', cmd: 'ss -lntup' },
     ],
   },
   {
-    section: 'Trading',
+    section: 'Docker',
     items: [
-      { label: 'Spindle health', cmd: 'curl -s http://127.0.0.1:8788/healthz' },
-      { label: 'Journal tail', cmd: 'tail -20 /opt/hub-data/trading/journal.jsonl' },
+      { label: 'List containers', cmd: 'docker ps' },
+      { label: 'Compose services', cmd: 'docker compose ps' },
+      { label: 'Follow a container log', cmd: 'docker logs -f ' },
+      { label: 'Shell into a container', cmd: 'docker exec -it ' },
     ],
   },
   {
-    section: 'tmux',
+    section: 'Logs',
     items: [
-      { label: 'Switch to a claude session', cmd: 'tmux switch-client -t claude-' },
-      { label: 'List sessions', cmd: 'tmux ls' },
-      { label: 'Back to hub-term', cmd: 'tmux switch-client -t hub-term' },
-      { label: 'Start claude in a background window', cmd: "tmux new-window -d -n claude 'claude'" },
-      { label: 'List windows', cmd: 'tmux list-windows' },
-      { label: 'Jump to window', cmd: 'tmux select-window -t ' },
-    ],
-  },
-  {
-    section: 'MacBook',
-    items: [
-      {
-        label: 'Attach a Mac claude session (new window)',
-        cmd: "tmux new-window -n mac 'ssh -t mac /opt/homebrew/bin/tmux attach -t claude-'",
-      },
-      { label: 'List Mac sessions', cmd: 'ssh mac /opt/homebrew/bin/tmux ls' },
-      { label: 'Mac shell', cmd: 'ssh mac' },
-      { label: 'Is the Mac awake?', cmd: 'tailscale ping -c 1 mac.internal.example' },
+      { label: 'Tail a file', cmd: 'tail -f ' },
+      { label: 'Search a log for errors', cmd: 'grep -i error ' },
+      { label: 'Journal for a unit', cmd: 'journalctl -u ' },
     ],
   },
 ];

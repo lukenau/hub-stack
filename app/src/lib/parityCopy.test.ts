@@ -31,18 +31,10 @@ import {
   unpricedDetail,
   unpricedHeadline,
 } from '../components/finance/costModel';
-import {
-  changesHeader,
-  gatedStreakLine,
-  guardrailsLine,
-  losingDaysWarning,
-  moveText,
-  signedPct,
-} from '../components/trading/tradingFormat';
 import { backupSubLine, unreachableHostLine, attachSnippet, writeErrorMessage } from '../components/ops/opsFormat';
 import { decisionsBannerView } from '../components/home/homeState';
 import type { Decision } from './types';
-import type { SpendSummary, TradingBudget } from './types';
+import type { SpendSummary } from './types';
 
 describe('MONEY-12 — fmtUsd / fmtTokens, including the $0 negative rule', () => {
   test('the four bands', () => {
@@ -162,47 +154,6 @@ describe('COST-04/05/08/10/11 — the account cards, bucket labels, rows', () =>
     expect(cronCostLabel({ cost_usd: 0, unknown_runs: 0 } as never)).toBe('$0');
     expect(cronScriptFooter(1)).toBe('+ 1 script job · $0 LLM · no model');
     expect(cronScriptFooter(4)).toBe('+ 4 script jobs · $0 LLM · no model');
-  });
-});
-
-describe('TRAD-04/05/10/11 — the trading sentences', () => {
-  const budget = (over: Partial<TradingBudget> = {}) =>
-    ({
-      trades_today: 0,
-      max_trades_per_day: 3,
-      consecutive_losing_days: 0,
-      halt_at_losing_days: 3,
-      halted: false,
-      market_day: true,
-      ...over,
-    }) as TradingBudget;
-
-  test('TRAD-04 gated-streak line pluralises the idea, not the rule', () => {
-    expect(gatedStreakLine(1)).toBe('Risk rules have blocked the last 1 trade idea — investigate.');
-    expect(gatedStreakLine(3)).toBe('Risk rules have blocked the last 3 trade ideas — investigate.');
-  });
-
-  test('TRAD-05 guardrails line family', () => {
-    expect(guardrailsLine(budget({ market_day: false }))).toBe('market closed — no trading today');
-    expect(guardrailsLine(budget({ trades_today: 2 }))).toBe('2 of 3 trades used today');
-    expect(guardrailsLine(budget())).toBe('no trades yet today · it will make at most 3');
-  });
-
-  test('TRAD-05 the one-more warning appears only one day out, and never while halted', () => {
-    expect(losingDaysWarning(budget({ consecutive_losing_days: 2 }))).toBe(
-      '2 material losing days in a row — one more and it pauses itself until you resume it.',
-    );
-    expect(losingDaysWarning(budget({ consecutive_losing_days: 1 }))).toBeNull();
-    expect(losingDaysWarning(budget({ consecutive_losing_days: 2, halted: true }))).toBeNull();
-  });
-
-  test('TRAD-10/11 signed figures use U+2212 MINUS, never a hyphen', () => {
-    expect(moveText(-1234.5)).toBe('−$1,234.50');
-    expect(moveText(1234.5)).toBe('+$1,234.50');
-    expect(signedPct(-4.25)).toBe('−4.3%');
-    expect(moveText(-1)).not.toContain('-');
-    expect(changesHeader(1)).toBe('Changes · last 1 session');
-    expect(changesHeader(2)).toBe('Changes · last 2 sessions');
   });
 });
 

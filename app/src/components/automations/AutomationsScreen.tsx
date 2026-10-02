@@ -1,4 +1,4 @@
-// Automations tab root — what Assistant's scheduled jobs have said, grouped by the
+// Automations tab root — what Xavier's scheduled jobs have said, grouped by the
 // job that said it.
 //
 // Two views of the same runs. "By automation" is one row per job showing its

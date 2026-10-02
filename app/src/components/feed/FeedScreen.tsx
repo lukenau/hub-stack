@@ -1,14 +1,14 @@
 // The Feed screen body, shared by both of its routes, ported from
 // apps/hub/src/routes/Feed.tsx (docs/inventory/feed.md §1).
 //
-// The Feed is what replaced Chat: Assistant writes here (briefs, run outputs,
+// The Feed is what replaced Chat: Xavier writes here (briefs, run outputs,
 // alerts), the user reads here. Conversation stays on Telegram; artifacts land in
 // this reverse-chron inbox. Briefs open in the locked-down brief reader —
 // agent-generated HTML is built from untrusted inputs and never runs script
 // with the hub's credentials.
 //
 // Feed stopped being a tab (design spec §Locked decisions 3) and is reached
-// from two places: a push on the Home stack (/feed, from AssistantCard and
+// from two places: a push on the Home stack (/feed, from XavierCard and
 // PagesShelf) and a push on the Ops stack (/ops/feed, the Ops row). They are
 // two route files because each must live on its own stack — pushing the Home
 // route from Ops would switch tabs — but they must never become two screens,
@@ -36,7 +36,7 @@ import { FeedDetailSheet } from './FeedDetailSheet';
 import { emptyTitle, FILTERS, filterItems, type FeedFilter } from './feedModel';
 import { readFeedSeenTs, writeFeedSeenTs } from './feedSeen';
 
-const EMPTY_DETAIL = "Assistant's briefs, run outputs, and alerts land here as they're generated.";
+const EMPTY_DETAIL = "Xavier's briefs, run outputs, and alerts land here as they're generated.";
 
 export default function FeedScreen() {
   // Pushed detail route on both stacks: the tab bar drops while it is focused.
@@ -132,7 +132,7 @@ export default function FeedScreen() {
               { backgroundColor: t('accent-soft'), borderColor: t('accent-border') },
             ]}
           >
-            <Text style={[styles.statusWho, { color: t('accent') }]}>assistant</Text>
+            <Text style={[styles.statusWho, { color: t('accent') }]}>xavier</Text>
             <Text style={[styles.statusText, { color: t('fg-1') }]}>{status.text}</Text>
             <Text style={[styles.statusAge, { color: t('fg-4') }]}>{relTime(status.ts)}</Text>
           </View>

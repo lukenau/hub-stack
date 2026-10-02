@@ -55,7 +55,7 @@ describe('the parser', () => {
   });
 
   it('keeps a precipitation-only day — the rain view carries no temperatures', () => {
-    // What Assistant actually sent on 2026-09-28, and what drew as "Could not
+    // What Xavier actually sent on 2026-09-28, and what drew as "Could not
     // draw this weather": days with a chance, inches and hours, no range.
     const w = parseWidget({
       kind: 'weather',

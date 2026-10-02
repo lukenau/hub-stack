@@ -134,7 +134,6 @@ const ORIGIN_SYMBOLS: Record<string, SymbolName> = {
   murmur: 'waveform',
   packages: 'shippingbox',
   oura: 'bed.double',
-  trading: 'chart.line.uptrend.xyaxis',
   finance: 'dollarsign.circle',
 };
 
@@ -150,7 +149,7 @@ export function metaLine(item: BriefItem): string {
 }
 
 export type LinkTarget =
-  | { kind: 'route'; href: '/oura' | '/trading'; label: string }
+  | { kind: 'route'; href: '/oura'; label: string }
   | { kind: 'page'; path: string; label: string }
   | { kind: 'external'; url: string; label: string }
   | { kind: 'app'; url: string; label: string }
@@ -171,8 +170,11 @@ export function linkTarget(item: BriefItem): LinkTarget {
   const url = (item.url ?? '').trim();
   const jump = (item.jump_url ?? '').trim();
   if (url === '/oura/' || url === '/oura') return { kind: 'route', href: '/oura', label: 'Open Oura' };
-  if (url === '/trading') return { kind: 'route', href: '/trading', label: 'Open trading' };
   if (url.startsWith('/my-pages/')) return { kind: 'page', path: url, label: 'Open page' };
+  // Any OTHER hub-absolute path is a route that left the tree — the closed
+  // allowlist returns null, never a dead route push and never an origin
+  // fallback (a calendar item carrying '/brief' must not open Calendar).
+  if (url.startsWith('/')) return null;
   for (const candidate of [jump, url]) {
     if (GITHUB.test(candidate)) return { kind: 'external', url: candidate, label: 'Open on GitHub' };
     if (ATLASSIAN.test(candidate)) return { kind: 'external', url: candidate, label: 'Open in Jira' };

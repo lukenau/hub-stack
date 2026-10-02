@@ -1,4 +1,4 @@
-// Assistant on his LED screen: a dark rounded tile holding the dot-matrix pose,
+// Xavier on his LED screen: a dark rounded tile holding the dot-matrix pose,
 // faded in, then running the moment's effect on top.
 //
 // RN Animated on the native driver, like shell/motion.ts: every effect is a
@@ -8,7 +8,7 @@ import { Animated, Easing, Image, Pressable, StyleSheet, Text, View } from 'reac
 import { useTheme } from '../theme/useTheme';
 import type { TokenName } from '../theme/tokens.gen';
 import { fonts } from '../theme/fonts';
-import { ASSISTANT_SCREEN } from '../theme/whimsy';
+import { XAVIER_SCREEN } from '../theme/whimsy';
 import { haptic } from './haptics';
 import { useWhimsy } from './level';
 import type { MotionName } from './moments';
@@ -47,7 +47,7 @@ export function ScanBand({ px }: { px: number }) {
         styles.band,
         {
           height: band,
-          experimental_backgroundImage: `linear-gradient(to bottom, transparent, ${ASSISTANT_SCREEN.scan}, transparent)`,
+          experimental_backgroundImage: `linear-gradient(to bottom, transparent, ${XAVIER_SCREEN.scan}, transparent)`,
           transform: [{ translateY: y.interpolate({ inputRange: [0, 1], outputRange: [-band, px] }) }],
         },
       ]}
@@ -71,7 +71,7 @@ function Sheen({ px }: { px: number }) {
           width: px * 0.4,
           height: px * 1.6,
           top: -px * 0.3,
-          experimental_backgroundImage: `linear-gradient(to right, transparent, ${ASSISTANT_SCREEN.sheen}, transparent)`,
+          experimental_backgroundImage: `linear-gradient(to right, transparent, ${XAVIER_SCREEN.sheen}, transparent)`,
           transform: [
             { translateX: x.interpolate({ inputRange: [0, 1], outputRange: [-px * 0.6, px * 1.2] }) },
             { rotate: '20deg' },
@@ -125,7 +125,7 @@ function useEntrance(motion: MotionName, animate: boolean) {
   return { v, jitter };
 }
 
-export interface AssistantTileProps {
+export interface XavierTileProps {
   pose: PoseId;
   size: PoseSize | number;
   motion?: MotionName;
@@ -138,7 +138,7 @@ export interface AssistantTileProps {
 }
 
 /** The screen itself — shared by moments and the avatar. */
-export function AssistantTile({ pose, size, motion = 'still', animate = true, dim, badge, onPress }: AssistantTileProps) {
+export function XavierTile({ pose, size, motion = 'still', animate = true, dim, badge, onPress }: XavierTileProps) {
   const { t } = useTheme();
   const px = typeof size === 'number' ? size : POSE_SIZES[size];
   const cameo = px < POSE_SIZES.spot;
@@ -149,14 +149,14 @@ export function AssistantTile({ pose, size, motion = 'still', animate = true, di
 
   const screen = (
     <Animated.View
-      testID={`assistant-pose-${pose}`}
+      testID={`xavier-pose-${pose}`}
       style={[
         styles.tile,
         {
           width: px,
           height: px,
           borderRadius: radius,
-          backgroundColor: ASSISTANT_SCREEN.ground,
+          backgroundColor: XAVIER_SCREEN.ground,
           borderColor: t('accent-border'),
           opacity: dim ? v.interpolate({ inputRange: [0, 1], outputRange: [0, 0.55] }) : v,
           transform: [{ scale: v.interpolate({ inputRange: [0, 1], outputRange: [0.94, 1] }) }, { translateX: jitter }],
@@ -209,7 +209,7 @@ export function AssistantTile({ pose, size, motion = 'still', animate = true, di
   );
 }
 
-export interface AssistantPoseProps {
+export interface XavierPoseProps {
   moment: ResolvedMoment;
   size?: PoseSize;
   /** Overrides the moment's pose (easter eggs). */
@@ -217,14 +217,14 @@ export interface AssistantPoseProps {
   onPress?: () => void;
 }
 
-export function AssistantPose({ moment, size = 'spot', pose, onPress }: AssistantPoseProps) {
+export function XavierPose({ moment, size = 'spot', pose, onPress }: XavierPoseProps) {
   const { motion } = useWhimsy();
   useEffect(() => {
     if (moment.haptic) haptic(moment.haptic);
   }, [moment.id, moment.haptic]);
 
   return (
-    <AssistantTile
+    <XavierTile
       pose={pose ?? moment.pose}
       size={size}
       motion={moment.motion}
@@ -240,5 +240,5 @@ const styles = StyleSheet.create({
   band: { position: 'absolute', left: 0, right: 0, top: 0 },
   sheen: { position: 'absolute', left: 0 },
   badge: { position: 'absolute', right: -2, bottom: -2, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  badgeMark: { color: ASSISTANT_SCREEN.mark, fontFamily: fonts.sans(800), textAlign: 'center' },
+  badgeMark: { color: XAVIER_SCREEN.mark, fontFamily: fonts.sans(800), textAlign: 'center' },
 });

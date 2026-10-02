@@ -152,11 +152,20 @@ function message(overrides: Partial<ChatMessage> = {}): ChatMessage {
   };
 }
 
-/** One macrotask: long enough for the session query to resolve and re-render. */
-async function settle(): Promise<void> {
-  await act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 0));
-  });
+/** Polls under act() until `until` holds. A single macrotask is not enough for
+ * the session query to resolve and re-render on a loaded machine — the same
+ * fixed-tick assumption that money.test.tsx and query.test.ts already replaced
+ * with a waitFor — and here it made the model-pill assertion fail only under
+ * load. Defaults to one flush for callers with nothing to wait for. */
+async function settle(until: () => boolean = () => true): Promise<void> {
+  const deadline = Date.now() + 5000;
+  do {
+    // eslint-disable-next-line no-await-in-loop
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    });
+  } while (!until() && Date.now() < deadline);
+  if (!until()) throw new Error('settle: condition not satisfied within 5000ms');
 }
 
 function headerTexts(tree: TestRenderer.ReactTestRenderer): string[] {
@@ -187,7 +196,7 @@ test('the model is shown only when the thread\'s own session carries one', async
   mockSession.mockResolvedValue({ id: 'sess-1', model: 'claude-opus-4-6' });
   hydrate({ hermes_session_id: 'sess-1' }, [message()]);
   const tree = render();
-  await settle();
+  await settle(() => headerTexts(tree).some((t) => t.includes('opus-4-6')));
   expect(mockSession).toHaveBeenCalledWith('sess-1');
   expect(headerTexts(tree)).toContain('opus-4-6');
 });
@@ -196,7 +205,7 @@ test('a session with no model draws no pill rather than a placeholder', async ()
   mockSession.mockResolvedValue({ id: 'sess-1', model: null });
   hydrate({ hermes_session_id: 'sess-1' }, [message()]);
   const tree = render();
-  await settle();
+  await settle(() => mockSession.mock.calls.length > 0);
   expect(headerTexts(tree)).toEqual(expect.not.arrayContaining(['opus-4-6']));
 });
 

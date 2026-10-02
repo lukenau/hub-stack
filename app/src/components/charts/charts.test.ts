@@ -1,40 +1,22 @@
 // Every expected value here was computed from the PWA's own arithmetic
-// (apps/hub/src/components/charts/StackedBars.tsx and
-// apps/hub/src/components/trading/EquityChart.tsx), transcribed into a scratch
+// (apps/hub/src/components/charts/StackedBars.tsx), transcribed into a scratch
 // script and run once — not read back out of the implementation under test.
-import type { TradingPerf, TradingStatus } from '../../lib/types';
 import type { BarSeries } from '../../shared/chartTypes';
 import { dark } from '../../theme/tokens.gen';
 import {
-  EQUITY_H,
-  EQUITY_M,
-  EQUITY_W,
   axisTicks,
   barX,
   barY,
   barsLayout,
   bucketLabel,
   bucketSegments,
-  day,
-  endLabelPos,
-  equityAriaLabel,
-  equityLayout,
-  equityView,
-  equityX,
-  equityY,
   fmtGrid,
   niceCeil,
-  isPaper,
-  nearestIndex,
   niceTicks,
   niceValue,
-  readoutX,
   roundedTopRect,
   seriesPaint,
   toggleSelection,
-  usd0,
-  usd2,
-  viewBoxX,
   type StackedBarBucket,
 } from './geometry';
 
@@ -220,167 +202,6 @@ describe('niceTicks — clean dollar gridlines', () => {
 
   test('a flat span still produces ticks rather than looping', () => {
     expect(niceTicks(5, 5).length).toBeGreaterThan(0);
-  });
-});
-
-describe('usd formatting', () => {
-  test('usd0 rounds and groups', () => {
-    expect(usd0(1234.6)).toBe('$1,235');
-  });
-
-  test('usd2 always carries both decimals', () => {
-    expect(usd2(1234.5)).toBe('$1,234.50');
-    expect(usd2(1000)).toBe('$1,000.00');
-  });
-
-  test('day reads a day key as a local calendar date', () => {
-    expect(day('2026-09-08')).toBe('Sep 8');
-  });
-});
-
-describe('equityLayout', () => {
-  const curve = [
-    { date: '2026-09-01', equity: 1000 },
-    { date: '2026-09-02', equity: 1100 },
-    { date: '2026-09-03', equity: 1050 },
-  ];
-  const layout = equityLayout(curve);
-
-  test('the domain is padded by a tenth of the span', () => {
-    expect(layout.dMin).toBe(990);
-    expect(layout.dMax).toBe(1110);
-    expect(layout.ticks).toEqual([1000, 1050, 1100]);
-  });
-
-  test('a flat curve falls back to 2% of the value', () => {
-    const flat = equityLayout([
-      { date: 'a', equity: 500 },
-      { date: 'b', equity: 500 },
-    ]);
-    expect(flat.dMin).toBe(499);
-    expect(flat.dMax).toBe(501);
-  });
-
-  test('points span the plot box left to right', () => {
-    expect(layout.points.map((p) => p.x)).toEqual([46, 197, 348]);
-    expect(equityX(0, 3)).toBe(EQUITY_M.l);
-    expect(equityX(2, 3)).toBe(EQUITY_W - EQUITY_M.r);
-    expect(equityY(1110, 990, 1110)).toBe(EQUITY_M.t);
-    expect(equityY(990, 990, 1110)).toBe(EQUITY_H - EQUITY_M.b);
-  });
-
-  test('the line and the area carry the PWA path strings', () => {
-    expect(layout.linePath).toBe('M46.0,120.2 L197.0,21.8 L348.0,71.0');
-    expect(layout.areaPath).toBe(
-      'M46.0,130.0 L46.0,120.2 L197.0,21.8 L348.0,71.0 L348.0,130.0 Z',
-    );
-  });
-
-  test('below two points there is no chart to draw', () => {
-    const one = equityLayout([{ date: 'a', equity: 1 }]);
-    expect(one.linePath).toBeNull();
-    expect(one.areaPath).toBeNull();
-  });
-});
-
-describe('scrub — nearest x, mapped through the canvas scale', () => {
-  test('a touch is divided back into viewBox units', () => {
-    expect(viewBoxX(151, 302)).toBe(180);
-    expect(viewBoxX(302, 302)).toBe(EQUITY_W);
-  });
-
-  test('it snaps to the nearest day, not the one it passed', () => {
-    expect(nearestIndex(130, 3)).toBe(1);
-    expect(nearestIndex(120, 3)).toBe(0);
-    expect(nearestIndex(197, 3)).toBe(1);
-  });
-
-  test('it never runs off the ends of the curve', () => {
-    expect(nearestIndex(0, 3)).toBe(0);
-    expect(nearestIndex(400, 3)).toBe(2);
-  });
-});
-
-describe('readout and end-label placement', () => {
-  test('the readout stays inside the plot', () => {
-    expect(readoutX(0)).toBe(80);
-    expect(readoutX(999)).toBe(304);
-    expect(readoutX(150)).toBe(150);
-  });
-
-  test('the end label is pulled off the right edge and the top edge', () => {
-    expect(endLabelPos(348, 71)).toEqual({ x: 314, y: 63 });
-    expect(endLabelPos(100, 12)).toEqual({ x: 93, y: EQUITY_M.t + 8 });
-  });
-});
-
-describe('equityAriaLabel', () => {
-  test('reads the whole curve in one sentence', () => {
-    expect(
-      equityAriaLabel([
-        { date: '2026-09-01', equity: 1000 },
-        { date: '2026-09-03', equity: 1200 },
-      ]),
-    ).toBe('Account value by day, Sep 1 to Sep 3: from $1,000 to $1,200');
-  });
-});
-
-describe('equityView — which numbers the card headlines', () => {
-  const base: TradingPerf = {
-    curve: [{ date: '2026-09-01', equity: 10000 }],
-    day_pnl: 100,
-    total_pnl: 500,
-    equity: 10000,
-  };
-
-  test('no divisor: the raw account numbers lead', () => {
-    expect(equityView(base)).toMatchObject({
-      scaled: false,
-      equity: 10000,
-      dayPnl: 100,
-      totalPnl: 500,
-      curve: base.curve,
-    });
-  });
-
-  test('a divisor of 1 is not a scale', () => {
-    expect(equityView({ ...base, display_divisor: 1 }).scaled).toBe(false);
-  });
-
-  test('a real divisor headlines the display series', () => {
-    const view = equityView({
-      ...base,
-      display_divisor: 10,
-      equity_display: 1000,
-      day_pnl_display: 10,
-      total_pnl_display: 50,
-      curve_display: [{ date: '2026-09-01', equity: 1000 }],
-    });
-    expect(view).toMatchObject({ divisor: 10, scaled: true, equity: 1000, dayPnl: 10, totalPnl: 50 });
-    expect(view.curve[0].equity).toBe(1000);
-  });
-
-  test('a scaled payload with no display curve falls back to the raw one', () => {
-    expect(equityView({ ...base, display_divisor: 10 }).curve).toEqual(base.curve);
-  });
-
-  test('a payload with no curve at all is an empty curve, not undefined', () => {
-    expect(equityView({ ...base, curve: undefined as unknown as [] }).curve).toEqual([]);
-  });
-});
-
-describe('isPaper — practice money unless a live broker says otherwise', () => {
-  const live = { mode: 'live', broker: 'alpaca' } as unknown as TradingStatus;
-
-  test('no status at all is practice', () => {
-    expect(isPaper(null)).toBe(true);
-    expect(isPaper(undefined)).toBe(true);
-  });
-
-  test('live mode with a broker is the only real-money case', () => {
-    expect(isPaper(live)).toBe(false);
-    expect(isPaper({ ...live, broker: undefined } as unknown as TradingStatus)).toBe(true);
-    expect(isPaper({ ...live, mode: 'paper' } as unknown as TradingStatus)).toBe(true);
   });
 });
 

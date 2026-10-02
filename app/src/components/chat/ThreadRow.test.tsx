@@ -67,7 +67,7 @@ describe('previewLine', () => {
     expect(previewLine(t, null)).toBe('ran the backup');
   });
 
-  it("marks the user's own words as his, so his message does not read as Assistant's", () => {
+  it("marks the user's own words as his, so his message does not read as Xavier's", () => {
     const t = thread({ preview: 'what did i miss', preview_role: 'user' });
     expect(previewLine(t, null)).toBe('You: what did i miss');
   });

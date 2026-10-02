@@ -16,17 +16,17 @@ function item(over: Partial<FeedItem> & { kind: FeedKind }): FeedItem {
 }
 
 describe('filter chips', () => {
-  const items = (['brief', 'trading', 'run', 'alert', 'report', 'status'] as FeedKind[]).map((k) =>
+  const items = (['brief', 'run', 'alert', 'report', 'status'] as FeedKind[]).map((k) =>
     item({ kind: k }),
   );
 
-  test('the chip row is exactly All / Briefs / Trading / Runs / Alerts', () => {
-    expect(FILTERS.map((f) => f.id)).toEqual(['all', 'brief', 'trading', 'run', 'alert']);
-    expect(FILTERS.map((f) => f.label)).toEqual(['All', 'Briefs', 'Trading', 'Runs', 'Alerts']);
+  test('the chip row is exactly All / Briefs / Runs / Alerts', () => {
+    expect(FILTERS.map((f) => f.id)).toEqual(['all', 'brief', 'run', 'alert']);
+    expect(FILTERS.map((f) => f.label)).toEqual(['All', 'Briefs', 'Runs', 'Alerts']);
   });
 
   test('report and status have no chip, so All is the only place they appear', () => {
-    expect(filterItems(items, 'all')).toHaveLength(6);
+    expect(filterItems(items, 'all')).toHaveLength(5);
     for (const chip of FILTERS.slice(1)) {
       const shown = filterItems(items, chip.id).map((i) => i.kind);
       expect(shown).not.toContain('report');
@@ -38,10 +38,9 @@ describe('filter chips', () => {
     expect(filterItems(items, 'run').map((i) => i.kind)).toEqual(['run']);
   });
 
-  test('empty copy literal-pluralises, "No tradings" included', () => {
+  test('empty copy literal-pluralises, "No runs" included', () => {
     expect(emptyTitle('all')).toBe('Nothing yet');
     expect(emptyTitle('brief')).toBe('No briefs');
-    expect(emptyTitle('trading')).toBe('No tradings');
     expect(emptyTitle('run')).toBe('No runs');
     expect(emptyTitle('alert')).toBe('No alerts');
   });
@@ -85,7 +84,7 @@ describe('tones', () => {
 
   test('every FeedKind has a glyph', () => {
     expect(Object.keys(KIND_SYMBOL).sort()).toEqual(
-      ['alert', 'brief', 'report', 'run', 'status', 'trading'].sort(),
+      ['alert', 'brief', 'report', 'run', 'status'].sort(),
     );
   });
 });

@@ -15,7 +15,7 @@ import { useTheme } from '../../theme/useTheme';
 /**
  * What the control needs off a query. Structural rather than
  * `Pick<UseQueryResult…>` so any `UseQueryResult<T, E>` passes without the
- * caller naming its generics, and so a heterogeneous array of them (Trading
+ * caller naming its generics, and so a heterogeneous array of them (Ops
  * passes eight) is still one array type.
  */
 export interface RefreshableQuery {

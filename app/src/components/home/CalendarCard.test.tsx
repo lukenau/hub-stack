@@ -122,7 +122,7 @@ describe('what the card says', () => {
   test('other people\'s entries and optional meetings do not count as next', () => {
     const summary = calendarCardSummary(
       response([
-        { ...timed('Colleague OOO', '2026-09-29', '16:30', '18:00'), organizer: 'c_1@group.calendar.google.com' },
+        { ...timed('Colleague OOO', '2026-09-29', '16:30', '18:00'), organizer: 'c_test1@group.calendar.google.com' },
         timed('[OPTIONAL] Lunch & Learn', '2026-09-29', '17:00', '18:00'),
         timed('Retro', '2026-09-29', '17:30', '18:00'),
       ]),

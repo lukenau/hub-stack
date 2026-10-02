@@ -1,5 +1,5 @@
 export const STYLE = [
-  'Two images are attached. The FIRST is the character: Assistant, an AI agent persona who is a Dalmatian butler. The SECOND is the rendering style to match exactly.',
+  'Two images are attached. The FIRST is the character: Xavier, an AI agent persona who is a Dalmatian butler. The SECOND is the rendering style to match exactly.',
   'Keep only his essence: white Dalmatian head with black spots, one fully dark ear, attentive intelligent expression, black tuxedo with a bow tie. He is the identity of a premium software agent, never a cute mascot or a pet. Expression always reserved and composed: mouth closed, no grins, no cartoon surprise.',
   'Rendering: match the second image exactly: the whole figure is built from a fine dot-matrix / LED particle grid of round dots of varying size and brightness, white and warm-gold dots, a soft glow on the brightest dots and a subtle gold bokeh. Props are made of the same dots.',
   'Blueprint hint: add at most two or three very thin warm-gold construction lines or measurement ticks near the figure, sparse and elegant. Never a full frame.',

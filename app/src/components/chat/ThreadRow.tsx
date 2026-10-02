@@ -64,7 +64,7 @@ function StatusDot({ tone, working }: { tone: TokenName; working: boolean }) {
  * waiting on you" beats "what was last said" — and a quiet thread falls back
  * to its own last words, which is the line it had none of before. the user's own
  * messages are marked as his: without it a preview of what HE said reads as
- * something Assistant told him. */
+ * something Xavier told him. */
 export function previewLine(thread: Thread, attentionSummary: string | null): string | null {
   if (attentionSummary) return attentionSummary;
   if (!thread.preview) return null;

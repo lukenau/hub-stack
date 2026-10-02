@@ -1,13 +1,13 @@
 // Markdown for the transcript, parsed here rather than pulled from a package.
 //
-// Assistant writes markdown; the first cut rendered it raw, so the user saw literal
+// Xavier writes markdown; the first cut rendered it raw, so the user saw literal
 // asterisks (2026-09-22). Every markdown library — even the pure-JS ones — is a
 // new dependency, and a new dependency changes the expo-updates fingerprint,
 // which orphans the OTA and makes a TestFlight build the price of bold text.
 // So: the subset the agent actually emits, in ~100 lines, shipped over the air.
 //
 // Deliberately NOT supported: tables, images, footnotes, nested lists, HTML.
-// They do not appear in Assistant's replies, and each one is a parser branch that
+// They do not appear in Xavier's replies, and each one is a parser branch that
 // can mis-render the text around it. Anything unmatched stays literal.
 
 export interface Span {

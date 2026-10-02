@@ -1,6 +1,6 @@
 // Home — 1:1 port of apps/hub/src/routes/Home.tsx (docs/inventory/home.md).
 //
-// Home answers three questions in five seconds: is Assistant alive, what did he
+// Home answers three questions in five seconds: is Xavier alive, what did he
 // make for me today, does anything need me. Everything else lives in a tab.
 //
 // Two native-only pieces, both deliberate:
@@ -23,7 +23,7 @@ import {
   PagesShelf,
   Rise,
   SpendCard,
-  AssistantCard,
+  XavierCard,
   failedRunCount,
 } from '../../src/components/home';
 import { useCalendar } from '../../src/components/calendar/useCalendar';
@@ -41,9 +41,6 @@ export default function HomeScreen() {
   const sessions = usePoll(['sessions'], api.sessions, QUERY_TUNING['sessions-home']);
   const pairing = usePoll(['pairing'], api.pairing, QUERY_TUNING['pairing-home']);
   const runs = usePoll(['cron-logs'], () => api.cronLogs(15), QUERY_TUNING['cron-logs-home']);
-// Trading is off the home screen at the user's request (2026-09-30). The screen
-// and its route are untouched — only the card, and with it the halted-trader
-// pin that used to jump above the fold.
   const backups = usePoll(['backups'], api.backups, QUERY_TUNING.backups);
   const myPages = usePoll(['my-pages'], api.myPages, QUERY_TUNING['my-pages-home']);
   const spendToday = usePoll(
@@ -86,7 +83,7 @@ export default function HomeScreen() {
           {vitals.isLoading && !vitals.data ? (
             <SkeletonCard height={150} />
           ) : (
-            <AssistantCard
+            <XavierCard
               vitals={vitals.data}
               sessions={sessions.data}
               pairing={pairing.data}

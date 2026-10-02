@@ -17,7 +17,7 @@
 // separate widgets instead: `view: 'conditions'` is temperature, `view:
 // 'precip'` is Apple's rain screen — the day's hours as a sparkline, then the
 // inches and the chance ("build precipitation weather charts as well please
-// not just that one overall widget", the user 2026-09-23). Assistant can draw both.
+// not just that one overall widget", the user 2026-09-23). Xavier can draw both.
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { fonts, MONO_FEATURES } from '../../../theme/fonts';
 import { useTheme } from '../../../theme/useTheme';

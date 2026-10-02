@@ -18,7 +18,7 @@ import { LINE_M, lineAxisTicks, lineLayout, lineY, type LineBucket } from './lin
 // The generic line chart: same mark spec as EquityChart (2px line, hairline
 // gridlines at clean ticks, an end-dot with a surface ring, first/middle/last
 // labels under a rule) over any `{series, buckets}` payload rather than a
-// trading curve. Colors follow the series, never the position.
+// fixed equity curve. Colors follow the series, never the position.
 
 const MONO_400 = require('../../../assets/fonts/HubMono-400.ttf');
 const AXIS_FONT_SIZE = 9;

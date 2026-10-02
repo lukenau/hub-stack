@@ -1,5 +1,5 @@
 // A five-dot LED scanner: one gold dot runs back and forth across a dim row.
-// Assistant's "working" glyph wherever a full tile would be too big.
+// Xavier's "working" glyph wherever a full tile would be too big.
 import { memo, useEffect, useMemo, useRef } from 'react';
 import { Animated, Easing, StyleSheet, View } from 'react-native';
 import { useTheme } from '../theme/useTheme';

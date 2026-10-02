@@ -1,41 +1,41 @@
-// Assistant's dot-matrix poses, each a small LED screen with its own dark
-// backdrop. Adding one: a prompt line in scripts/assistant/poses.prompts.mjs,
-// `node scripts/assistant/gen-pose.mjs <id>`, export, then one line here.
+// Xavier's dot-matrix poses, each a small LED screen with its own dark
+// backdrop. Adding one: a prompt line in scripts/xavier/poses.prompts.mjs,
+// `node scripts/xavier/gen-pose.mjs <id>`, export, then one line here.
 // JS-required images ship over the air.
 import type { ImageSourcePropType } from 'react-native';
 
 export const POSES = {
-  portrait: require('../../assets/assistant/portrait.jpg'),
-  bow: require('../../assets/assistant/bow.jpg'),
-  'tray-empty': require('../../assets/assistant/tray-empty.jpg'),
-  'tray-offer': require('../../assets/assistant/tray-offer.jpg'),
-  sniffing: require('../../assets/assistant/sniffing.jpg'),
-  ledger: require('../../assets/assistant/ledger.jpg'),
-  'ears-up': require('../../assets/assistant/ears-up.jpg'),
-  tilt: require('../../assets/assistant/tilt.jpg'),
-  oops: require('../../assets/assistant/oops.jpg'),
-  triumph: require('../../assets/assistant/triumph.jpg'),
-  asleep: require('../../assets/assistant/asleep.jpg'),
-  pyjamas: require('../../assets/assistant/pyjamas.jpg'),
-  party: require('../../assets/assistant/party.jpg'),
+  portrait: require('../../assets/xavier/portrait.jpg'),
+  bow: require('../../assets/xavier/bow.jpg'),
+  'tray-empty': require('../../assets/xavier/tray-empty.jpg'),
+  'tray-offer': require('../../assets/xavier/tray-offer.jpg'),
+  sniffing: require('../../assets/xavier/sniffing.jpg'),
+  ledger: require('../../assets/xavier/ledger.jpg'),
+  'ears-up': require('../../assets/xavier/ears-up.jpg'),
+  tilt: require('../../assets/xavier/tilt.jpg'),
+  oops: require('../../assets/xavier/oops.jpg'),
+  triumph: require('../../assets/xavier/triumph.jpg'),
+  asleep: require('../../assets/xavier/asleep.jpg'),
+  pyjamas: require('../../assets/xavier/pyjamas.jpg'),
+  party: require('../../assets/xavier/party.jpg'),
 } satisfies Record<string, ImageSourcePropType>;
 
 export type PoseId = keyof typeof POSES;
 
 export const POSE_LABELS: Record<PoseId, string> = {
-  portrait: 'Assistant',
-  bow: 'Assistant bowing',
-  'tray-empty': 'Assistant holding an empty silver tray',
-  'tray-offer': 'Assistant presenting a sealed letter on a tray',
-  sniffing: 'Assistant sniffing about',
-  ledger: 'Assistant reading his ledger',
-  'ears-up': 'Assistant, ears up',
-  tilt: 'Assistant tilting his head',
-  oops: 'Assistant catching a falling teacup',
-  triumph: 'Assistant ringing a service bell',
-  asleep: 'Assistant dozing',
-  pyjamas: 'Assistant in his pyjamas',
-  party: 'Assistant in a party hat',
+  portrait: 'Xavier',
+  bow: 'Xavier bowing',
+  'tray-empty': 'Xavier holding an empty silver tray',
+  'tray-offer': 'Xavier presenting a sealed letter on a tray',
+  sniffing: 'Xavier sniffing about',
+  ledger: 'Xavier reading his ledger',
+  'ears-up': 'Xavier, ears up',
+  tilt: 'Xavier tilting his head',
+  oops: 'Xavier catching a falling teacup',
+  triumph: 'Xavier ringing a service bell',
+  asleep: 'Xavier dozing',
+  pyjamas: 'Xavier in his pyjamas',
+  party: 'Xavier in a party hat',
 };
 
 /** The small round tile's crop: centre (0–1) and zoom, framed on his face AND

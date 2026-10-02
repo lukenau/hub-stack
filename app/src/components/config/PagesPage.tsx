@@ -1,5 +1,5 @@
 // 1:1 port of apps/hub/src/routes/config/PagesPage.tsx — the raw index of
-// everything Assistant has dropped under `sites/my-pages/<slug>/index.html`.
+// everything Xavier has dropped under `sites/my-pages/<slug>/index.html`.
 // Daily briefs also surface in the Feed; this page is the whole shelf.
 //
 // The PWA row is `<a target="_blank">`, which in a standalone PWA leaves the
@@ -68,7 +68,7 @@ export function PagesPage() {
       {pages.length === 0 ? (
         <ConfigCard style={styles.emptyCard}>
           <Text style={[styles.empty, { color: t('fg-3') }]}>
-            No hosted pages yet. Assistant drops an <Text style={styles.emptyMono}>index.html</Text> under{' '}
+            No hosted pages yet. Xavier drops an <Text style={styles.emptyMono}>index.html</Text> under{' '}
             <Text style={styles.emptyMono}>sites/my-pages/&lt;slug&gt;</Text> and it appears here.
           </Text>
         </ConfigCard>

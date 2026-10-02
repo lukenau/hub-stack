@@ -346,7 +346,7 @@ export function AdvisorPage() {
                   Advisor needs the direct Anthropic provider
                 </Text>
                 <Text style={[styles.blockedBody, { color: t('fg-2') }]}>
-                  Assistant currently routes via {providerLabel(provider)}. Switch model.provider first — presets are
+                  Xavier currently routes via {providerLabel(provider)}. Switch model.provider first — presets are
                   disabled until then.
                 </Text>
               </View>

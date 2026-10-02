@@ -1,4 +1,4 @@
-// The one import site for Assistant and the app's whimsy. See README.md.
+// The one import site for Xavier and the app's whimsy. See README.md.
 export { useWhimsy, useWhimsyStore, WHIMSY_KEY } from './level';
 export type { WhimsyLevel, Whimsy } from './level';
 export { haptic, hapticAllowed } from './haptics';
@@ -13,11 +13,11 @@ export { EGGS, useEgg } from './eggs';
 export type { EggId } from './eggs';
 export { useMoment, resolveMoment } from './useMoment';
 export type { ResolvedMoment } from './useMoment';
-export { AssistantPose, AssistantTile, ScanBand, POSE_SIZES } from './AssistantPose';
-export type { PoseSize, AssistantTileProps } from './AssistantPose';
-export { AssistantAvatar } from './AssistantAvatar';
-export type { AvatarState } from './AssistantAvatar';
+export { XavierPose, XavierTile, ScanBand, POSE_SIZES } from './XavierPose';
+export type { PoseSize, XavierTileProps } from './XavierPose';
+export { XavierAvatar } from './XavierAvatar';
+export type { AvatarState } from './XavierAvatar';
 export { DotScanner } from './DotScanner';
-export { AssistantMoment } from './AssistantMoment';
+export { XavierMoment } from './XavierMoment';
 export { TickRule, Monogram } from './ornament';
 export { WhimsyToggle } from './WhimsyToggle';

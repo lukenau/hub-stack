@@ -53,13 +53,6 @@ const SECTION_3_1_QUERY_NAMESPACES = [
   'openrouter-credits',
   'browser-sessions',
   'finance',
-  'trading',
-  'trading-perf',
-  'trading-explain',
-  'trading-events',
-  'trading-exposure',
-  'trading-log',
-  'trading-proposals',
   'murmur',
   'config-full',
   'advisor',
@@ -276,7 +269,7 @@ describe('offline persistence: AsyncStorage persister round-trip', () => {
     for (const ns of expectedOfflineNamespaces) {
       expect(shouldPersistQuery(asQuery(ns))).toBe(true);
     }
-    for (const ns of ['trading', 'finance', 'decisions', 'browser-sessions', 'config-full']) {
+    for (const ns of ['finance', 'decisions', 'browser-sessions', 'config-full']) {
       expect(shouldPersistQuery(asQuery(ns))).toBe(false);
     }
     // The exported set matches this independent list exactly — catches drift
@@ -296,7 +289,7 @@ describe('offline persistence: AsyncStorage persister round-trip', () => {
       // prefetchQuery (not setQueryData) so the query really goes through
       // 'success' status — the real condition defaultShouldDehydrateQuery checks.
       await source.prefetchQuery({ queryKey: ['health'], queryFn: () => Promise.resolve({ ok: true, updated_at: 't0' }) });
-      await source.prefetchQuery({ queryKey: ['trading'], queryFn: () => Promise.resolve({ status: 'live' }) }); // not in the offline whitelist
+      await source.prefetchQuery({ queryKey: ['finance'], queryFn: () => Promise.resolve({ balance: 0 }) }); // not in the offline whitelist
 
       await persistQueryClientSave({
         queryClient: source,
@@ -311,7 +304,7 @@ describe('offline persistence: AsyncStorage persister round-trip', () => {
       });
 
       expect(target.getQueryData(['health'])).toEqual({ ok: true, updated_at: 't0' });
-      expect(target.getQueryData(['trading'])).toBeUndefined();
+      expect(target.getQueryData(['finance'])).toBeUndefined();
     } finally {
       source.clear();
       target.clear();
@@ -331,7 +324,7 @@ describe('gcTime scoped to the 11 persisted namespaces on the real queryClient s
   // hit once with the silently-no-op'd staleTimeMs/refetchIntervalMs field
   // names — a green test that doesn't touch the production object at all.
 
-  const UNPERSISTED_NAMESPACES = ['trading', 'finance', 'decisions', 'browser-sessions', 'config-full', 'fs-browse', 'fs-read'];
+  const UNPERSISTED_NAMESPACES = ['finance', 'decisions', 'browser-sessions', 'config-full', 'fs-browse', 'fs-read'];
   const REACT_QUERY_BUILTIN_GC_TIME_MS = 5 * 60 * 1000; // removable.ts's own fallback when nothing overrides it
 
   test('setQueryDefaults registers gcTime=24h for exactly the 11 persisted namespaces, and nothing else, on queryClient', () => {
@@ -346,17 +339,17 @@ describe('gcTime scoped to the 11 persisted namespaces on the real queryClient s
   test('a real query built on queryClient for a persisted namespace carries gcTime=24h; an unpersisted one keeps react-query\'s 5-minute built-in default', async () => {
     try {
       await queryClient.prefetchQuery({ queryKey: ['health'], queryFn: () => Promise.resolve({ ok: true }) });
-      await queryClient.prefetchQuery({ queryKey: ['trading'], queryFn: () => Promise.resolve({ status: 'live' }) });
+      await queryClient.prefetchQuery({ queryKey: ['finance'], queryFn: () => Promise.resolve({ balance: 0 }) });
 
       const health = queryClient.getQueryCache().find({ queryKey: ['health'] });
-      const trading = queryClient.getQueryCache().find({ queryKey: ['trading'] });
+      const finance = queryClient.getQueryCache().find({ queryKey: ['finance'] });
       // `query.gcTime` (Removable's resolved field, folded in by
       // updateGcTime during setOptions) is the effective value — NOT
       // `query.options.gcTime`, which stays `undefined` whenever nothing
       // in the defaults chain set it explicitly (react-query's 5-minute
       // fallback lives only on the resolved field, never copied back).
       expect(health!.gcTime).toBe(OFFLINE_CACHE_MAX_AGE_MS);
-      expect(trading!.gcTime).toBe(REACT_QUERY_BUILTIN_GC_TIME_MS);
+      expect(finance!.gcTime).toBe(REACT_QUERY_BUILTIN_GC_TIME_MS);
     } finally {
       queryClient.clear();
     }

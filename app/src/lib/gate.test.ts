@@ -288,7 +288,7 @@ describe('api.applyWrite with the real signer registered', () => {
     mockFetchOnce(jsonResponse(challengeResponse(ALPHABET_CHALLENGE.b64u)));
     mockFetchOnce(jsonResponse({ status: 'applied', applied_at: 'now' }));
 
-    await api.applyWrite({ action: 'trading.resume' });
+    await api.applyWrite({ action: 'murmur.drain_now' });
 
     expect((signWithOptions as jest.Mock).mock.calls[0][0].data).toBe(ALPHABET_CHALLENGE.standard);
     const applied = bodyOf((global.fetch as jest.Mock).mock.calls[1]);
@@ -317,7 +317,7 @@ describe('api.applyWrite with the real signer registered', () => {
     (signWithOptions as jest.Mock).mockResolvedValue({ success: true, signature: 's' });
     mockFetchOnce(jsonResponse(challengeResponse(VECTOR.challengeB64)));
     mockFetchOnce(jsonResponse({ detail: { code: 'no_devicekey', detail: 'No device key paired.' } }, { status: 412 }));
-    await expect(api.applyWrite({ action: 'trading.resume' })).rejects.toMatchObject({ code: 'no_passkey' });
+    await expect(api.applyWrite({ action: 'murmur.drain_now' })).rejects.toMatchObject({ code: 'no_passkey' });
   });
 });
 
@@ -494,7 +494,7 @@ describe('enrolment', () => {
     (signWithOptions as jest.Mock).mockResolvedValue({ success: true, signature: 'SIGDER==' });
     mockFetchOnce(jsonResponse(challengeResponse(VECTOR.challengeB64)));
     mockFetchOnce(jsonResponse({ status: 'applied', applied_at: 'now' }));
-    await api.applyWrite({ action: 'trading.resume' });
+    await api.applyWrite({ action: 'murmur.drain_now' });
 
     const applied = bodyOf((global.fetch as jest.Mock).mock.calls[2]);
     expect(applied.devicekey_assertion).toEqual({
@@ -611,7 +611,7 @@ describe('the registration seam is not a hot-swap', () => {
       .fn()
       .mockResolvedValueOnce(jsonResponse(challengeResponse(VECTOR.challengeB64)))
       .mockResolvedValueOnce(jsonResponse({ status: 'applied', applied_at: 'now' }));
-    await fresh.api.applyWrite({ action: 'trading.resume' });
+    await fresh.api.applyWrite({ action: 'murmur.drain_now' });
     const applied = bodyOf((global.fetch as jest.Mock).mock.calls[1]);
     expect((applied.devicekey_assertion as { key_id: string }).key_id).toBe('first');
   });

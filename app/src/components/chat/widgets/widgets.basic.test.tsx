@@ -72,7 +72,7 @@ test('the card renders its title, subtitle, body and every row', () => {
   const widget: CardWidgetT = {
     kind: 'card',
     title: 'Overnight run',
-    subtitle: 'spindle-trading',
+    subtitle: 'assistant-agent',
     body: 'Two gates opened, one closed flat.',
     rows: [
       { label: 'Filled', value: '3', tone: 'up' },
@@ -82,7 +82,7 @@ test('the card renders its title, subtitle, body and every row', () => {
   };
   const rendered = texts(render(<CardWidget widget={widget} />));
   expect(rendered).toContain('Overnight run');
-  expect(rendered).toContain('spindle-trading');
+  expect(rendered).toContain('assistant-agent');
   expect(rendered).toContain('Two gates opened, one closed flat.');
   expect(rendered).toContain('Filled');
   expect(rendered).toContain('3');

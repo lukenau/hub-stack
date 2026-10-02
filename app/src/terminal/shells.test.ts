@@ -58,9 +58,9 @@ describe('shellMeta', () => {
 describe('pastSessionMeta', () => {
   test('is the age, then the cwd and the running flag when present', () => {
     expect(pastSessionMeta(past(), NOW)).toBe('10m ago');
-    expect(pastSessionMeta(past({ cwd: '/home/agent/ai' }), NOW)).toBe('10m ago · /home/agent/ai');
-    expect(pastSessionMeta(past({ cwd: '/home/agent/ai', live: true }), NOW)).toBe(
-      '10m ago · /home/agent/ai · running',
+    expect(pastSessionMeta(past({ cwd: '/home/user/projects' }), NOW)).toBe('10m ago · /home/user/projects');
+    expect(pastSessionMeta(past({ cwd: '/home/user/projects', live: true }), NOW)).toBe(
+      '10m ago · /home/user/projects · running',
     );
   });
 });

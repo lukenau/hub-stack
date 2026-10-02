@@ -23,7 +23,7 @@ export interface ChatLockGateProps {
   unlockLabel?: string;
 }
 
-const DEFAULT_COPY = 'Chat with Assistant. Unlock with Face ID — the session stays live for an hour.';
+const DEFAULT_COPY = 'Chat with Xavier. Unlock with Face ID — the session stays live for an hour.';
 
 export function ChatLockGate({ header, children, copy = DEFAULT_COPY, unlockLabel = 'Unlock chat' }: ChatLockGateProps) {
   const unlocked = useChatLock((s) => s.unlocked);

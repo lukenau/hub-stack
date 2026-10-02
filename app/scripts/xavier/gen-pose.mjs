@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// Usage: node scripts/assistant/gen-pose.mjs <id...|--all> [--n 3] [--model google/gemini-3-pro-image]
+// Usage: node scripts/xavier/gen-pose.mjs <id...|--all> [--n 3] [--model google/gemini-3-pro-image]
 //        [--start 1] [--extra "additional direction"] [--ref character.png] [--style style.png]
-// Needs OPENROUTER_API_KEY in env. Writes scripts/assistant/out/<id>/cand-<n>.png and appends
-// per-call cost to scripts/assistant/out/costs.jsonl.
+// Needs OPENROUTER_API_KEY in env. Writes scripts/xavier/out/<id>/cand-<n>.png and appends
+// per-call cost to scripts/xavier/out/costs.jsonl.
 import { readFile, writeFile, mkdir, appendFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';

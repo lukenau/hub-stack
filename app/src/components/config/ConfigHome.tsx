@@ -120,14 +120,20 @@ export function ConfigHome() {
         </>
       }
     >
-      {/* Everything below is Assistant's server config. Appearance is a viewer
+      {/* Everything below is Xavier's server config. Appearance is a viewer
           preference for this device only, so it gets its own heading rather
           than being filed among gateway keys. */}
       <SectionHead label="This device" />
       <View style={styles.themeSlot}>
         <ThemeToggle />
       </View>
-      <SectionHead label="Assistant" />
+      <PageRow
+        label="Server address"
+        sub="which hub this build talks to"
+        href="/config/server"
+        isLast={false}
+      />
+      <SectionHead label="Xavier" />
       <View style={styles.themeSlot}>
         <WhimsyToggle />
       </View>

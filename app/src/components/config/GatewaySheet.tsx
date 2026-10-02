@@ -1,4 +1,4 @@
-// ConfigHome.tsx:30-77,187-218 — the "Restart / Drain the Hermes gateway?"
+// ConfigHome.tsx:30-77,187-218 — the "Restart / Drain the gateway?"
 // confirm sheet, as its own route (natively a sheet IS a route, task-8
 // report §Sheets).
 //
@@ -17,8 +17,8 @@ export type GatewayAction = 'restart' | 'drain';
 
 export const GATEWAY: Record<GatewayAction, { action: 'gateway.restart' | 'gateway.drain'; title: string; confirm: string }> =
   {
-    restart: { action: 'gateway.restart', title: 'Restart the Hermes gateway?', confirm: 'Restart · Face ID' },
-    drain: { action: 'gateway.drain', title: 'Drain the Hermes gateway?', confirm: 'Drain · Face ID' },
+    restart: { action: 'gateway.restart', title: 'Restart the gateway?', confirm: 'Restart · Face ID' },
+    drain: { action: 'gateway.drain', title: 'Drain the gateway?', confirm: 'Drain · Face ID' },
   };
 
 /** ConfigHome.tsx:68-76 — the applied state lingers 1200 ms, then the sheet closes. */

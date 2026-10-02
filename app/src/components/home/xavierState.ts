@@ -1,4 +1,4 @@
-// AssistantCard's derivations (AssistantCard.tsx:9-54,114-141). Pure — no
+// XavierCard's derivations (XavierCard.tsx:9-54,114-141). Pure — no
 // react-native import — because the card itself draws a Skia ring and a test
 // that imported it would drag the native canvas in.
 import type { AgentSession, CronRun, PairingReport, Vitals } from '../../lib/types';
@@ -7,7 +7,7 @@ import { relTime } from '../../shared/time';
 
 const FAILED = /(fail|error)/i;
 
-/** AssistantCard.tsx:9-12 — a DIFFERENT shortModel from seriesColors.ts's. */
+/** XavierCard.tsx:9-12 — a DIFFERENT shortModel from seriesColors.ts's. */
 export function shortModel(model: string | null): string {
   if (!model) return '';
   return model.replace('claude-', '').replace('openai/', '');
@@ -31,10 +31,10 @@ export function discordDown(vitals: Vitals | undefined): boolean {
   return vitals != null && vitals.agent.discord_state !== 'connected';
 }
 
-export interface AssistantState {
+export interface XavierState {
   status: 'up' | 'down' | 'unknown';
   busy: boolean;
-  /** Gateway down = red (Assistant is off). Discord down = amber (runs, can't hear the user). */
+  /** Gateway down = red (Xavier is off). Discord down = amber (runs, can't hear the user). */
   ring: TokenName;
   presence: string;
   name: string;
@@ -45,13 +45,13 @@ export interface AssistantState {
   needsYouDetail: string;
 }
 
-export function assistantState(
+export function xavierState(
   vitals: Vitals | undefined,
   sessions: AgentSession[] | undefined,
   pairing: PairingReport | undefined,
   runs: CronRun[] | undefined,
   now = Date.now(),
-): AssistantState {
+): XavierState {
   const status = vitals?.agent.status ?? 'unknown';
   const busy = vitals?.agent.busy ?? false;
   const discord = discordDown(vitals);
@@ -91,7 +91,7 @@ export function assistantState(
     busy,
     ring,
     presence,
-    name: vitals?.agent.name ?? 'Assistant',
+    name: vitals?.agent.name ?? 'Xavier',
     todayLine,
     lastRun,
     lastRunFailed: lastRun ? isFailedRun(lastRun) : false,
@@ -105,7 +105,7 @@ export function assistantState(
   };
 }
 
-// --- liveness ring geometry (AssistantCard.tsx:7,68-79 / theme.md §5.3) -------
+// --- liveness ring geometry (XavierCard.tsx:7,68-79 / theme.md §5.3) -------
 
 /** 46px avatar, ring span `inset-[-4px]`, annulus 2.5px→2px in the CSS mask. */
 export const AVATAR_SIZE = 46;

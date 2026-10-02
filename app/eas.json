@@ -17,26 +17,13 @@
     }
   },
   "submit": {
-    "development": {
-      "ios": {
-        "ascApiKeyPath": "/opt/murmur/asc/AuthKey.p8",
-        "ascApiKeyId": "EXAMPLKEY1",
-        "ascApiKeyIssuerId": "7359bd9e-ee6d-4455-aad9-93991edb39b1",
-        "groups": [
-          "internal"
-        ],
-        "ascAppId": "6811085935"
-      }
-    },
     "production": {
       "ios": {
-        "ascApiKeyPath": "/opt/murmur/asc/AuthKey.p8",
-        "ascApiKeyId": "EXAMPLKEY1",
-        "ascApiKeyIssuerId": "7359bd9e-ee6d-4455-aad9-93991edb39b1",
-        "groups": [
-          "internal"
-        ],
-        "ascAppId": "6811085935"
+        "ascApiKeyPath": "./secrets/AuthKey.p8",
+        "ascApiKeyId": "REPLACE_WITH_KEY_ID",
+        "ascApiKeyIssuerId": "REPLACE_WITH_ISSUER_ID",
+        "groups": ["beta"],
+        "ascAppId": "REPLACE_WITH_APP_ID"
       }
     }
   }

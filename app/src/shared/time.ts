@@ -5,8 +5,8 @@
 // src/theme's resolveToken(). Change the PWA first, then re-copy.
 // --- end copy header; everything below is verbatim ---
 // One relative-time formatter for the whole app. Nine near-identical copies of
-// this lived in Feed, Ops, Home, TradingCard, TradingStatusStrip,
-// TradingActivity, BrowserCard, AssistantCard, SourcesFooter and DecisionCards.
+// this lived in Feed, Ops, Home, BrowserCard, XavierCard, SourcesFooter and
+// DecisionCards.
 //
 // the user, 2026-08-08: "instead of x days ago, can you do dates and x days ago".
 // Once something is a day or more old, "3d ago" no longer tells you WHICH day,

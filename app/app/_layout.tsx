@@ -1,6 +1,7 @@
 // Root layout: providers + the native tab bar.
 //
-// Tab set is Home / Trading / Ops / Chat / Automations — five, because UIKit
+// Tab set is Home / Ops / Chat / Automations — four, comfortably under the
+// six where UIKit
 // collapses six or more into four plus a "More" list, and nobody has
 // documented how that list behaves under iOS 26 glass. Feed and Money are not
 // tabs: they are full-screen pushes on the Home stack (and Feed also from a
@@ -36,6 +37,7 @@ import { selectNeedsYouCount, useChatStore } from '../src/chat/store';
 import { useAutomationsBadge } from '../src/automations/badge';
 import { TabErrorBoundary } from '../src/components/shell/ErrorBoundary';
 import { installGateSigner } from '../src/lib/gate';
+import { loadStoredApiBase } from '../src/lib/api';
 import { watchPresence } from '../src/chat/presence';
 import { wireFocusManager } from '../src/lib/query';
 import { onNotificationTap } from '../src/lib/push';
@@ -50,6 +52,11 @@ export default function RootLayout() {
   useEffect(() => {
     hydrate();
     void useWhimsyStore.getState().hydrate();
+    // The user-set server override (Config › Server address) has to be in
+    // effect before the first screen query fires. Fire-and-forget on purpose:
+    // api.ts resolves every call path at call time, so whichever calls race
+    // ahead of this simply use the build-time base until it lands.
+    void loadStoredApiBase();
   }, [hydrate]);
 
   // Arms the write gate. api.ts owns the challenge -> sign -> apply sequence for
@@ -158,12 +165,6 @@ function ThemedShell() {
           {automationsNeedYou > 0 ? (
             <NativeTabs.Trigger.Badge>{String(automationsNeedYou)}</NativeTabs.Trigger.Badge>
           ) : null}
-        </NativeTabs.Trigger>
-        {/* Last: the one tab the user opens least (order asked for 2026-10-01). */}
-        <NativeTabs.Trigger name="trading">
-          {/* No .fill variant exists for this symbol. */}
-          <NativeTabs.Trigger.Icon sf="chart.line.uptrend.xyaxis" />
-          <NativeTabs.Trigger.Label>Trading</NativeTabs.Trigger.Label>
         </NativeTabs.Trigger>
       </NativeTabs>
     </ThemeProvider>

@@ -1,6 +1,6 @@
 // A delegated task, drawn as its own card rather than a `delegate_task` tool
 // row (audit gap A14). The distinction matters in a transcript: a tool call is
-// something Assistant did, a subagent is someone Assistant asked — it has a role, a
+// something Xavier did, a subagent is someone Xavier asked — it has a role, a
 // goal, a lifetime and a report back, and reading it as one grey row among
 // twelve loses all of that.
 //

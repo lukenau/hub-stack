@@ -20,11 +20,11 @@ export interface ConfigHelp {
 
 export const CONFIG_HELP: Record<string, ConfigHelp> = {
   'model.default': {
-    desc: "The model Assistant runs everything on. Provider-qualified when routing via OpenRouter (anthropic/claude-opus-4.8).",
+    desc: "The model Xavier runs everything on. Provider-qualified when routing via OpenRouter (anthropic/claude-opus-4.8).",
     tier: 'caution',
   },
   'model.provider': {
-    desc: "Which provider plugin carries chat traffic — must match model.default's id format. A typo here takes Assistant offline.",
+    desc: "Which provider plugin carries chat traffic — must match model.default's id format. A typo here takes Xavier offline.",
     tier: 'danger',
   },
   'agent.max_turns': {
@@ -54,10 +54,10 @@ export const CONFIG_HELP: Record<string, ConfigHelp> = {
     domain: ['5m', '1h'],
   },
   'memory.memory_enabled': {
-    desc: "Assistant's persistent notes, injected every session.",
+    desc: "Xavier's persistent notes, injected every session.",
   },
   'memory.write_approval': {
-    desc: 'Require your OK before Assistant saves a memory. Off = silent saves.',
+    desc: 'Require your OK before Xavier saves a memory. Off = silent saves.',
     tier: 'caution',
   },
   'memory.flush_min_turns': {
@@ -75,7 +75,7 @@ export const CONFIG_HELP: Record<string, ConfigHelp> = {
     tier: 'danger',
   },
   'terminal.backend': {
-    desc: "Where Assistant's shell runs: local = inside the gateway container. Governs blast radius of agent commands.",
+    desc: "Where Xavier's shell runs: local = inside the gateway container. Governs blast radius of agent commands.",
     tier: 'danger',
   },
   'terminal.timeout': {
@@ -91,7 +91,7 @@ export const CONFIG_HELP: Record<string, ConfigHelp> = {
     unit: 'min',
   },
   TELEGRAM_HOME_CHANNEL: {
-    desc: 'Chat ID Assistant calls home for proactive messages — wrong ID sends them elsewhere.',
+    desc: 'Chat ID Xavier calls home for proactive messages — wrong ID sends them elsewhere.',
     tier: 'danger',
   },
   'tool_loop_guardrails.hard_stop_enabled': {

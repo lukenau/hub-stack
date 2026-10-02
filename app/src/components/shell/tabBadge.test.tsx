@@ -158,7 +158,7 @@ test('only Chat and Automations carry one', () => {
   // One badge on the whole bar: Chat's. Automations has nothing waiting, so
   // it carries no badge rather than an empty one.
   expect(badges(tree)).toHaveLength(1);
-  for (const tab of ['(home)', 'trading', 'ops']) expect(badgeOf(tree, tab)).toBe('');
+  for (const tab of ['(home)', 'ops']) expect(badgeOf(tree, tab)).toBe('');
 });
 
 test('the badge is a View-free string — an empty one, not a zero', () => {

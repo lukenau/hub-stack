@@ -1,5 +1,5 @@
 // Two composite tokens are handed to React Native's CSS-string style parsers
-// verbatim rather than re-authored as structured values: AssistantCard passes
+// verbatim rather than re-authored as structured values: XavierCard passes
 // `--hero-wash` to `experimental_backgroundImage`, Toast passes `--shadow-menu`
 // to `boxShadow`. RN renders nothing at all when a string fails to parse, so a
 // token rewritten into a syntax RN does not accept would cost the hero card's
@@ -24,8 +24,8 @@ import { resolveToken, type Scheme } from './useTheme';
 const SCHEMES: Scheme[] = ['dark', 'light'];
 
 describe.each(SCHEMES)('%s scheme', (scheme) => {
-  test('--hero-wash parses into the sheen AssistantCard paints', () => {
-    // AssistantCard.tsx:67 — a single linear-gradient. Zero layers would mean the
+  test('--hero-wash parses into the sheen XavierCard paints', () => {
+    // XavierCard.tsx:67 — a single linear-gradient. Zero layers would mean the
     // hero card silently lost its sheen with no other signal.
     expect(processBackgroundImage(resolveToken(scheme, 'hero-wash'))).toHaveLength(1);
   });

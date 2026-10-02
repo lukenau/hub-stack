@@ -93,22 +93,27 @@ Tailscale, Headscale, WireGuard, Cloudflare Tunnel, or LAN-only — see
 The app, dark theme, sample data throughout:
 
 ![Home](assets/img/app-home.jpg)
+![Chat — thread list](assets/img/app-chat.jpg)
 ![Chat — the empty thread](assets/img/app-chat-thread.jpg)
-![Chat](assets/img/app-chat.jpg)
 
-![Calendar](assets/img/app-calendar.jpg)
-![Calendar, agenda](assets/img/app-agenda.jpg)
+![Calendar — day](assets/img/app-calendar.jpg)
+![Calendar — week](assets/img/app-calweek.jpg)
+![Calendar — agenda](assets/img/app-agenda.jpg)
 
 ![Weather](assets/img/app-weather.jpg)
 ![Rain forecast](assets/img/app-precip.jpg)
 
-![Brief](assets/img/app-brief.jpg)
-![Feed](assets/img/app-feed.jpg)
-
 ![Cost](assets/img/app-cost.jpg)
 
 ![Ops](assets/img/app-ops.jpg)
-![Config](assets/img/app-config.jpg)
+![Automations](assets/img/app-automations.jpg)
+
+![Widgets — card, metric and chart](assets/img/app-widgets-card.jpg)
+![Widgets — table and charts](assets/img/app-widgets-table.jpg)
+![Widgets — progress, link and buttons](assets/img/app-widgets-misc.jpg)
+![Widgets — poll and checklist](assets/img/app-widgets-poll.jpg)
+![Widgets — timeline](assets/img/app-widgets-timeline.jpg)
+![Widgets — form](assets/img/app-widgets-form.jpg)
 
 ```
 hub-stack/

@@ -45,9 +45,8 @@ independent of it.
 - **The recorder** — any BLE wearable that records to on-board flash. The
   author uses a BLE pendant.
 - **The bridge daemon** — the piece that drains the recorder and ships audio
-  onward. It is published separately from hub-stack, the same way the agent
-  gateway and the hub bridge sidecar are; a link to it goes here once it
-  lands.
+  onward. It is in this repo at
+  [`services/murmur-bridge/`](../services/murmur-bridge/) (see its README).
 - **A transcription backend** — self-hosted, plus a model key for the
   extraction step if you want memory extraction.
 - **Hub configuration** — the environment variables in

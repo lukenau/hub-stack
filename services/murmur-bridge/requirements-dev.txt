@@ -1,0 +1,12 @@
+# Test-only dependencies for the Murmur bridge.
+#
+# The runtime requirements are in requirements.txt. These are needed to run the
+# suite, and are kept separate so a deployment does not install them.
+#
+#   python -m pip install -r requirements.txt -r requirements-dev.txt
+#   python -m pytest murmur/tests
+
+-r requirements.txt
+
+pytest
+responses

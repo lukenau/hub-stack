@@ -127,6 +127,7 @@ from the inference key above).
 
 Voice capture status and control on the Murmur page: pendant, bridge, and
 pipeline state, plus gated actions (drain, pause) that the bridge picks up.
+What the pipeline is, stage by stage: [MURMUR.md](MURMUR.md).
 
 ```ini
 MURMUR_BRIDGE_TOKEN=

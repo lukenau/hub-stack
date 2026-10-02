@@ -24,7 +24,8 @@ the end.
   (`server/chat/approval.py`, `chatApprovalApply`).
 - **Attachments and voice capture plumbing.** Photos upload as media ids before the
   message that carries them (`POST /chat/threads/{id}/media`); a Murmur voice-capture
-  bridge can feed its transcripts into the hub when you run one (external service).
+  bridge can feed its transcripts into the hub when you run one (external service,
+  [MURMUR.md](MURMUR.md)).
 
 ## Rich custom widgets in chat
 
@@ -135,6 +136,24 @@ disappears into a hole.
 - **Browse and read files on your server.** The Files surface lists multiple
   configured roots and lets you browse and read within them
   (`GET /api/files/roots|browse|read`, traversal-guarded in `server/files.py`).
+
+## Always-on voice capture, optionally (Murmur)
+
+- **Your day becomes a searchable transcript, on your own machine.** A wearable
+  audio recorder buffers speech to its own flash, a daemon on your network
+  drains it over Bluetooth, and a transcription backend you run produces
+  speaker-tagged transcript day files and a memory index the agent can read
+  (`docs/MURMUR.md`).
+- **Custody is the feature.** The audio leaves hardware you own and lands on a
+  machine you run; the only traffic that leaves your boundary is derived text
+  (model calls for extraction, and a hosted memory provider if you use one).
+- **Strictly optional.** Without a configured capture bridge the Murmur page
+  does not appear, and nothing else in the hub changes. Most self-hosters will
+  not have the hardware, and that is the supported default.
+- **Status and control in the app.** One capture-chain strip (pendant, bridge,
+  pipeline, memory) with a status dot per stage, plus drain/pause/resume
+  actions through the same challenge, sign, apply write gate as every other
+  write in the hub (`app/app/ops/murmur.tsx`, `server/app.py` murmur routes).
 
 ## Push notifications
 

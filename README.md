@@ -85,6 +85,23 @@ Tailscale, Headscale, WireGuard, Cloudflare Tunnel, or LAN-only — see
 
 ---
 
+## Optional headline capability: always-on voice capture (Murmur)
+
+hub-stack's most unusual capability is **Murmur**: an optional always-on memory
+pipeline. A small wearable audio recorder buffers your day onto its own flash
+storage, a daemon on your network drains it, and a transcription backend you
+run turns it into speaker-tagged transcripts and a memory index your assistant
+can search. The point is custody — the audio leaves hardware you own and goes
+to a machine you run, with no consumer cloud anywhere in the path.
+
+It is also **strictly optional**, and stated plainly: most self-hosters have no
+wearable and will not get one. Without a configured capture bridge the Murmur
+page does not appear, and the hub you get is exactly the one documented
+everywhere else. Full pipeline, hardware, and honest limits:
+**[docs/MURMUR.md](docs/MURMUR.md)**.
+
+---
+
 ## What it looks like
 
 <p align="center">
@@ -193,7 +210,8 @@ and what happens when a service is unset:
 This repo is the **hub server + app**. It includes the code that talks to
 several optional services but bundles **none of them** — the agent gateway
 (Hermes), the memory provider, Murmur, iMessage, and OpenRouter all live
-outside this repo. The hub runs standalone; panels whose service is unset
+outside this repo (Murmur's pipeline is documented separately:
+[docs/MURMUR.md](docs/MURMUR.md)). The hub runs standalone; panels whose service is unset
 degrade instead of crashing. Full breakdown: **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)**; per-service catalogue with env vars and `.env` blocks: **[docs/SERVICES.md](docs/SERVICES.md)**; agent-side tool connectors: **[docs/CONNECTORS.md](docs/CONNECTORS.md)**.
 
 ---

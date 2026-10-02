@@ -91,8 +91,9 @@ for key, info in get_skill_commands().items():
     )
 
 import yaml  # noqa: E402
+from hermes_cli.config import get_config_path  # noqa: E402
 
-with open("config.yaml") as f:
+with open(get_config_path()) as f:
     cfg = yaml.safe_load(f)
 
 alias_names: set[str] = set()

@@ -6,7 +6,7 @@ describe('toolSummary — the collapsed one-liner', () => {
     expect(toolSummary({ command: 'uname -r' })).toBe('uname -r');
   });
   it('falls back through the other primary arguments', () => {
-    expect(toolSummary('{"path": "/srv/hub-data/x.json"}')).toBe('/srv/hub-data/x.json');
+    expect(toolSummary('{"path": "/tmp/x.json"}')).toBe('/tmp/x.json');
     expect(toolSummary('{"query": "alpaca rename"}')).toBe('alpaca rename');
     expect(toolSummary('{"whatever": "still shown"}')).toBe('still shown');
   });

@@ -468,7 +468,7 @@ def test_a_runs_attachment_is_kept_beside_its_text(unlocked):
     run_id = f"{OPS}:2026-09-28_21-00-20"
     for parts in (
         [{"type": "text", "text": "\u26A0\uFE0F ops-watch:\n\u2022 backup stale"}],
-        [{"type": "file", "name": "report.csv", "path": "/srv/hub-data/x.csv"}, {"type": "text", "text": "Saved on the gateway"}],
+        [{"type": "file", "name": "report.csv", "path": "/tmp/x.csv"}, {"type": "text", "text": "Saved on the gateway"}],
     ):
         r = client.post("/api/platform/hub/deliver", headers=KEY,
                         json={"thread_id": "ops", "job_id": OPS, "job_run_id": run_id, "parts": parts})

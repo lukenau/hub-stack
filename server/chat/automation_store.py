@@ -24,6 +24,12 @@ from chat.store import LEGACY_DELIVERY_KINDS, ChatStore
 
 HUB_TZ = ZoneInfo(os.environ.get("HUB_TZ", "America/New_York"))
 
+# Base of the scheduler's run-file archive, used by the follow-up note that points at
+# the full run file. The gateway's data directory differs per deployment, so this is
+# overridable; the default is the archive's location relative to the gateway data dir
+# (the same `cron/output/<job_id>/` layout this module keys runs on).
+CRON_OUTPUT_DIR = os.environ.get("HERMES_CRON_OUTPUT_DIR", "cron/output")
+
 UNATTRIBUTED_JOB_ID = "unattributed"
 SKILLS_CURATOR_JOB_ID = "skills-curator"
 MAX_OUTPUT_CHARS = 16_000
@@ -226,7 +232,7 @@ def context_note(job: dict[str, Any], run: dict[str, Any]) -> str:
         "This conversation is the user's follow-up to the output of a scheduled job. "
         f"Job: {job['name']} (id {job['job_id']}, schedule {job.get('schedule') or 'unknown'}, "
         f"{job.get('mode') or 'agent'}). Run: {when}, status {run['status']}. "
-        f"The full run file, while the scheduler still keeps it: cron/output/{job_id}/{stem}.md\n"
+        f"The full run file, while the scheduler still keeps it: {CRON_OUTPUT_DIR}/{job_id}/{stem}.md\n"
         f"What that run reported:\n{output}"
     )
 

@@ -26,8 +26,10 @@ This file covers three groups:
 ### xterm.js (MIT)
 
 `app/src/terminal/xtermBundle.gen.ts` embeds a generated bundle of
-**@xterm/xterm** and **@xterm/addon-fit** (xtermjs/xterm.js), plus the xterm
-stylesheet.
+**@xterm/xterm** (`^6.0.0`) and **@xterm/addon-fit** (`^0.11.0`)
+(xtermjs/xterm.js), plus the xterm stylesheet. Those are the ranges the bundle
+was vendored from; the generated constants record the exact installed version,
+and a test in `app/src/terminal` pins the two together.
 
 ```
 Copyright (c) 2017-2019 The xterm.js authors

@@ -15,6 +15,19 @@ By **Luke Nau** — [GitHub](https://github.com/lukenau) · [LinkedIn](https://w
 The hub's agent is **Xavier**: the assistant the app is built around, and the
 name on the app's home screen.
 
+<p align="center">
+  <img src="app/assets/xavier/portrait.jpg" width="118" alt="Xavier">
+  <img src="app/assets/xavier/sniffing.jpg" width="118" alt="Xavier, sniffing">
+  <img src="app/assets/xavier/ledger.jpg" width="118" alt="Xavier at the ledger">
+  <img src="app/assets/xavier/ears-up.jpg" width="118" alt="Xavier, ears up">
+  <img src="app/assets/xavier/tray-offer.jpg" width="118" alt="Xavier offering a tray">
+  <img src="app/assets/xavier/triumph.jpg" width="118" alt="Xavier, triumphant">
+</p>
+
+Xavier has moods, and the app shows them: he sleeps when nothing is happening,
+turns up when a job lands, and there's a pose for when something breaks. The
+art is the same set the app ships with, not a README-only illustration.
+
 **Bring your own model.** hub-stack talks to [OpenRouter](https://openrouter.ai),
 so you point it at one key and pick whichever frontier model you want — Claude,
 GPT, Gemini, Llama, whatever fits the task — with no per-provider wiring. Your
@@ -78,6 +91,26 @@ Tailscale, Headscale, WireGuard, Cloudflare Tunnel, or LAN-only — see
 
 ## What's in the box
 
+## What it looks like
+
+Real screenshots of the app (rendered from the app's own web target at iPhone
+dimensions — 1170x2532), dark theme:
+
+Home — the agent card with Xavier's portrait, today's brief, calendar, money:
+
+![Home](assets/img/app-home.png)
+
+Today's brief, the calendar, and the activity feed:
+
+![Brief](assets/img/app-brief.png)
+![Calendar](assets/img/app-calendar.png)
+![Feed](assets/img/app-feed.png)
+
+Ops and Config:
+
+![Ops](assets/img/app-ops.png)
+![Config](assets/img/app-config.png)
+
 ```
 hub-stack/
 ├── install.sh              one-command bootstrap
@@ -88,6 +121,35 @@ hub-stack/
 ├── docs/                   setup, per-host installs, connect-the-app, troubleshooting
 └── assets/img/             diagrams and install screenshots
 ```
+
+---
+
+## What actually does the work
+
+The hub is the **server and the app**. The intelligence behind it is an agent
+runtime that lives outside this repo, and it's worth being explicit about which
+piece does what, because most of the value is not in this codebase.
+
+- **[Hermes Agent](https://hermes-agent.nousresearch.com/docs)** (Nous Research)
+  — the agent runtime the hub talks to. It does the model calls, the tool use,
+  the scheduled jobs and the memory; hub-stack is the server and the app in
+  front of it. Point the hub at a Hermes instance and you get an assistant;
+  without one, the hub is a dashboard and a chat shell. This is the piece that
+  makes the rest useful.
+- **[OpenRouter](https://openrouter.ai)** — one key for whichever model you want,
+  instead of one integration per provider.
+- **[Supermemory](https://supermemory.ai)** — optional long-term memory, so the
+  agent remembers across sessions.
+- **[Tailscale](https://tailscale.com)** — the private mesh that lets the app
+  reach a server you never expose to the internet.
+- **[Expo](https://expo.dev)** and **[React Native](https://reactnative.dev)** —
+  the app, built and shipped with EAS.
+- **[FastAPI](https://fastapi.tiangolo.com)** and **[Docker](https://www.docker.com)**
+  — the server, and how you run it.
+
+None of these are bundled with hub-stack. What is included, what is optional,
+and what happens when a service is unset:
+**[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)**.
 
 ---
 
@@ -109,10 +171,11 @@ degrade instead of crashing. Full breakdown: **[docs/INTEGRATIONS.md](docs/INTEG
 - **No telemetry, no analytics, no phone-home.** The server sends nothing to us
   and nothing to anyone else. The app contains no analytics SDK (no
   Sentry/Amplitude/Segment/PostHog). There is no "usage" reporting to disable.
-- **The app talks only to the server it was built for.** The address comes from
-  `expo.extra.apiBase`. An unconfigured build carries a placeholder
-  (`https://hub.example.com`) that leads nowhere; there is no hidden fallback to
-  anyone else's server, and no in-app field that could redirect it.
+- **The app talks only to the server you point it at.** You enter your server's
+  address in the app, or bake it in at build time (`expo.extra.apiBase`). An
+  unconfigured build carries a placeholder (`https://hub.example.com`) that leads
+  nowhere; there is no hidden fallback to anyone else's server, and nothing the
+  app contacts that you did not configure yourself.
 - **Loopback by default.** The server binds `127.0.0.1` — unreachable from the
   network until *you* add TLS or a private mesh. It never opens an inbound port
   to the internet on its own.

@@ -92,7 +92,6 @@ The app, dark theme, sample data throughout:
 ![Chat](assets/img/app-chat.jpg)
 
 ![Calendar](assets/img/app-calendar.jpg)
-![Automations](assets/img/app-automations.jpg)
 
 ![Weather](assets/img/app-weather.jpg)
 ![Rain forecast](assets/img/app-precip.jpg)

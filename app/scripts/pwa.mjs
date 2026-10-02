@@ -24,13 +24,23 @@ export const PWA_DIR = join(APP_DIR, '..', 'hub');
 export const hasPwa = () => existsSync(join(PWA_DIR, 'package.json'));
 
 /**
- * Report that a check cannot run here, then return so the caller can carry on.
- * Says plainly that nothing was verified and why, so a reader of `npm run
- * check` can tell a skip from a pass.
+ * The exit status a check uses when it could NOT verify its subject. It is
+ * deliberately distinct from 0 (verified) and 1 (verified and failed), so a
+ * caller reading only an exit code can never mistake a skip for a pass.
+ * `npm run check:pwa` treats it as a failure; `npm run check` runs only the
+ * checks a public clone can actually run, so it never sees one.
+ */
+export const SKIP_EXIT = 2;
+
+/**
+ * Report that a check cannot run here and return the status the caller must
+ * exit with. Says plainly that nothing was verified and why, so the output is
+ * never readable as a pass.
  */
 export function skipPwa(name) {
   console.log(
     `skip: ${name} — the PWA (apps/hub) is not part of this repo, so there is nothing to compare against. ` +
       'This check runs only in the private monorepo; it was NOT verified here.',
   );
+  return SKIP_EXIT;
 }

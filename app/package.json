@@ -60,8 +60,10 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "npm run check && jest",
+    "test:ci": "jest --maxWorkers=1",
     "typecheck": "tsc --noEmit",
-    "check": "node scripts/check-pwa-theme-parity.mjs && node scripts/gen-tokens.mjs --check && node scripts/gen-xterm-bundle.mjs --check && node scripts/check-no-raw-color.mjs && node scripts/check-shared-parity.mjs"
+    "check": "node scripts/run-checks.mjs",
+    "check:pwa": "node scripts/run-checks.mjs --require-pwa"
   },
   "private": true
 }

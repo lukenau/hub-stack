@@ -7,7 +7,8 @@
 // blocks ever diverged, the generated table would be silently wrong.
 //
 // It is a check of the PWA BY the PWA, and the PWA is not part of this repo, so
-// with no PWA checked out there is simply nothing to check: say so and pass.
+// with no PWA checked out there is simply nothing to check: say so and exit
+// not-verified (2), never 0.
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -16,8 +17,8 @@ import { skipPwa, PWA_DIR } from './pwa.mjs';
 const checker = join(PWA_DIR, 'scripts', 'check-theme-parity.mjs');
 
 if (!existsSync(checker)) {
-  skipPwa('theme parity (the PWA\'s tokens.css light-block check)');
-  process.exit(0);
+  // Exit with the "not verified" status, never 0 — see scripts/pwa.mjs.
+  process.exit(skipPwa('theme parity (the PWA\'s tokens.css light-block check)'));
 }
 
 const run = spawnSync(process.execPath, [checker], { stdio: 'inherit' });

@@ -18,10 +18,11 @@ const PWA = resolve(APP, '../hub');
 
 // Every pair below compares a file in this repo against its PWA original, and
 // the PWA is not part of this repo. With no PWA there is nothing to compare —
-// say so and pass, rather than reporting every copy as "cannot read".
+// say so and exit not-verified (2), rather than reporting every copy as
+// "cannot read".
 if (!hasPwa()) {
-  skipPwa('shared-copy parity (src/shared/* and src/lib/types.ts vs the PWA originals)');
-  process.exit(0);
+  // Exit with the "not verified" status, never 0 — see scripts/pwa.mjs.
+  process.exit(skipPwa('shared-copy parity (src/shared/* and src/lib/types.ts vs the PWA originals)'));
 }
 
 // [copy under apps/hub-app, source under apps/hub, optional line slice]

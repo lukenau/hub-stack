@@ -14,6 +14,7 @@ cd app
 npm install
 npm run typecheck     # tsc --noEmit
 npm test              # npm run check, then jest (jest-expo preset)
+npm run check:pwa     # extra: parity checks vs the PWA (only where apps/hub exists)
 npx expo start        # dev client / Expo Go
 ```
 

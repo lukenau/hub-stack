@@ -377,9 +377,13 @@ once per version, Beta App Review.
 Before any build that leaves your machine, run the repo checks:
 
 ```bash
-cd app && npm run check
+cd app && npm run check:pwa   # every check, incl. the ones that need apps/hub
 cd .. && ./scripts/hub-stack-gate.sh .
 ```
+
+`npm run check` alone runs only the checks a public clone can run; in a working
+copy that has the PWA beside the app, use `npm run check:pwa`, which also runs
+the theme, token, xterm-bundle and shared-copy parity checks against it.
 
 ---
 

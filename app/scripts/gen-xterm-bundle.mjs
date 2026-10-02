@@ -33,8 +33,8 @@ const checkMode = process.argv.includes('--check');
 // that was never here. (`--check` is the mode the `check` script runs.)
 if (!existsSync(join(pwa, 'package.json'))) {
   if (checkMode) {
-    skipPwa('xterm bundle freshness (src/terminal/xtermBundle.gen.ts vs the PWA node_modules)');
-    process.exit(0);
+    // Exit with the "not verified" status, never 0 — see scripts/pwa.mjs.
+    process.exit(skipPwa('xterm bundle freshness (src/terminal/xtermBundle.gen.ts vs the PWA node_modules)'));
   }
   console.error(`FAIL: the PWA is not checked out beside the app (looked for ${pwa}).`);
   console.error("The vendored bytes are copied from the PWA's node_modules — check the PWA out and run `npm install` in it first.");

@@ -41,8 +41,8 @@ const checkMode = process.argv.includes('--check');
 // an ENOENT that reads like a broken repo.
 if (!existsSync(cssPath)) {
   if (checkMode) {
-    skipPwa("token freshness (src/theme/tokens.gen.ts vs the PWA's tokens.css)");
-    process.exit(0);
+    // Exit with the "not verified" status, never 0 — see scripts/pwa.mjs.
+    process.exit(skipPwa("token freshness (src/theme/tokens.gen.ts vs the PWA's tokens.css)"));
   }
   console.error(`FAIL: ${cssPath} is missing.`);
   console.error(

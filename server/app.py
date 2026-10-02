@@ -11,7 +11,7 @@ Per ADR 011 (hub IA + security boundary, amended 2026-04-20):
   the WebAuthn path is unchanged.
 - One subprocess call allowed: `openclaw status --json` (fixed single arg,
   trusted binary) — guarded no-op when the binary is absent (Linux box).
-  Everything else reads files, plus an optional loopback Hermes-gateway probe.
+  Everything else reads files, plus an optional loopback assistant-gateway probe.
 - `hub_term_session` cookie gates the ttyd iframe; issued after WebAuthn
   verification, HttpOnly, SameSite=Strict, path=/terminal, Max-Age=3600.
 

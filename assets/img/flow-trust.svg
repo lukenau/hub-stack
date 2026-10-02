@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs>
+<marker id="a0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/></marker><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#22d3ee"/></marker><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#fbbf24"/></marker><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#fb7185"/></marker>
+</defs>
+<rect width="1600" height="900" fill="#020617"/>
+<rect x="90" y="150" width="910" height="600" rx="18" fill="#08131c" stroke="#22d3ee" stroke-width="1.5"/>
+<rect x="405" y="128" width="280" height="44" rx="22" fill="#020617" stroke="#22d3ee" stroke-width="1.5"/>
+<text x="545" y="155" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="14" fill="#22d3ee" text-anchor="middle" letter-spacing="1.5">YOUR MACHINE</text>
+<rect x="135" y="225" width="380" height="110" rx="10" fill="#062b33" stroke="#22d3ee" stroke-width="1.5"/>
+<text x="325" y="285" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="14" fill="#22d3ee" text-anchor="middle">Messages</text>
+<rect x="575" y="225" width="380" height="110" rx="10" fill="#062b33" stroke="#22d3ee" stroke-width="1.5"/>
+<text x="765" y="285" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="14" fill="#22d3ee" text-anchor="middle">Notes</text>
+<rect x="135" y="395" width="380" height="110" rx="10" fill="#062b33" stroke="#22d3ee" stroke-width="1.5"/>
+<text x="325" y="455" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="14" fill="#22d3ee" text-anchor="middle">Health data</text>
+<rect x="575" y="395" width="380" height="110" rx="10" fill="#062b33" stroke="#22d3ee" stroke-width="1.5"/>
+<text x="765" y="455" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="14" fill="#22d3ee" text-anchor="middle">Panel caches</text>
+<rect x="135" y="565" width="380" height="110" rx="10" fill="#062b33" stroke="#22d3ee" stroke-width="1.5"/>
+<text x="325" y="625" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="14" fill="#22d3ee" text-anchor="middle">Device keys</text>
+<rect x="575" y="565" width="380" height="110" rx="10" fill="#062b33" stroke="#22d3ee" stroke-width="1.5"/>
+<text x="765" y="625" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="14" fill="#22d3ee" text-anchor="middle">Memory</text>
+<rect x="1190" y="250" width="320" height="400" rx="10" fill="#331017" stroke="#fb7185" stroke-width="1.5"/>
+<text x="1350" y="447" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="14" fill="#fb7185" text-anchor="middle">Model provider</text>
+<text x="1350" y="467" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="11" fill="#94a3b8" text-anchor="middle">inference happens here</text>
+<path d="M1000,450 L1190,450" fill="none" stroke="#fb7185" stroke-width="2" marker-end="url(#a3)"/>
+<text x="1095" y="424" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#94a3b8" text-anchor="middle">the prompt and its context</text>
+<text x="1095" y="478" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#fb7185" text-anchor="middle">the only thing that leaves</text>
+<text x="800" y="830" font-family="ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#94a3b8" text-anchor="middle">No telemetry. Nothing phones home.</text>
+</svg>

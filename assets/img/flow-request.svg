@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs>
+<marker id="a0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/></marker><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#22d3ee"/></marker><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#fbbf24"/></marker><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#fb7185"/></marker>
+</defs>
+<rect width="1600" height="900" fill="#020617"/>
+<circle cx="180.0" cy="160" r="12" fill="#22d3ee"/>
+<text x="180.0" y="164" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#020617" text-anchor="middle">1</text>
+<rect x="60" y="190" width="240" height="72" rx="10" fill="#0a1520" stroke="#22d3ee" stroke-width="1.5"/>
+<text x="180" y="223" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#22d3ee" text-anchor="middle">iOS or web app</text>
+<text x="180" y="243" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="11" fill="#94a3b8" text-anchor="middle">Expo · React Native</text>
+<circle cx="455.0" cy="160" r="12" fill="#22d3ee"/>
+<text x="455.0" y="164" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#020617" text-anchor="middle">2</text>
+<rect x="350" y="190" width="210" height="72" rx="10" fill="#33240a" stroke="#fbbf24" stroke-width="1.5"/>
+<text x="455" y="223" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#fbbf24" text-anchor="middle">device key</text>
+<text x="455" y="243" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="11" fill="#94a3b8" text-anchor="middle">signs the request</text>
+<circle cx="730.0" cy="160" r="12" fill="#22d3ee"/>
+<text x="730.0" y="164" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#020617" text-anchor="middle">3</text>
+<rect x="610" y="190" width="240" height="72" rx="10" fill="#0a1520" stroke="#22d3ee" stroke-width="1.5"/>
+<text x="730" y="223" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#22d3ee" text-anchor="middle">hub-api</text>
+<text x="730" y="243" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="11" fill="#94a3b8" text-anchor="middle">FastAPI · validates · stores</text>
+<circle cx="1050.0" cy="160" r="12" fill="#22d3ee"/>
+<text x="1050.0" y="164" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#020617" text-anchor="middle">4</text>
+<rect x="900" y="190" width="300" height="72" rx="10" fill="#062b33" stroke="#22d3ee" stroke-width="1.5"/>
+<text x="1050" y="223" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#22d3ee" text-anchor="middle">Hermes Agent</text>
+<text x="1050" y="243" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="11" fill="#94a3b8" text-anchor="middle">decides what to do next</text>
+<circle cx="1390.0" cy="160" r="12" fill="#22d3ee"/>
+<text x="1390.0" y="164" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#020617" text-anchor="middle">5</text>
+<rect x="1250" y="190" width="280" height="72" rx="10" fill="#0a1520" stroke="#22d3ee" stroke-width="1.5"/>
+<text x="1390" y="223" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#22d3ee" text-anchor="middle">response</text>
+<text x="1390" y="243" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="11" fill="#94a3b8" text-anchor="middle">assembled</text>
+<path d="M300,226 L350,226" fill="none" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#a1)"/>
+<path d="M560,226 L610,226" fill="none" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#a1)"/>
+<path d="M850,226 L900,226" fill="none" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#a1)"/>
+<path d="M1200,226 L1250,226" fill="none" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#a1)"/>
+<rect x="850" y="350" width="300" height="100" rx="12" fill="#052e22" stroke="#34d399" stroke-width="1.5" stroke-dasharray="5 5"/>
+<text x="866" y="374" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="11" fill="#34d399" text-anchor="start">tool calls</text>
+<rect x="866" y="386" width="86" height="46" rx="10" fill="#052e22" stroke="#34d399" stroke-width="1.5"/>
+<text x="909" y="414" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="11" fill="#34d399" text-anchor="middle">shell</text>
+<rect x="960" y="386" width="86" height="46" rx="10" fill="#052e22" stroke="#34d399" stroke-width="1.5"/>
+<text x="1003" y="414" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="11" fill="#34d399" text-anchor="middle">browser</text>
+<rect x="1054" y="386" width="86" height="46" rx="10" fill="#052e22" stroke="#34d399" stroke-width="1.5"/>
+<text x="1097" y="414" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="11" fill="#34d399" text-anchor="middle">home</text>
+<rect x="1180" y="350" width="220" height="100" rx="10" fill="#33240a" stroke="#fbbf24" stroke-width="1.5"/>
+<text x="1290" y="397" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#fbbf24" text-anchor="middle">OpenRouter</text>
+<text x="1290" y="417" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="11" fill="#94a3b8" text-anchor="middle">a frontier model</text>
+<path d="M1050,262 L1050,318" fill="none" stroke="#22d3ee" stroke-width="1.5"/>
+<path d="M1000,318 L1290,318" fill="none" stroke="#22d3ee" stroke-width="1.5"/>
+<path d="M1000,318 L1000,350" fill="none" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#a1)"/>
+<path d="M1290,318 L1290,350" fill="none" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#a1)"/>
+<path d="M1000,450 L1000,480 L1460,480 L1460,262" fill="none" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#a1)"/>
+<path d="M1530,226 L1562,226 L1562,700 L180,700 L180,262" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8 6" marker-end="url(#a0)"/>
+<text x="871" y="688" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#94a3b8" text-anchor="middle">streamed back over HTTPS</text>
+<text x="800" y="810" font-family="ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#94a3b8" text-anchor="middle">The hub is the server and the app. The runtime is what does the thinking.</text>
+</svg>

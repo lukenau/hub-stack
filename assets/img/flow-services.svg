@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs>
+<marker id="a0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/></marker><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#22d3ee"/></marker><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#fbbf24"/></marker><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#fb7185"/></marker>
+</defs>
+<rect width="1600" height="900" fill="#020617"/>
+<rect x="640" y="390" width="320" height="110" rx="14" fill="#062b33" stroke="#22d3ee" stroke-width="1.5"/>
+<text x="800" y="442" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="20" fill="#22d3ee" text-anchor="middle">hub-api</text>
+<text x="800" y="462" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="11" fill="#94a3b8" text-anchor="middle">runs with none of these configured</text>
+<rect x="110" y="50" width="240" height="96" rx="10" fill="#12102a" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="230" y="103" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="15" fill="#a78bfa" text-anchor="middle">Model access</text>
+<text x="230.0" y="114" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#94a3b8" text-anchor="middle">OpenRouter</text>
+<rect x="490" y="50" width="240" height="96" rx="10" fill="#12102a" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="610" y="103" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="15" fill="#a78bfa" text-anchor="middle">Home</text>
+<text x="610.0" y="114" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#94a3b8" text-anchor="middle">Home Assistant</text>
+<rect x="870" y="50" width="240" height="96" rx="10" fill="#12102a" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="990" y="103" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="15" fill="#a78bfa" text-anchor="middle">Weather</text>
+<text x="990.0" y="114" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#94a3b8" text-anchor="middle">Apple WeatherKit</text>
+<rect x="1250" y="50" width="240" height="96" rx="10" fill="#12102a" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="1370" y="103" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="15" fill="#a78bfa" text-anchor="middle">Voice and notes</text>
+<text x="1370.0" y="114" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#94a3b8" text-anchor="middle">Murmur, Notes-sync</text>
+<rect x="40" y="390" width="240" height="96" rx="10" fill="#12102a" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="160" y="443" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="15" fill="#a78bfa" text-anchor="middle">Secrets</text>
+<text x="160.0" y="454" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#94a3b8" text-anchor="middle">1Password</text>
+<rect x="1320" y="390" width="240" height="96" rx="10" fill="#12102a" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="1440" y="443" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="15" fill="#a78bfa" text-anchor="middle">Money and payments</text>
+<text x="1440.0" y="454" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#94a3b8" text-anchor="middle">cards, receipts</text>
+<rect x="300" y="700" width="240" height="96" rx="10" fill="#12102a" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="420" y="753" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="15" fill="#a78bfa" text-anchor="middle">Memory</text>
+<text x="420.0" y="764" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#94a3b8" text-anchor="middle">Supermemory</text>
+<rect x="680" y="700" width="240" height="96" rx="10" fill="#12102a" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="800" y="753" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="15" fill="#a78bfa" text-anchor="middle">Messaging</text>
+<text x="800.0" y="764" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#94a3b8" text-anchor="middle">iMessage, Discord</text>
+<rect x="1060" y="700" width="240" height="96" rx="10" fill="#12102a" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="1180" y="753" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="15" fill="#a78bfa" text-anchor="middle">Browser automation</text>
+<text x="1180.0" y="764" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#94a3b8" text-anchor="middle">Browser Use</text>
+<path d="M309,146 L710,390" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8 6"/>
+<path d="M636,146 L770,390" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8 6"/>
+<path d="M964,146 L830,390" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8 6"/>
+<path d="M1291,146 L890,390" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8 6"/>
+<path d="M280,439 L640,443" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8 6"/>
+<path d="M1320,439 L960,443" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8 6"/>
+<path d="M480,700 L731,500" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8 6"/>
+<path d="M800,700 L800,500" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8 6"/>
+<path d="M1120,700 L869,500" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8 6"/>
+<text x="800" y="856" font-family="ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#94a3b8" text-anchor="middle">All connectors are optional.</text>
+</svg>

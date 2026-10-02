@@ -4,7 +4,7 @@ Run the hub on a box in your home — a mini PC, an always-on desktop, or a
 NAS that supports Docker (Synology, QNAP, TrueNAS). Best when you want your
 data at home.
 
-![Home server install](assets/img/install-home-server.svg)
+![Home server install](../assets/img/install-home-server.svg)
 
 ## Prerequisites
 
@@ -61,7 +61,7 @@ data at home.
    ```bash
    curl -fsSL https://tailscale.com/install.sh | sh
    sudo tailscale up
-   sudo tailscale serve --bg --http=80 http://127.0.0.1:8090
+   sudo tailscale serve --bg --https=443 http://127.0.0.1:8090
    ```
 
    The app then uses `http://<server-tailnet-name>` (HTTPS if you use

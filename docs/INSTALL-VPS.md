@@ -4,7 +4,7 @@ Run the hub on a small cloud VM (any Debian 12 / Ubuntu 22.04+ box from
 Hetzner, DigitalOcean, OVH, Linode, …). Best when you want it always-on and
 reachable from anywhere.
 
-![VPS install](assets/img/install-vps.svg)
+![VPS install](../assets/img/install-vps.svg)
 
 ## Prerequisites
 
@@ -77,7 +77,7 @@ reachable from anywhere.
    ```bash
    curl -fsSL https://tailscale.com/install.sh | sh
    sudo tailscale up
-   sudo tailscale serve --bg --http=80 http://127.0.0.1:8090
+   sudo tailscale serve --bg --https=443 http://127.0.0.1:8090
    tailscale status   # note your machine's tailnet name
    ```
 
@@ -89,7 +89,14 @@ reachable from anywhere.
    Keep `HUB_BIND=127.0.0.1` — the proxy connects to loopback, so you do
    **not** open the port to the world. Example with Caddy (auto-HTTPS):
 
+   Caddy is not in the default Debian/Ubuntu repositories, so add its
+   official one first:
+
    ```bash
+   sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
+   curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+   curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+   sudo apt update
    sudo apt install -y caddy
    ```
 

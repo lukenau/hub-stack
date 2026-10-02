@@ -3,7 +3,7 @@
 What the pieces are, how they talk, and why some choices are the way they
 are.
 
-![Architecture](assets/img/architecture.svg)
+![Architecture](../assets/img/architecture.svg)
 
 ---
 
@@ -46,8 +46,10 @@ to the public internet unless *you* put a proxy there.
 
 - **Liveness**: `GET /api/healthz` → `200`, `{"status":"ok"}`. Unauthenticated.
 - **Read endpoints** (GET): health, agents, backups, audit, activity,
-  schedules, skills, home-assistant state, calendar, my-pages, files. All
-  require the bearer token.
+  schedules, skills, home-assistant state, calendar, my-pages, files. Reads
+  carry no authentication of any kind: anyone who can reach the server can
+  read it. Access control is the network boundary (private mesh, tailnet,
+  or loopback) — see [SECURITY.md](../SECURITY.md).
 - **Action endpoints** (POST): an explicit allowlist only — the terminal
   session flow (`/api/terminal/*`) and the Home Assistant flow
   (`/api/ha/challenge` → `/api/ha/apply`). Every POST is gated by a
@@ -86,16 +88,19 @@ is what actually decides reachability. This means:
 - fresh installs are unreachable from the network by default;
 - a reverse proxy or Tailscale on the same host can front it without
   exposing the raw port;
-- `HUB_BIND=0.0.0.0` is the explicit opt-in to LAN access, with
-  token-only protection and no TLS — see the warning in
-  [CONNECT-APP.md](CONNECT-APP.md).
+- `HUB_BIND=0.0.0.0` is the explicit opt-in to LAN access, with no
+  per-request authentication and no TLS — any device on the LAN can read
+  everything. See the warning in [CONNECT-APP.md](CONNECT-APP.md).
 
 ## Configuration surface
 
 Everything is environment-driven via `.env` (see
 [SETUP.md](SETUP.md#configuration) for the full table). Key ones:
 
-- `HUB_API_TOKEN` — the bearer token (required).
+- `HUB_API_TOKEN` — **reserved, not enforced.** The server never reads this
+  value and no endpoint requires it. It exists so existing installs keep
+  working if request authentication is added later; do not rely on it to
+  protect anything.
 - `HUB_BIND` — host publish address.
 - `HUB_DATA_DIR` — persistence.
 - `HUB_ORIGIN` — CORS allowlist.
@@ -109,8 +114,12 @@ Everything is environment-driven via `.env` (see
 Summary — full details in [SECURITY.md](../SECURITY.md):
 
 - Loopback by default; TLS/mesh is an explicit step you take.
-- Bearer-token auth for the API; WebAuthn/device-key proof for sensitive
-  actions.
+- No request authentication on the API. Access control is the network
+  boundary: private mesh, tailnet, or loopback — whoever can reach the
+  server can read it.
+- Writes are gated by WebAuthn/device-key proof of presence (Face ID /
+  Secure Enclave), which is separate from — and not — request
+  authentication.
 - Read-mostly API with a small, explicit POST allowlist.
 - Non-root container, no telemetry, no external calls home.
 

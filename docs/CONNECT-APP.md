@@ -1,10 +1,16 @@
 # Connect the app
 
-The hub app (web, iOS, Android) needs two things: the **server URL** and the
-**API token**. This guide also covers how to make the server reachable in a
-safe way — and the one setting you should never change carelessly.
+The app needs one thing: a **reachable server**. This guide covers how to
+make the server reachable in a safe way — the security step that actually
+matters.
 
-![Connect the app](assets/img/connect-app.svg)
+> **How the app authenticates (read this).** There is no login and no token to
+> type in. The app talks to whatever URL it was built with, and *reachability is
+> the access boundary* — so the mesh/TLS step below is the security step, not an
+> optional extra. Writes are separately gated by a Face ID device key. See
+> [SECURITY.md](../SECURITY.md).
+
+![Connect the app](../assets/img/connect-app.svg)
 
 ---
 
@@ -16,6 +22,9 @@ it up:
 
 ### Option A — Tailscale (recommended)
 
+> Full step-by-step, plus Headscale / WireGuard / Cloudflare Tunnel / LAN-only
+> alternatives: **[MESH.md](MESH.md)**.
+
 Encrypted private mesh, nothing exposed to the public internet, works from
 home and away.
 
@@ -23,7 +32,7 @@ home and away.
 2. On the server, forward to the loopback-published hub:
 
    ```bash
-   sudo tailscale serve --bg --http=80 http://127.0.0.1:8090
+   sudo tailscale serve --bg --https=443 http://127.0.0.1:8090
    ```
 
 3. In `.env`, set:
@@ -73,36 +82,42 @@ HUB_PUBLIC_BASE=http://192.168.1.50:8090    # server's LAN IP
 HUB_ORIGIN=http://192.168.1.50:8090
 ```
 
-Then `docker compose up -d`. Connections are plain HTTP inside your LAN;
-the bearer token is the only barrier. Do not do this on a shared or guest
-network.
+Then `docker compose up -d`. Connections are plain HTTP inside your LAN, and
+the server has no per-request authentication — any device on the LAN can read
+everything the server exposes. Do not do this on a shared or guest network.
 
-> ⚠️ **Do not bind `0.0.0.0` without a proxy or mesh in front.** The only
-> protection on a directly-exposed port is the bearer token, and traffic
-> is unencrypted. Never port-forward the hub port to the internet. If a
-> machine on the network is untrusted (public Wi-Fi, shared VPS), use
-> Option A or B.
+> ⚠️ **Do not bind `0.0.0.0` without a proxy or mesh in front.** A
+> directly-exposed port has no authentication at all: anyone who can reach
+> it reads everything, and the traffic is unencrypted. The only thing that
+> limits what a client can *do* is the device-key write gate, which a
+> stranger simply doesn't have. Never port-forward the hub port to the
+> internet. If a machine on the network is untrusted (public Wi-Fi, shared
+> VPS), use Option A or B.
 
 ---
 
-## Step 2 — Get the token
+## Step 2 — Pair the app
 
-```bash
-cd hub-stack
-grep HUB_API_TOKEN .env
-```
+There is no server URL to type and no token to paste: the app has no fields
+for either. It talks to the URL it was **built with** — `expo.extra.apiBase`
+in `app/app.json`, defaulting to the `https://hub.example.com` placeholder in
+`app/src/lib/api.ts`. To point a build at your server, set `extra.apiBase`
+before building (see [PUBLIC-BUILD.md](PUBLIC-BUILD.md)); the shipped build
+for a beta already has the right URL baked in.
 
-It was generated automatically at first install. Treat it like a password.
-
-## Step 3 — Pair the app
+Pairing the device is the one in-app step, and it is what lets this phone
+*write*:
 
 1. Open the Hub app.
-2. When prompted (or in Settings → Server), enter:
-   - **Server URL** — exactly the `HUB_PUBLIC_BASE` value from above,
-     including the scheme (`http://` or `https://`) and port if non-default.
-   - **Token** — paste the `HUB_API_TOKEN` value.
-3. Save. The app stores the token locally and sends it as
-   `Authorization: Bearer <token>` on every request.
+2. Go to **Config → Security → Pair this iPhone** and enter the 6-character
+   enrolment code minted from your Hub PWA's **Config → Security** page
+   (behind your own Face ID / passkey prompt).
+3. The app generates a Secure Enclave key, posts the public half to
+   `/api/devicekey/register`, and the device is trusted. From then on, Face
+   ID authorises writes on this device.
+
+Reads need no pairing at all — as soon as the build can reach the server,
+the home screen loads live data. Pairing only turns on writes.
 
 **Success looks like:** the app's home screen loads live data instead of an
 empty/error state.
@@ -118,7 +133,9 @@ npm run android # needs Android SDK / emulator or device
 ```
 
 The default `HUB_ORIGIN=http://localhost:8081` already allows the web dev
-server. On the web app's server screen, enter your server URL and token.
+server. The web build uses the same build-time URL as the native app — set
+`extra.apiBase` in `app/app.json` to your server before `npm run web`; there
+is no in-app server field.
 
 ---
 
@@ -134,11 +151,11 @@ curl -fsS http://<your-server-url>/api/healthz
 If that fails, the problem is network reachability, not the app — see
 [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
 
-## Rotating the token
+## Unpairing a device
 
-1. Edit `.env`, replace the `HUB_API_TOKEN` value (e.g.
-   `openssl rand -hex 32`).
-2. `docker compose up -d` to apply.
-3. Update the token in every paired app.
-
-Old tokens stop working immediately after the restart.
+To revoke a phone's ability to *write*, remove its device key on the Hub
+PWA's **Config → Security** page — the paired key stops being trusted
+immediately. That does not revoke *reads*: reads are not authenticated, so
+also remove the device from the network that reaches the server (its
+tailnet membership, mesh credentials, or LAN access) — see
+[SECURITY.md](../SECURITY.md).

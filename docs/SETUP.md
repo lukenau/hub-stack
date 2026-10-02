@@ -27,7 +27,7 @@ Success looks like this:
 Then point the app at the server and enter the token — see
 [CONNECT-APP.md](CONNECT-APP.md). The token is in `.env` under `HUB_API_TOKEN`.
 
-![Quickstart](assets/img/quickstart.svg)
+![Quickstart](../assets/img/quickstart.svg)
 
 ---
 
@@ -42,7 +42,7 @@ In order:
    back to `/dev/urandom`). An existing `.env` is kept untouched.
 3. **Builds and starts** the server with `docker compose up -d --build`.
 4. **Waits for health** — polls `http://127.0.0.1:8090/api/healthz` every
-   2 s for up to 60 s, then points you at the logs if it never came up.
+   2 s for up to 90 s, then points you at the logs if it never came up.
 5. **Prints next steps** — the URL for the app and a pointer to CONNECT-APP.md.
 
 Other modes:
@@ -77,7 +77,7 @@ the left-hand `8090` there.
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `HUB_API_TOKEN` | *auto-generated* | **Required.** Bearer token the app presents. Leave blank and the server refuses to start. Treat it like a password. |
+| `HUB_API_TOKEN` | *auto-generated* | **RESERVED** — not enforced today. The server does not read this value and the API does not require it; access control is the network boundary (see SECURITY.md). install.sh still fills it so existing installs keep working if enforcement is added later. Do NOT rely on it to protect an exposed port. |
 | `HUB_ORIGIN` | `http://localhost:8081` | Origins allowed to call the API (comma-separated). The default matches the app's web dev server. |
 | `HUB_PUBLIC_BASE` | `http://127.0.0.1:8090` | Base URL the server advertises to clients. Set this to whatever URL the app will actually use. |
 | `HUB_USER_NAME` / `HUB_USER_HANDLE` | `Your Name` / `you` | Display identity shown in the app. |
@@ -108,8 +108,9 @@ curl -fsS http://127.0.0.1:8090/api/healthz
 # → {"status":"ok"}
 ```
 
-Anything else (activity, files, home automation state…) requires the
-`HUB_API_TOKEN` bearer token.
+Everything else (activity, files, home automation state…) is served without
+authentication. The API has no per-request token: reachability is the access
+boundary (see [SECURITY.md](../SECURITY.md)).
 
 ## Updating
 

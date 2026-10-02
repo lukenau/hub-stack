@@ -3,7 +3,6 @@
 Quick diagnosis path: check the installer output → check `docker compose ps`
 → check logs (`./install.sh --logs`) → match a symptom below.
 
-![Troubleshooting](assets/img/troubleshooting.svg)
 
 ---
 
@@ -18,7 +17,7 @@ Quick diagnosis path: check the installer output → check `docker compose ps`
 ## `Server did not become healthy`
 
 The build succeeded but the container never answered `/api/healthz` within
-60 s.
+90 s.
 
 1. Look at the logs: `./install.sh --logs`
 2. `docker compose ps` — is the container `Up (healthy)`, restarting, or exited?
@@ -33,11 +32,8 @@ The build succeeded but the container never answered `/api/healthz` within
      Stop the other service, or change the **left-hand** `8090` in the
      `ports:` line of `docker-compose.yml` (e.g. `8091:8090`) — then also
      update `HUB_PUBLIC_BASE`.
-   - **`.env` is missing `HUB_API_TOKEN`** or it's blank — the server
-     refuses to start. Re-run `./install.sh` (it only creates `.env` if
-     absent, so either fill the token in or delete `.env` to regenerate).
    - **First build was slow** — on a small VPS the image build can take a
-     few minutes; the 60 s health wait may time out even though the
+     few minutes; the 90 s health wait may time out even though the
      container comes up right after. Re-run `./install.sh --logs` or
      `curl http://127.0.0.1:8090/api/healthz` a minute later.
 
@@ -70,9 +66,10 @@ Work through in order:
      just bind `0.0.0.0` on an internet-facing machine.
    - Fails everywhere → the container is down; see above.
 
-2. **401 / unauthorized responses** — the token in the app doesn't match
-   `HUB_API_TOKEN` in `.env`. If you rotated the token, update every paired
-   app.
+2. **401 responses** — gated routes lock individually: the terminal returns
+   `401 terminal locked` until you unlock it with Face ID. Reads are
+   unauthenticated and do not use `HUB_API_TOKEN` (see
+   [SECURITY.md](../SECURITY.md)).
 
 3. **CORS / origin errors in the web app** — the origin the app runs from
    isn't in `HUB_ORIGIN`. Add it (comma-separated list) and

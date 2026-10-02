@@ -72,6 +72,7 @@ earlier release to compare against.
 - The Backups card no longer asserts one deployment's schedule and repository policy to every user; the schedule and append-only flag render only when the server's backup status file reports them. (`7989e0e`)
 - Backup test fixtures use obviously-fictional values instead of a repository name and size that may be the author's real ones. (`7989e0e`)
 - The slash-command bootstrap seed no longer carries any deployment's real command registry: `server/chat/command_catalog_bootstrap.json` is now a small, hand-authored, generic sample of the catalogue wire format, replacing a generated dump of a live gateway's private skill, plugin and alias registrations. (`92286cf`)
+- The server's own module docstring no longer names an internal deployment: the optional liveness probe is described generically, so the publish gate's internal-hostname scan is clean instead of matching a bare prose component name. (`9e5dfc7`)
 
 ### Removed
 

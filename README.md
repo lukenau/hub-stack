@@ -25,7 +25,7 @@ name on the app's home screen.
 </p>
 
 The pose tracks what the hub is actually doing — idle, working a job, done, or
-broken. These are the app's own assets, not illustrations drawn for the README.
+broken.
 
 **Bring your own model.** hub-stack talks to [OpenRouter](https://openrouter.ai),
 so you point it at one key and pick whichever frontier model you want — Claude,

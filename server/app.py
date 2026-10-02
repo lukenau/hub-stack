@@ -2656,7 +2656,7 @@ def _queue_draft(chat_id: str, contact: str, text: str) -> str:
 # contract the Telegram notice had.
 DISCORD_APPROVALS_TOKEN_FILE = Path(os.environ.get(
     "HUB_DISCORD_APPROVALS_TOKEN", "/data/hub/secrets/discord-approvals-token"))
-DISCORD_APPROVALS_CHANNEL = os.environ.get("HUB_APPROVALS_CHANNEL", "0000000000000000000")
+DISCORD_APPROVALS_CHANNEL = os.environ.get("HUB_APPROVALS_CHANNEL", "")
 # Only this Discord user may approve. A button is visible to the channel; the
 # press is still authorised per-user, and separately by the draft's HMAC.
 DISCORD_APPROVER_ID = os.environ.get("HUB_APPROVER_DISCORD_ID", "")

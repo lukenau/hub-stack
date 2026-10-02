@@ -52,11 +52,11 @@ ATTENTION_SEVERITIES = ("alert", "warn", "failed")
 # Discord channel -> category, the same map `cron-dual-deliver.sh` ported the
 # channels to Hub threads with.
 _DISCORD_CHANNEL_CATEGORY = {
-    "0000000000000000000": "ops",
-    "0000000000000000000": "personal",
-    "0000000000000000000": "personal",
-    "0000000000000000000": "ops",
-    "0000000000000000000": "money",
+    "100000000000000001": "ops",
+    "100000000000000002": "personal",
+    "100000000000000003": "personal",
+    "100000000000000004": "ops",
+    "100000000000000005": "money",
 }
 _HUB_THREAD_CATEGORY = {"ops": "ops", "cron": "ops", "money": "money", "brief": "personal"}
 

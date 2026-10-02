@@ -58,9 +58,9 @@ def run(job_id: str, stem: str, hours_ago: float, output: str = "", status: str 
 
 JOBS = [
     {"id": OPS, "name": "ops-watch", "schedule": "0 21 * * *", "mode": "script",
-     "deliver": "discord:0000000000000000000,hub:ops", "state": "active"},
+     "deliver": "discord:100000000000000001,hub:ops", "state": "active"},
     {"id": CREDIT, "name": "credit-watch", "schedule": "0 9 * * *", "mode": "script",
-     "deliver": "discord:0000000000000000000,hub:ops", "state": "active"},
+     "deliver": "discord:100000000000000001,hub:ops", "state": "active"},
     {"id": CANDLE, "name": "Living Room Candle ON (2 PM)", "schedule": "0 14 * * *", "mode": "script",
      "deliver": "local", "state": "active"},
 ]
@@ -96,10 +96,10 @@ def jobs_by_name() -> dict[str, dict]:
 
 # --- what a run says -----------------------------------------------------------------
 def test_category_comes_from_where_the_job_delivers():
-    assert category_for("discord:0000000000000000000,hub:money") == "money"
-    assert category_for("discord:0000000000000000000,hub:brief") == "personal"
+    assert category_for("discord:100000000000000005,hub:money") == "money"
+    assert category_for("discord:100000000000000002,hub:brief") == "personal"
     assert category_for("hub:cron") == "ops"
-    assert category_for("discord:0000000000000000000") == "ops"
+    assert category_for("discord:100000000000000001") == "ops"
     assert category_for("local") == "background"
     assert category_for("origin") == "personal"
     assert category_for(None) == "background"
@@ -558,7 +558,7 @@ def test_prefs_and_read_routes(unlocked):
 # --- history ----------------------------------------------------------------------------
 def test_backfill_files_stored_deliveries_on_evidence_only(unlocked):
     autos = AutomationStore(platform.get_store())
-    sync(jobs=[{"id": "ce4ca12805ee", "name": "cron-watch", "deliver": "discord:0000000000000000000,hub:cron"}])
+    sync(jobs=[{"id": "ce4ca12805ee", "name": "cron-watch", "deliver": "discord:100000000000000004,hub:cron"}])
     sync(runs=[
         run(OPS, "f1", 30, "\u26A0\uFE0F hub-server ops-watch:\n\u2022 backup stale \u2014 112h"),
         run(CREDIT, "f1", 1, "\U0001F6A8 credit-watch: balance $9.97 left"),

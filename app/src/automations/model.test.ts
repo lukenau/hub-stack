@@ -218,7 +218,7 @@ describe('lines', () => {
   });
 
   test('where a job sends is named, not quoted', () => {
-    expect(deliverLabel('discord:0000000000000000000,hub:ops')).toBe('Discord, Hub');
+    expect(deliverLabel('discord:100000000000000001,hub:ops')).toBe('Discord, Hub');
     expect(deliverLabel('local')).toBe('Nowhere, output is kept on file');
     expect(deliverLabel('origin')).toBe('The chat it was set up in');
     expect(deliverLabel(null)).toBe('Nowhere');

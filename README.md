@@ -13,7 +13,12 @@ party sits between you and your data.
 By **Luke Nau** — [GitHub](https://github.com/lukenau) · [LinkedIn](https://www.linkedin.com/in/lukenau).
 
 The hub's agent is **Xavier**: the assistant the app is built around, and the
-name on the app's home screen.
+name on the app's home screen. The runtime behind that agent is
+**[Hermes Agent](https://hermes-agent.nousresearch.com/docs)** by Nous Research
+— hub-stack is the server and the app in front of it, and it is the piece doing
+the model calls, tool use, scheduled jobs and memory. It gets its own section
+below, because most of the value here is not in this codebase:
+**[What actually does the work](#what-actually-does-the-work)**.
 
 <p align="center">
   <img src="app/assets/xavier/portrait.jpg" width="118" alt="Xavier">
@@ -92,12 +97,15 @@ The app, dark theme, sample data throughout:
 ![Chat](assets/img/app-chat.jpg)
 
 ![Calendar](assets/img/app-calendar.jpg)
+![Calendar, agenda](assets/img/app-agenda.jpg)
 
 ![Weather](assets/img/app-weather.jpg)
 ![Rain forecast](assets/img/app-precip.jpg)
 
 ![Brief](assets/img/app-brief.jpg)
 ![Feed](assets/img/app-feed.jpg)
+
+![Cost](assets/img/app-cost.jpg)
 
 ![Ops](assets/img/app-ops.jpg)
 ![Config](assets/img/app-config.jpg)

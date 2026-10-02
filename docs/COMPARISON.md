@@ -52,7 +52,7 @@ operator."
 Stated plainly, because a comparison that only lists advantages is marketing:
 
 - No hosted option, no support contract, no SLA. If it breaks, that is you.
-- One maintainer. See the bus-factor note in the README.
+- One maintainer. If they stop, the project stops with them.
 - iOS only, today.
 - Fewer ready-made connectors than a funded product. See
   [SERVICES.md](SERVICES.md) for what exists and what you bring yourself.

@@ -8,12 +8,16 @@
 **Self-host a private AI hub: one server you own, plus the app that talks to it.**
 
 hub-stack is the server + client pair behind a personal AI hub. You run the
-server on a box you control (a VPS, a home server, or a Mac), and the app —
-web, iPhone, or Android — connects to it over your own network or a private
-mesh (Tailscale). Nothing is exposed to the public internet, and no third
-party sits between you and your data.
+server on a box you control (a VPS, a home server, or a Mac), and the app
+connects to it over your own network or a private mesh (Tailscale). Nothing is
+exposed to the public internet, and no third party sits between you and your
+data.
 
-By **Luke Nau** — [GitHub](https://github.com/lukenau) · [LinkedIn](https://www.linkedin.com/in/lukenau).
+The app is one Expo / React Native codebase, and **iOS is the platform that
+ships today** — a TestFlight or App Store build. The web and Android targets
+build from the same source tree for development, but they are not distributed
+or supported. What the app does, feature by feature, with the mechanism behind
+each claim: **[docs/FEATURES.md](docs/FEATURES.md)**.
 
 The hub's agent is **Xavier**: the assistant the app is built around, and the
 name on the app's home screen. The runtime behind that agent is
@@ -195,7 +199,7 @@ hub-stack/
 ├── docker-compose.yml      the server
 ├── .env.example            every setting, documented
 ├── server/                 hub-api — the FastAPI service (the "hub")
-├── app/                    the Hub client (web + iOS + Android, Expo/React Native)
+├── app/                    the Hub client (Expo / React Native; iOS ships today)
 ├── docs/                   setup, per-host installs, connect-the-app, troubleshooting
 └── assets/img/             diagrams and install screenshots
 ```
@@ -340,6 +344,36 @@ cannot avoid if you want a phone app is Apple's $99/year.
 
 Two honest blanks: OpenRouter publishes no average personal spend, so none is
 quoted here, and hardware prices move with the market, so they are ranges.
+
+---
+
+## Documentation
+
+**[docs/FEATURES.md](docs/FEATURES.md)** is the full feature list — what the app
+does, with the mechanism behind each claim. The rest, by task:
+
+- **[docs/SETUP.md](docs/SETUP.md)** — install and first run.
+- **[docs/CONNECT-APP.md](docs/CONNECT-APP.md)** — secure the connection and
+  pair your device.
+- **[docs/MESH.md](docs/MESH.md)** — Tailscale, Headscale, WireGuard,
+  Cloudflare Tunnel, or LAN-only.
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — the pieces, how they talk,
+  and why.
+- **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)**,
+  **[docs/SERVICES.md](docs/SERVICES.md)**,
+  **[docs/CONNECTORS.md](docs/CONNECTORS.md)** — what is included, what is
+  optional, and what happens when a service is unset.
+- **[docs/PRIVACY.md](docs/PRIVACY.md)** — what the software does with data,
+  claim by claim, against the source.
+- **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** — symptom → fix.
+- **[SECURITY.md](SECURITY.md)** — threat model and how to report issues.
+
+Maintainer and release docs. These are process, not part of the self-hosting
+path, and they are public because the app is: **[docs/PUBLISH-APP.md](docs/PUBLISH-APP.md)**
+(Expo project and App Store Connect record), **[docs/BETA.md](docs/BETA.md)**
+(running a TestFlight beta), **[docs/PUBLIC-BUILD.md](docs/PUBLIC-BUILD.md)**
+(producing a build with the personal features stripped), and
+**[docs/RELEASE-CHECKLIST.md](docs/RELEASE-CHECKLIST.md)** (pre-submit checks).
 
 ---
 

@@ -19,11 +19,8 @@
   "submit": {
     "production": {
       "ios": {
-        "ascApiKeyPath": "./secrets/AuthKey.p8",
-        "ascApiKeyId": "REPLACE_WITH_KEY_ID",
-        "ascApiKeyIssuerId": "REPLACE_WITH_ISSUER_ID",
-        "groups": ["beta"],
-        "ascAppId": "REPLACE_WITH_APP_ID"
+        "ascAppId": "6818348260",
+        "groups": ["beta"]
       }
     }
   }

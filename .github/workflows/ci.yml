@@ -63,7 +63,7 @@ jobs:
       # docs. The script excludes itself and matches the author's actual
       # tailnet, so CI runs the script.
       - name: Run the publish gate
-        run: bash scripts/hub-stack-gate.sh
+        run: bash scripts/hub-stack-gate.sh .
 
   dco:
     name: DCO sign-off

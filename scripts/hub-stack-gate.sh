@@ -4,7 +4,7 @@
 # Exit 0 = clean (safe to publish). Exit 1 = blockers found.
 # Usage: hub-stack-gate.sh [repo_dir]
 set -uo pipefail
-REPO="${1:-workspace/hub-stack}"
+REPO="${1:-.}"
 cd "$REPO" || { echo "no such dir: $REPO"; exit 1; }
 
 EXCLUDES=(--exclude-dir=.git --exclude-dir=node_modules --exclude-dir=dist

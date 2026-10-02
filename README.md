@@ -110,12 +110,18 @@ everywhere else. Full pipeline, hardware, and honest limits:
   <img src="app/assets/xavier/tilt.jpg" width="96" alt="">
 </p>
 
-The app, dark theme, sample data throughout:
+The app, dark and light themes, sample data throughout:
 
-**Home, chat, threads**
+**Home, dark and light**
 
 <p align="center">
-  <img src="assets/img/app-home.jpg" width="220" alt="Home">
+  <img src="assets/img/app-home.jpg" width="220" alt="Home — dark theme">
+  <img src="assets/img/app-home-light.jpg" width="220" alt="Home — light theme">
+</p>
+
+**Chat and threads**
+
+<p align="center">
   <img src="assets/img/app-chat.jpg" width="220" alt="Chat — thread list">
   <img src="assets/img/app-chat-thread.jpg" width="220" alt="Chat — the empty thread">
 </p>

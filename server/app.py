@@ -51,6 +51,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, model_validator
 
 import devicekeys as dk
+import pair_local
 import webauthn_gate as wa
 from ha_actions import router as ha_router
 from files import router as files_router
@@ -2957,6 +2958,15 @@ async def _approvals_gateway() -> None:
 @app.on_event("startup")
 async def _start_approvals_gateway() -> None:
     asyncio.create_task(_approvals_gateway())
+
+
+@app.on_event("startup")
+async def _start_local_pair_socket() -> None:
+    """Serve the local (non-web) enrol-code mint socket. AF_UNIX only, so it is
+    never reachable over the network; the code it mints is the same
+    devicekeys.mint_enroll_code() the WebAuthn action uses. A bind failure
+    disables local minting and is logged — it never blocks API startup."""
+    await asyncio.to_thread(pair_local.start_local_pair_server)
 
 
 @app.post("/api/imessage/send/{draft_id}")

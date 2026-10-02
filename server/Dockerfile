@@ -6,7 +6,7 @@ FROM python:3.12-slim
 COPY requirements.txt /opt/hub-api/requirements.txt
 RUN pip install --no-cache-dir -r /opt/hub-api/requirements.txt
 
-COPY app.py ha_actions.py files.py hub_calendar.py webauthn_gate.py devicekeys.py /opt/hub-api/
+COPY app.py ha_actions.py files.py hub_calendar.py webauthn_gate.py devicekeys.py pair_local.py pair_cli.py /opt/hub-api/
 COPY chat/ /opt/hub-api/chat/
 
 # Non-root. Uid must match the host data-dir owner (HERMES_UID in deploy/.env — the gateway

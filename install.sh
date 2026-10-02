@@ -9,6 +9,7 @@
 #   ./install.sh --logs       follow server logs
 #   ./install.sh --status     show container state + health
 #   ./install.sh --url        print the URL to point the app at
+#   ./install.sh --pair       mint a one-time device enrolment code (local)
 #   ./install.sh --uninstall  stop and DELETE all data (asks first)
 #   ./install.sh --help       this text
 #
@@ -165,6 +166,13 @@ case "${1:-}" in
   --logs)    need_docker; exec docker compose logs -f --tail=100 ;;
   --status)  need_docker; docker compose ps; exit 0 ;;
   --restart) need_docker; docker compose restart; ok "hub-api restarted"; exit 0 ;;
+  --pair)
+    # Mint an enrolment code locally, inside the running server. No browser and
+    # no network: the code is generated over a unix socket in the data dir.
+    need_docker
+    docker compose exec -T hub-api python3 /opt/hub-api/pair_cli.py \
+      || die "Could not mint a code. Is the hub running? Start it with ./install.sh"
+    exit 0 ;;
   --uninstall)
     need_docker
     warn "This deletes the server AND all data under ${HUB_DATA_DIR:-./data}."
@@ -226,9 +234,11 @@ $(ok "Done.")
   Point the app at:   http://127.0.0.1:${PORT}   (this machine)
                       $(print_url)   (from another device on your network)
 
-  Pair the app:       Config → Security → Pair this iPhone — a one-time
-                      6-character enrolment code from the Hub PWA. No token,
-                      no login. See docs/CONNECT-APP.md.
+  Pair the app:       run  ./install.sh --pair  on this machine to mint a
+                      one-time 6-character enrolment code, then enter it in the
+                      app's Config → Security → Pair this iPhone. No token, no
+                      login, nothing sent over the network.
+                      See docs/CONNECT-APP.md.
 
   Next:               docs/CONNECT-APP.md — put TLS or a private mesh in front
                       before exposing this to any other device.

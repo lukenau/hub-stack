@@ -65,22 +65,26 @@ and prints the URL to point the app at. That's it.
   Point the app at:   http://127.0.0.1:8090   (this machine)
                       http://192.168.1.50:8090   (from another device on your network)
 
-  Pair the app:       Config → Security → Pair this iPhone — a one-time
-                      6-character enrolment code from the Hub PWA. No token,
-                      no login.
+  Pair the app:       run  ./install.sh --pair  on this machine to mint a
+                      one-time 6-character enrolment code, then enter it in the
+                      app's Config → Security → Pair this iPhone. No token, no
+                      login, nothing sent over the network.
 ```
 
 Next, point the app at that URL and pair the device. Both happen in the app:
 type the address into **Config → Server address** (no rebuild needed — this
 user-set value wins over the build-time `expo.extra.apiBase` in `app/app.json`).
-Pairing mints a one-time six-character code on the Hub PWA's **Config → Security**
-page (the **Pair iPhone app** action) and you type it into the app's
+Pairing mints a one-time six-character code you run `./install.sh --pair` to
+produce on the server machine — it is generated locally over a unix socket, so
+nothing touches the network — and you type it into the app's
 **Config → Security → Pair this iPhone** screen; the code is six characters from
 A–Z (no `I`/`O`) and 2–9 (no `0`/`1`), single-use, and expires after 120 seconds
-by default. The installer's `from another device` line above is your machine's
-LAN address — on a VPS that is a private NIC reachable from nothing until you add
-a mesh or proxy. Details: **[docs/SETUP.md](docs/SETUP.md)** and
-**[docs/CONNECT-APP.md](docs/CONNECT-APP.md)**.
+by default. (If you also run a Hub web UI, its **Config → Security** page can
+mint the same code after a Face ID / passkey prompt — that UI is optional and is
+not part of this repository.) The installer's `from another device` line above
+is your machine's LAN address — on a VPS that is a private NIC reachable from
+nothing until you add a mesh or proxy. Details:
+**[docs/SETUP.md](docs/SETUP.md)** and **[docs/CONNECT-APP.md](docs/CONNECT-APP.md)**.
 
 ---
 

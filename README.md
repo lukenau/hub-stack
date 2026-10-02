@@ -129,6 +129,9 @@ hub-stack/
 
 ## What actually does the work
 
+![How a request flows: the app talks to your server, which hands the work to the agent runtime](assets/img/flow-request.svg)
+
+
 The hub is the **server and the app**. The intelligence behind it is an agent
 runtime that lives outside this repo, and it's worth being explicit about which
 piece does what, because most of the value is not in this codebase.
@@ -158,6 +161,9 @@ and what happens when a service is unset:
 
 ## Integrations — what's included, what isn't
 
+![The connector surface: hub-api at the centre, every service optional](assets/img/flow-services.svg)
+
+
 This repo is the **hub server + app**. It includes the code that talks to
 several optional services but bundles **none of them** — the agent gateway
 (Hermes), the memory provider, Murmur, iMessage, and OpenRouter all live
@@ -171,6 +177,8 @@ degrade instead of crashing. Full breakdown: **[docs/INTEGRATIONS.md](docs/INTEG
 <p align="center">
   <img src="app/assets/xavier/asleep.jpg" width="96" alt="">
 </p>
+
+![What stays on the box and what has to leave it](assets/img/flow-trust.svg)
 
 
 - **Your data never leaves your machine.** Everything the hub knows lives in

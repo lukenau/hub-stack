@@ -71,6 +71,7 @@ earlier release to compare against.
 - Private-architecture strings on the Ops, System and Config screens were replaced with generic operator descriptions. (`567d005`, `ba0243f`)
 - The Backups card no longer asserts one deployment's schedule and repository policy to every user; the schedule and append-only flag render only when the server's backup status file reports them. (`7989e0e`)
 - Backup test fixtures use obviously-fictional values instead of a repository name and size that may be the author's real ones. (`7989e0e`)
+- The slash-command bootstrap seed no longer carries any deployment's real command registry: `server/chat/command_catalog_bootstrap.json` is now a small, hand-authored, generic sample of the catalogue wire format, replacing a generated dump of a live gateway's private skill, plugin and alias registrations. (`92286cf`)
 
 ### Removed
 
@@ -78,6 +79,7 @@ earlier release to compare against.
 - An Android `RECORD_AUDIO` permission that had no code path behind it. (`8d1c80f`)
 - The composed README banner and its SVG source, replaced by the real app icon and character images. (`c10f8ac`)
 - The TestFlight group from `app/eas.json` (a group belongs to a deployment and is supplied at submit time with `--groups`). (`5c5694c`)
+- The two bootstrap-generation scripts (`server/chat/generate_command_catalog_bootstrap.py` and `.sh`), which read a running gateway's registries and wrote them straight into the repo — tooling that existed only to refresh one deployment's seed, with no product role now that the seed is a generic placeholder. (`92286cf`)
 
 ---
 

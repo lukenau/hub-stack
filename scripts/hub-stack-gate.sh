@@ -43,8 +43,13 @@ echo "== hub-stack publish gate =="
 scan    "work: employer/employer"   'employer|analytics-repo|dbt-repo|vendor-a|vendor-b'
 scan    "work: Jira ids"            '\b(AN|RR|CNAI)-[0-9]{3,6}\b'
 scan    "work: colleague emails"    '[A-Za-z0-9._%+-]+@employer\.com'
-scan    "work: internal hostnames"  'example-host|example-mac|lukenau-'
-scan    "host: tailnet/ts.net"      '100\.(64|81)\.[0-9]|\.[a-z0-9]+\.ts\.net'
+# The author's real deployment hostnames, not the placeholders the public
+# export substitutes into their place: `agent-cloud` (the VPS) becomes
+# `example-host`, `lukes-macbook-pro` becomes `example-mac`. Matching the
+# placeholders was backwards — it made the gate fail on its own clean tree
+# (services/murmur-bridge/config.example.toml, .../test_bridge_status.py).
+scan    "work: internal hostnames"  'agent-cloud|lukes-macbook|lukenau-|hermes-gateway|tail7fbd48'
+scan    "host: tailnet/ts.net"      '100\.(64|71|81)\.[0-9]|\.[a-z0-9]+\.ts\.net'
 
 # The author's name is INTENTIONAL branding here (LICENSE, README, package
 # metadata, docs) — Luke Nau is the owner and publisher, so the name is allowed.
@@ -64,8 +69,11 @@ scan_cs "secrets: slack/google"     'xapp-[0-9A-Za-z-]{10}|AIza[0-9A-Za-z_-]{35}
 # app.json needs the real one for any build to work. Submission credentials
 # (ascAppId, key id, issuer id) stay covered.
 scan_cs "ident: ASC/EAS account ids" '"(ascAppId|ascApiKeyId|ascApiKeyIssuerId)": *"[0-9a-zA-Z][0-9a-zA-Z-]{5,}"'
-# Host filesystem layout of the author's private deployment.
-scan    "host: private estate paths" '/opt/(agent-data|murmur|hermes)/'
+# Host filesystem layout of the author's private deployment. `/srv/hub-data`
+# is the host mount; `/srv/hub-data` is the same directory as seen inside the
+# gateway container, and both leaked into the tree before the export scrubber
+# ran — match either.
+scan    "host: private estate paths" '/opt/(agent-data|data|murmur|hermes)/'
 # .env files must never ship with real values
 scan_env() {
   local out; out=$(find . -name '.env' -not -path './.git/*' -not -path './node_modules/*' 2>/dev/null | sed 's/^/        /')

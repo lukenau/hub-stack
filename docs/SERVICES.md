@@ -45,8 +45,9 @@ service is an honest empty panel.
 ### Hermes agent gateway
 
 The agent that answers chat, holds your memory, and reports spend and model
-usage. Without it the hub is a dashboard plus chat shell; with it, chat gets an
-assistant and the memory and vitals panels come alive.
+usage. The reference agent is **[Hermes Agent](https://hermes-agent.nousresearch.com/docs)**
+by Nous Research. Without it the hub is a dashboard plus chat shell; with it,
+chat gets an assistant and the memory and vitals panels come alive.
 
 ```ini
 HERMES_API_BASE=https://your-gateway-host:port

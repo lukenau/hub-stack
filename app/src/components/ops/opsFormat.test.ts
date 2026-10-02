@@ -78,8 +78,8 @@ describe('writeErrorMessage (Ops.tsx:43-48)', () => {
   });
 
   test('every other ApplyError code surfaces its message', () => {
-    expect(writeErrorMessage(new ApplyError('bridge_error', 'hermes cron run failed'))).toBe(
-      'hermes cron run failed',
+    expect(writeErrorMessage(new ApplyError('bridge_error', 'cron run failed'))).toBe(
+      'cron run failed',
     );
   });
 

@@ -19,7 +19,7 @@ export function RunsSection({ q }: { q: UseQueryResult<CronRun[], Error> }) {
     <View style={styles.section}>
       <SectionHead label="Recent runs" count={q.data ? `${runs.length}` : ''} />
       {q.isLoading ? (
-        <StatePanel tone="pending" title="Reading run log…" detail="hermes cron logs · via CLI-bridge" />
+        <StatePanel tone="pending" title="Reading run log…" detail="job run history" />
       ) : null}
       {q.isError ? <StatePanel tone="error" title="Run log unavailable" detail={q.error?.message ?? ''} /> : null}
       {q.data && runs.length === 0 ? (

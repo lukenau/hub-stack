@@ -117,7 +117,7 @@ export function JobsSection({ q }: { q: UseQueryResult<CronReport, Error> }) {
     <View style={styles.section}>
       <SectionHead label="Jobs" count={q.data ? `${q.data.count}` : ''} />
       {q.isLoading ? (
-        <StatePanel tone="pending" title="Reading jobs…" detail="hermes cron list · via CLI-bridge" />
+        <StatePanel tone="pending" title="Reading jobs…" detail="scheduled jobs" />
       ) : null}
       {q.isError ? <StatePanel tone="error" title="Cron unavailable" detail={q.error?.message ?? ''} /> : null}
       {q.data && jobs.length === 0 ? (

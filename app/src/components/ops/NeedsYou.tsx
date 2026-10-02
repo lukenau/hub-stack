@@ -38,7 +38,7 @@ export function NeedsYou({ q }: { q: UseQueryResult<PairingReport, Error> }) {
     <View style={styles.section}>
       <SectionHead label="Needs you" count={q.data && q.data.pending_count > 0 ? `${q.data.pending_count}` : ''} />
       {q.isLoading ? (
-        <StatePanel tone="pending" title="Checking pairings…" detail="hermes pairing list · via CLI-bridge" />
+        <StatePanel tone="pending" title="Checking pairings…" detail="pairing requests" />
       ) : null}
       {q.isError ? <StatePanel tone="error" title="Pairing unavailable" detail={q.error?.message ?? ''} /> : null}
       {q.data && pending.length === 0 ? (

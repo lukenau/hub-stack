@@ -92,28 +92,50 @@ Tailscale, Headscale, WireGuard, Cloudflare Tunnel, or LAN-only — see
 
 The app, dark theme, sample data throughout:
 
-![Home](assets/img/app-home.jpg)
-![Chat — thread list](assets/img/app-chat.jpg)
-![Chat — the empty thread](assets/img/app-chat-thread.jpg)
+**Home, chat, threads**
 
-![Calendar — day](assets/img/app-calendar.jpg)
-![Calendar — week](assets/img/app-calweek.jpg)
-![Calendar — agenda](assets/img/app-agenda.jpg)
+<p align="center">
+  <img src="assets/img/app-home.jpg" width="220" alt="Home">
+  <img src="assets/img/app-chat.jpg" width="220" alt="Chat — thread list">
+  <img src="assets/img/app-chat-thread.jpg" width="220" alt="Chat — the empty thread">
+</p>
 
-![Weather](assets/img/app-weather.jpg)
-![Rain forecast](assets/img/app-precip.jpg)
+**Calendar**
 
-![Cost](assets/img/app-cost.jpg)
+<p align="center">
+  <img src="assets/img/app-calendar.jpg" width="220" alt="Calendar — day">
+  <img src="assets/img/app-calweek.jpg" width="220" alt="Calendar — week">
+  <img src="assets/img/app-agenda.jpg" width="220" alt="Calendar — agenda">
+</p>
 
-![Ops](assets/img/app-ops.jpg)
-![Automations](assets/img/app-automations.jpg)
+**Weather and cost**
 
-![Widgets — card, metric and chart](assets/img/app-widgets-card.jpg)
-![Widgets — table and charts](assets/img/app-widgets-table.jpg)
-![Widgets — progress, link and buttons](assets/img/app-widgets-misc.jpg)
-![Widgets — poll and checklist](assets/img/app-widgets-poll.jpg)
-![Widgets — timeline](assets/img/app-widgets-timeline.jpg)
-![Widgets — form](assets/img/app-widgets-form.jpg)
+<p align="center">
+  <img src="assets/img/app-weather.jpg" width="220" alt="Weather">
+  <img src="assets/img/app-precip.jpg" width="220" alt="Rain forecast">
+  <img src="assets/img/app-cost.jpg" width="220" alt="Cost">
+</p>
+
+**Ops and automations**
+
+<p align="center">
+  <img src="assets/img/app-ops.jpg" width="220" alt="Ops">
+  <img src="assets/img/app-automations.jpg" width="220" alt="Automations">
+</p>
+
+**Widgets**
+
+<p align="center">
+  <img src="assets/img/app-widgets-card.jpg" width="220" alt="Card, metric and chart">
+  <img src="assets/img/app-widgets-table.jpg" width="220" alt="Table and charts">
+  <img src="assets/img/app-widgets-misc.jpg" width="220" alt="Progress, link and buttons">
+</p>
+
+<p align="center">
+  <img src="assets/img/app-widgets-poll.jpg" width="220" alt="Poll and checklist">
+  <img src="assets/img/app-widgets-timeline.jpg" width="220" alt="Timeline">
+  <img src="assets/img/app-widgets-form.jpg" width="220" alt="Form">
+</p>
 
 ```
 hub-stack/

@@ -17,9 +17,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-import logging
 import os
-import secrets
 import time
 from pathlib import Path
 from typing import Any, Literal
@@ -27,46 +25,18 @@ from typing import Any, Literal
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
+import webauthn_gate as wa
+
 router = APIRouter(prefix="/api/ha", tags=["ha"])
 
 LOG_DIR = Path(os.environ.get("HUB_LOG_DIR", "/var/log/hub"))
 HA_WOULD_APPLY_LOG = LOG_DIR / "ha-would-apply.jsonl"
-PASSKEYS_JSON = Path(os.environ.get("HUB_PASSKEYS", str(Path(__file__).parent / "passkeys.json")))
 HA_LIVE_APPLY = os.environ.get("HA_LIVE_APPLY", "").lower() in ("true", "1", "yes")
 
-CHALLENGE_TTL_SECONDS = 30.0
-
-
-class _ChallengeCache:
-    """In-process cache of challenge -> (proposal_hash, expires_at).
-
-    Single-user hub so a dict is sufficient. TTL of 30s matches the
-    typical Face-ID ceremony window; expired entries pruned on write.
-    """
-
-    def __init__(self) -> None:
-        self._store: dict[str, tuple[str, float]] = {}
-
-    def _gc(self) -> None:
-        now = time.monotonic()
-        for c, (_, exp) in list(self._store.items()):
-            if exp < now:
-                del self._store[c]
-
-    def put(self, challenge: str, proposal_hash: str) -> None:
-        self._gc()
-        self._store[challenge] = (proposal_hash, time.monotonic() + CHALLENGE_TTL_SECONDS)
-
-    def take(self, challenge: str) -> str | None:
-        self._gc()
-        entry = self._store.pop(challenge, None)
-        if entry is None:
-            return None
-        proposal_hash, _ = entry
-        return proposal_hash
-
-
-_cache = _ChallengeCache()
+# The purpose this path binds its challenges to in the shared webauthn_gate cache —
+# distinct from "action"/"terminal"/"chat" so an assertion minted for one of those
+# can't unlock an HA apply, and vice versa.
+HA_APPLY_PURPOSE = "ha_apply"
 
 
 class ProposedChange(BaseModel):
@@ -131,87 +101,21 @@ def _proposal_hash(proposal: Proposal) -> str:
     return hashlib.sha256(_canonical_json(proposal.model_dump())).hexdigest()
 
 
-def _load_passkeys() -> list[dict[str, Any]]:
-    if not PASSKEYS_JSON.exists():
-        return []
-    try:
-        return json.loads(PASSKEYS_JSON.read_text())
-    except json.JSONDecodeError:
-        return []
-
-
-def _rp_id_from_env() -> str:
-    """Best-effort RP ID — the hub's tailnet hostname. Falls back to localhost.
-    Phase 2 enrolment flow should seed this explicitly."""
-    return os.environ.get("HUB_RP_ID", "localhost")
-
-
 @router.post("/challenge", response_model=ChallengeResponse)
-def ha_challenge(req: ChallengeRequest) -> ChallengeResponse:
-    passkeys = _load_passkeys()
-    if not passkeys:
+def ha_challenge(req: ChallengeRequest) -> dict[str, Any]:
+    """Assertion challenge for an HA apply, bound to this proposal's hash.
+
+    Delegates entirely to the primary webauthn_gate: same passkey store, same
+    single-use challenge cache, same purpose/context_hash binding every other
+    privileged surface uses. There is no second challenge store here.
+    """
+    try:
+        return wa.assertion_options(HA_APPLY_PURPOSE, _proposal_hash(req.proposal))
+    except wa.NoPasskeyError:
         raise HTTPException(
             status_code=412,
             detail={"code": "no_passkey", "detail": "No passkey registered. Enrol via Settings before using HA actions."},
         )
-    challenge_b64u = secrets.token_urlsafe(32)
-    phash = _proposal_hash(req.proposal)
-    _cache.put(challenge_b64u, phash)
-    return ChallengeResponse(
-        challenge=challenge_b64u,
-        rp_id=_rp_id_from_env(),
-        user_verification="required",
-        allowed_credentials=[AllowedCredential(id=p["credential_id"]) for p in passkeys if "credential_id" in p],
-    )
-
-
-def _verify_assertion(assertion: AssertionPayload, challenge: str, passkeys: list[dict[str, Any]]) -> bool:
-    """WebAuthn verification. Uses the `webauthn` library's
-    verify_authentication_response when installed; otherwise returns False
-    so the endpoint fails closed.
-
-    Phase 2 fill-in: pass origin + rp_id from env; store sign_count back
-    to passkeys.json to catch cloned authenticators.
-    """
-    try:
-        from webauthn import verify_authentication_response  # type: ignore
-        from webauthn.helpers.structs import AuthenticationCredential  # type: ignore
-    except ImportError:
-        # Distinguish a broken image dependency from a bad assertion in the logs.
-        logging.warning("webauthn library unavailable — assertion verification fails closed")
-        return False
-
-    cred_entry = next((p for p in passkeys if p.get("credential_id") == assertion.id), None)
-    if cred_entry is None:
-        return False
-
-    try:
-        verify_authentication_response(
-            credential=AuthenticationCredential.parse_raw(
-                json.dumps(
-                    {
-                        "id": assertion.id,
-                        "rawId": assertion.raw_id,
-                        "response": {
-                            "clientDataJSON": assertion.client_data_json,
-                            "authenticatorData": assertion.authenticator_data,
-                            "signature": assertion.signature,
-                            "userHandle": assertion.user_handle,
-                        },
-                        "type": "public-key",
-                    }
-                )
-            ),
-            expected_challenge=challenge.encode("utf-8"),
-            expected_rp_id=_rp_id_from_env(),
-            expected_origin=os.environ.get("HUB_ORIGIN", f"https://{_rp_id_from_env()}"),
-            credential_public_key=cred_entry["public_key"],
-            credential_current_sign_count=cred_entry.get("sign_count", 0),
-            require_user_verification=True,
-        )
-        return True
-    except Exception:
-        return False
 
 
 def _log_would_apply(proposal: Proposal, credential_id: str) -> None:
@@ -256,38 +160,25 @@ def _live_apply(proposal: Proposal) -> dict[str, Any]:
 
 @router.post("/apply")
 def ha_apply(req: ApplyRequest) -> dict[str, Any]:
-    passkeys = _load_passkeys()
-    if not passkeys:
+    if not wa.has_passkey():
         raise HTTPException(
             status_code=412,
             detail={"code": "no_passkey", "detail": "No passkey registered."},
         )
 
-    # Find the challenge that was issued for this specific proposal
+    # The real cryptographic verification — origin/RP-ID check, user-verification
+    # requirement, and the sign-count write-back for clone detection — all happen
+    # inside webauthn_gate.verify_assertion, the same call every other privileged
+    # surface (chat unlock, terminal, config-write actions) makes. It derives the
+    # challenge from the assertion's own clientDataJSON and checks it against this
+    # proposal's hash, so there is no separate challenge-matching loop here.
     expected_hash = _proposal_hash(req.proposal)
-    # We received an assertion; the client signed the challenge bytes. We
-    # need to derive the challenge from clientDataJSON. For minimum viable
-    # wiring, accept any still-cached challenge whose proposal_hash matches.
-    matched_challenge: str | None = None
-    for challenge, (phash, _exp) in list(_cache._store.items()):
-        if phash == expected_hash:
-            matched_challenge = challenge
-            break
-
-    if matched_challenge is None:
-        raise HTTPException(
-            status_code=412,
-            detail={"code": "challenge_expired", "detail": "No active challenge for this proposal — tap Approve again."},
-        )
-
-    if not _verify_assertion(req.assertion, matched_challenge, passkeys):
+    cred_id = wa.verify_assertion(req.assertion.model_dump(), HA_APPLY_PURPOSE, expected_hash)
+    if cred_id is None:
         raise HTTPException(
             status_code=403,
             detail={"code": "assertion_invalid", "detail": "Passkey verification failed."},
         )
-
-    # Consume the challenge on success
-    _cache.take(matched_challenge)
 
     started = time.monotonic()
     if HA_LIVE_APPLY:
@@ -299,7 +190,7 @@ def ha_apply(req: ApplyRequest) -> dict[str, Any]:
             "outcome": outcome,
         }
 
-    _log_would_apply(req.proposal, req.assertion.id)
+    _log_would_apply(req.proposal, cred_id)
     return {
         "status": "dry_run_ok",
         "applied_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),

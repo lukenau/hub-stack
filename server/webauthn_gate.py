@@ -4,6 +4,8 @@ Slice 2b security foundation. A single passkey gate backs every privileged surfa
   * enrolment            — register a platform authenticator into passkeys.json
   * the write-action gate — /api/action/{challenge,apply} (config.set, cron.*)
   * the terminal unlock   — /api/terminal/{challenge,session}
+  * the HA apply gate     — /api/ha/{challenge,apply} (purpose "ha_apply", context_hash
+                             = sha256 of the proposal; see server/ha_actions.py)
 
 All verification uses the well-tested `py_webauthn` library
 (verify_registration_response / verify_authentication_response) — NO hand-rolled

@@ -571,7 +571,7 @@ def test_backfill_files_stored_deliveries_on_evidence_only(unlocked):
 
     stored("ops", "\U0001F6A8 credit-watch: balance $9.97 left")                       # text
     stored("ops", "\u26A0\uFE0F hub-server ops-watch:\n\u2022 state volume 94% full")   # opener
-    stored("cron", "\U0001F6A8 cron-watch:\n  trading-watch missed its run")            # thread
+    stored("cron", "\U0001F6A8 cron-watch:\n  credit-watch missed its run")            # thread
     stored("ops", "\u23F3 Working \u2014 18 min \u2014 iteration 3")                    # nothing claims it
     stored("brief", "\u26A0\uFE0F Cron 'cron-watch' failed: the AI model service says no")  # named
     stored("ops", "here is what I found", run_id="run-1")                              # a chat turn
@@ -594,7 +594,7 @@ def test_backfill_files_stored_deliveries_on_evidence_only(unlocked):
     # which is "newest" is not something this test can say.)
     previews = sorted(i["run"]["preview"] for i in autos.job_items("ce4ca12805ee") if i["kind"] == "run")
     assert previews[0].startswith("Cron 'cron-watch' failed")
-    assert previews[1] == "trading-watch missed its run"
+    assert previews[1] == "credit-watch missed its run"
 
     listed = {t["id"] for t in client.get("/api/chat/threads", cookies=COOKIE).json()["threads"]}
     # `cron` held nothing but deliveries and is gone from Chat; `ops` holds a

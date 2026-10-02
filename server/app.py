@@ -83,7 +83,7 @@ OPENCLAW_BIN = os.environ.get("OPENCLAW_BIN", "/opt/homebrew/bin/openclaw")
 HERMES_API_BASE = os.environ.get("HERMES_API_BASE", "")
 HERMES_API_KEY = os.environ.get("HERMES_API_KEY", "")
 HERMES_AGENT_ID = os.environ.get("HERMES_AGENT_ID", "hermes")
-HERMES_AGENT_NAME = os.environ.get("HERMES_AGENT_NAME", "Hermes")
+HERMES_AGENT_NAME = os.environ.get("HERMES_AGENT_NAME", "Xavier")
 # litellm has been decommissioned: the cockpit's spend surfaces now read native
 # Hermes state.db via the hub-bridge /spend capability, the Chat model list is a
 # static direct-provider tier list, and vitals no longer probes litellm/postgres.
@@ -733,7 +733,6 @@ class WriteRequest(BaseModel):
         "murmur.drain_now",
         "murmur.capture_pause",
         "murmur.capture_resume",
-        "trading.resume",
         # Native-app pairing administration. Neither reaches the bridge; both are
         # reserved to a real passkey assertion (see _DEVICEKEY_ADMIN_ACTIONS).
         "devicekey.enroll_code",
@@ -991,8 +990,6 @@ def _validate_write_request(req: WriteRequest) -> None:
         return
     if req.action in _MURMUR_ACTIONS:
         return
-    if req.action == "trading.resume":
-        return
     if req.action in _DEVICEKEY_ADMIN_ACTIONS:
         # The key_id-xor-all requirement is enforced on the model (422). Here: when a
         # key_id IS given it must be an exact sha256 hex id — no prefix, no wildcard.
@@ -1242,8 +1239,6 @@ def action_apply(req: ActionApplyRequest) -> dict[str, Any]:
         return _apply_tmux(req.request)
     if req.request.action in _MURMUR_ACTIONS:
         return _apply_murmur(req.request)
-    if req.request.action == "trading.resume":
-        return _apply_trading_resume()
     argv = build_write_argv(req.request)  # re-derive; 400s on tamper
     try:
         result = _bridge_write(argv)
@@ -1374,7 +1369,7 @@ def _append_and_prune_commands(path: Path, record: dict[str, Any], max_entries: 
 
     Guarded by _MURMUR_CMDS_LOCK for same-process thread-safety. NOT tmp+rename
     (unlike webauthn_gate's _save_passkeys): verified live via `docker exec` that
-    hub-api (uid 1000) gets EPERM from os.replace() inside /opt/hub-data/hub
+    hub-api (uid 1000) gets EPERM from os.replace() inside /srv/hub-data/hub
     even when both the source and destination already exist at mode 666 —
     rename(2) requires WRITE permission on the containing directory itself
     (POSIX), which only the directory's owning group (agent, uid 1001) holds
@@ -1481,44 +1476,6 @@ def murmur_bridge_commands() -> Response:
     except OSError:
         text = ""
     return Response(content=text, media_type="text/plain")
-
-
-SPINDLE_RESUME_URL = os.environ.get("SPINDLE_RESUME_URL", "http://spindle-trading:8788/resume")
-SPINDLE_RESUME_TOKEN_FILE = Path(os.environ.get("SPINDLE_RESUME_TOKEN_FILE", "/data/hub/spindle-resume.token"))
-
-
-def _apply_trading_resume() -> dict[str, Any]:
-    """Clear spindle's breaker latch via its POST /resume (docker-network private,
-    shared-token, see spindle/__main__.py do_POST). The token lives in a FILE under
-    the hub mount rather than this container's env so provisioning it never needs a
-    container recreate. Reached ONLY from /api/action/apply after a verified WebAuthn
-    assertion — same trust story as every other write."""
-    try:
-        token = SPINDLE_RESUME_TOKEN_FILE.read_text().strip()
-    except OSError:
-        token = ""
-    if not token:
-        raise HTTPException(
-            status_code=503,
-            detail={"code": "resume_unconfigured",
-                    "detail": f"resume token missing at {SPINDLE_RESUME_TOKEN_FILE}"})
-    http_req = urllib.request.Request(
-        SPINDLE_RESUME_URL, data=b"", method="POST",
-        headers={"X-Resume-Token": token})
-    try:
-        with urllib.request.urlopen(http_req, timeout=10) as resp:
-            data = json.loads(resp.read())
-    except urllib.error.HTTPError as exc:
-        detail = exc.read().decode(errors="replace")[:200]
-        raise HTTPException(status_code=502, detail={
-            "code": "spindle_refused", "detail": f"spindle /resume HTTP {exc.code}: {detail}"})
-    except (urllib.error.URLError, OSError, ValueError) as exc:
-        raise HTTPException(status_code=502, detail={
-            "code": "spindle_unreachable", "detail": str(exc)})
-    return {"status": "applied", "code": 0,
-            "stdout": json.dumps(data), "stderr": "",
-            "was_halted": data.get("was_halted"),
-            "applied_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
 
 
 @app.get("/api/tmux/sessions")
@@ -1688,7 +1645,7 @@ def my_pages() -> dict[str, Any]:
 
 
 # Finance snapshot: written 3x/day by the hermes no_agent cron (finance-snapshot.py)
-# to /opt/hub-data/sites/finance/snapshot.json, read here off the ro sites mount.
+# to /srv/hub-data/sites/finance/snapshot.json, read here off the ro sites mount.
 # hub-api never touches the finance MCP/Plaid — it only serves the deterministic file.
 FINANCE_SNAPSHOT = Path(os.environ.get("HUB_FINANCE_SNAPSHOT", "/data/sites/finance/snapshot.json"))
 
@@ -3057,7 +3014,7 @@ async def imessage_send(draft_id: int, request: Request) -> Response:
 
 # --- Telegram topic routing (config-driven delivery) --------------------------
 # Canonical config: /data/hub/config/telegram-topics.json (host path
-# /opt/hub-data/hub/config/telegram-topics.json). The Hub edits it through the
+# /srv/hub-data/hub/config/telegram-topics.json). The Hub edits it through the
 # SAME WebAuthn gate the action writes use — a challenge bound to the sha256 of
 # the exact payload (purpose "topics"), then a verified assertion — and the write
 # only marks pending_sync; the host-side applier (hub-server/scripts/
@@ -3220,7 +3177,7 @@ def topics_apply(req: TopicsApplyRequest) -> dict[str, Any]:
 
 
 # --- Decision Inbox ----------------------------------------------------------
-# Filesystem-as-API: /data/hub/decisions/ (host /opt/hub-data/hub/decisions/),
+# Filesystem-as-API: /data/hub/decisions/ (host /srv/hub-data/hub/decisions/),
 # one JSON file per decision. Agents/coordinator write cards; the user answers them
 # in the Hub through the SAME WebAuthn gate as topics (challenge bound to the
 # sha256 of {id, option_key, note}, purpose "decisions", then a verified
@@ -3434,30 +3391,6 @@ def _feed_runs() -> list[dict[str, Any]]:
     return items
 
 
-def _feed_trading() -> list[dict[str, Any]]:
-    """Spindle's feed-worthy activity (placed orders, advisory decisions, data
-    guards) via its /events endpoint. Unreachable trading service = honest empty
-    contribution, never a broken feed."""
-    try:
-        with urllib.request.urlopen(f"{TRADING_API_BASE}/events", timeout=3) as resp:
-            events = json.loads(resp.read()).get("events") or []
-    except (urllib.error.URLError, OSError, json.JSONDecodeError):
-        return []
-    items: list[dict[str, Any]] = []
-    for i, e in enumerate(events):
-        if not isinstance(e.get("ts"), (int, float)) or not e.get("title"):
-            continue
-        items.append({
-            "id": f"trading-{int(e['ts'])}-{i}",
-            "ts": int(e["ts"]),
-            "kind": "trading",
-            "title": e["title"],
-            "status": e.get("status"),
-            "summary": (e.get("summary") or "")[:2000] or None,
-        })
-    return items
-
-
 def _feed_inbox() -> list[dict[str, Any]]:
     """Cards any agent can drop as INBOX_DIR/*.json (status.json is the status
     line, not a card). Malformed files are skipped silently — the inbox is a
@@ -3512,7 +3445,7 @@ def feed() -> dict[str, Any]:
     with _FEED_LOCK:
         if _FEED_CACHE and _FEED_CACHE[0] > time.time():
             return _FEED_CACHE[1]
-    items = _feed_briefs() + _feed_runs() + _feed_inbox() + _feed_trading()
+    items = _feed_briefs() + _feed_runs() + _feed_inbox()
     items.sort(key=lambda i: i["ts"], reverse=True)
     payload = {
         "items": items[:100],
@@ -4409,117 +4342,6 @@ _OPENROUTER_TTL_S = 300.0
 _OPENROUTER_CACHE: tuple[float, dict[str, Any]] | None = None
 _OPENROUTER_LOCK = threading.Lock()
 
-_BROWSERBASE_CACHE: tuple[float, dict[str, Any]] | None = None
-_BROWSERBASE_LOCK = threading.Lock()
-# Navigation history per session id. Completed sessions are immutable, so these
-# never expire; bounded by eviction below.
-_BB_NAV_CACHE: dict[str, list[str]] = {}
-
-
-def _bb_get(path: str, key: str, timeout: float = 6.0) -> Any:
-    req = urllib.request.Request(
-        f"https://api.browserbase.com{path}", headers={"X-BB-API-Key": key}
-    )
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read())
-
-
-def _bb_nav_history(session_id: str, key: str, cacheable: bool) -> list[str]:
-    """Main-frame navigation URLs for a session, in order, deduped consecutively —
-    the phone-native session summary (an itinerary beats a desktop replay)."""
-    if cacheable and session_id in _BB_NAV_CACHE:
-        return _BB_NAV_CACHE[session_id]
-    urls: list[str] = []
-    try:
-        for entry in _bb_get(f"/v1/sessions/{session_id}/logs", key, timeout=8.0):
-            if entry.get("method") != "Page.frameNavigated":
-                continue
-            frame = (((entry.get("request") or {}).get("params") or {}).get("frame") or {})
-            url = frame.get("url") or ""
-            if frame.get("parentId") or not url.startswith("http"):
-                continue  # subframes/ads and about:blank are noise
-            if not urls or urls[-1] != url:
-                urls.append(url)
-    except (urllib.error.URLError, OSError, ValueError, KeyError, TypeError):
-        return []
-    if cacheable:
-        if len(_BB_NAV_CACHE) > 48:
-            _BB_NAV_CACHE.pop(next(iter(_BB_NAV_CACHE)))
-        _BB_NAV_CACHE[session_id] = urls
-    return urls
-
-
-@app.get("/api/browser/sessions")
-def browser_sessions() -> dict[str, Any]:
-    """Assistant's cloud browser (Browserbase), phone-shaped: RUNNING sessions with
-    their embeddable live-view URL (the hub scales it to the screen — the
-    vendor's own page assumes desktop), plus recent sessions with replay links.
-    15s cache; 404 without a key (card hides)."""
-    key = os.environ.get("BROWSERBASE_API_KEY")
-    if not key:
-        raise HTTPException(status_code=404, detail="BROWSERBASE_API_KEY not configured")
-    global _BROWSERBASE_CACHE
-    with _BROWSERBASE_LOCK:
-        if _BROWSERBASE_CACHE and _BROWSERBASE_CACHE[0] > time.time():
-            return _BROWSERBASE_CACHE[1]
-    try:
-        rows = _bb_get("/v1/sessions", key)
-        if not isinstance(rows, list):
-            rows = rows.get("sessions") or rows.get("data") or []
-    except (urllib.error.URLError, OSError, ValueError, KeyError, TypeError) as exc:
-        raise HTTPException(status_code=502, detail=f"browserbase unavailable: {exc}")
-
-    running: list[dict[str, Any]] = []
-    for r in rows:
-        if r.get("status") != "RUNNING":
-            continue
-        live_url = None
-        try:
-            dbg = _bb_get(f"/v1/sessions/{r['id']}/debug", key, timeout=4.0)
-            live_url = dbg.get("debuggerFullscreenUrl") or dbg.get("debuggerUrl")
-        except (urllib.error.URLError, OSError, ValueError, KeyError, TypeError):
-            pass  # session row still renders without the embed
-        nav = _bb_nav_history(r["id"], key, cacheable=False)
-        running.append({
-            "id": r["id"],
-            "started_at": r.get("createdAt"),
-            "region": r.get("region"),
-            "live_url": live_url,
-            "current_url": nav[-1] if nav else None,
-            "pages": nav[-12:],
-        })
-
-    def _duration_s(r: dict[str, Any]) -> int | None:
-        try:
-            a = datetime.fromisoformat(r["createdAt"].replace("Z", "+00:00"))
-            b = datetime.fromisoformat(r["updatedAt"].replace("Z", "+00:00"))
-            return max(int((b - a).total_seconds()), 0)
-        except (KeyError, ValueError, TypeError, AttributeError):
-            return None
-
-    recent = []
-    for i, r in enumerate(x for x in rows[:8] if x.get("status") != "RUNNING"):
-        # Itineraries for the freshest few keep the first uncached call quick;
-        # older rows still show time + duration.
-        pages = _bb_nav_history(r["id"], key, cacheable=True) if i < 4 else []
-        recent.append({
-            "id": r["id"],
-            "status": r.get("status"),
-            "started_at": r.get("createdAt"),
-            "ended_at": r.get("updatedAt"),
-            "duration_s": _duration_s(r),
-            "pages": pages[:12],
-        })
-
-    payload = {
-        "running": running,
-        "recent": recent,
-        "updated_at": datetime.now(timezone.utc).isoformat(),
-    }
-    with _BROWSERBASE_LOCK:
-        _BROWSERBASE_CACHE = (time.time() + 10, payload)
-    return payload
-
 
 @app.get("/api/cost/openrouter")
 def cost_openrouter() -> dict[str, Any]:
@@ -4592,7 +4414,7 @@ def cost_openrouter() -> dict[str, Any]:
             activity = None  # credits still render; the card notes activity is off
 
     # Per-key spend from the cost-watch snapshot trail (hub-server/scripts/cost-watch.sh,
-    # host cron 09:15). The keys live in /opt/hub-data/.env, which this container cannot
+    # host cron 09:15). The keys live in /srv/hub-data/.env, which this container cannot
     # read — the host script does the key handling and writes the totals here, so tracking
     # another key never puts its secret in hub-api's environment. Rows predating multi-key
     # support carry no "key" and are all the hermes key.
@@ -5723,277 +5545,10 @@ def healthz() -> dict[str, str]:
 
 
 # ---------------------------------------------------------------------------
-# Trading (spindle) proxy. The trading container publishes 8788 on host
-# loopback only; a bridge-network hub-api reaches it as http://spindle-trading:8788
-# once `docker network connect <stack-net> spindle-trading` has been run (interim
-# wiring until compose reconciliation). Proxies /status when spindle grows it,
-# falling back to /healthz {status, mode, halted} — the PWA renders either shape.
-TRADING_API_BASE = os.environ.get("TRADING_API_BASE", "http://spindle-trading:8788")
-
-# Journal-derived fields spindle's GET surface doesn't carry (halt start time,
-# last placed order). Written by hub-server/scripts/spindle-derive.sh (host cron,
-# */5) via the filesystem-as-API pattern; merged only while fresh so a dead cron
-# degrades to the plain proxy response instead of serving a stale halt clock.
-SPINDLE_DERIVED = Path(os.environ.get("SPINDLE_DERIVED", "/data/hub/log/spindle.json"))
-SPINDLE_DERIVED_MAX_AGE_S = int(os.environ.get("SPINDLE_DERIVED_MAX_AGE_S", "900"))
-
-
-def _merge_spindle_derived(data: dict[str, Any]) -> None:
-    try:
-        if time.time() - SPINDLE_DERIVED.stat().st_mtime > SPINDLE_DERIVED_MAX_AGE_S:
-            return
-        derived = json.loads(SPINDLE_DERIVED.read_text())
-    except (OSError, json.JSONDecodeError):
-        return
-    if not isinstance(derived, dict):
-        return
-    if data.get("halted") and derived.get("halted_since"):
-        data["halted_since"] = derived["halted_since"]
-    if derived.get("last_order"):
-        data["last_order"] = derived["last_order"]
-
-
-@app.get("/api/trading/status")
-def trading_status() -> dict[str, Any]:
-    last_err: Exception | None = None
-    for path in ("/status", "/healthz"):
-        try:
-            with urllib.request.urlopen(f"{TRADING_API_BASE}{path}", timeout=3) as resp:
-                data = json.loads(resp.read())
-                if isinstance(data, dict):
-                    data.setdefault("status", "ok")
-                    data.setdefault("mode", "unknown")
-                    data.setdefault("halted", None)
-                    _merge_spindle_derived(data)
-                    return data
-        except urllib.error.HTTPError as exc:
-            if exc.code == 404:
-                continue  # /status not shipped yet — fall back to /healthz
-            last_err = exc
-            break
-        except (urllib.error.URLError, OSError, json.JSONDecodeError) as exc:
-            last_err = exc
-            break
-    return {"status": "offline", "mode": "unknown", "halted": None,
-            "detail": str(last_err) if last_err else "trading service unreachable"}
-
-
-def _trading_passthrough(path: str) -> dict[str, Any]:
-    try:
-        with urllib.request.urlopen(f"{TRADING_API_BASE}{path}", timeout=3) as resp:
-            data = json.loads(resp.read())
-            if isinstance(data, dict):
-                return data
-    except (urllib.error.URLError, OSError, json.JSONDecodeError) as exc:
-        raise HTTPException(status_code=503, detail=f"trading {path} unreachable: {exc}") from exc
-    raise HTTPException(status_code=502, detail=f"trading {path}: unexpected shape")
-
-
-@app.get("/api/trading/perf")
-def trading_perf() -> dict[str, Any]:
-    """Equity curve + PnL from spindle's journal marks (paper account)."""
-    return _trading_passthrough("/perf")
-
-
-@app.get("/api/trading/explain")
-def trading_explain() -> dict[str, Any]:
-    """The strategy's current view: momentum ranks, targets, positions — why it
-    holds what it holds."""
-    return _trading_passthrough("/explain")
-
-
-@app.get("/api/trading/events")
-def trading_events() -> dict[str, Any]:
-    """Recent order + advisory events from spindle (no halt events — those are
-    journal-derived, see _merge_spindle_derived)."""
-    return _trading_passthrough("/events")
-
-
-# ETF look-through holdings, written daily by hub-server/scripts/etf-holdings-fetch.sh
-# (issuer product data; filesystem-as-API). No freshness gate — holdings drift
-# slowly and each entry carries its own as_of, so stale beats missing.
-ETF_HOLDINGS = Path(os.environ.get("ETF_HOLDINGS", "/data/hub/log/etf-holdings.json"))
-# How many single stocks the ranked list carries. The card reads the length off
-# the response and states the coverage, so this is the only place it is set.
-EXPOSURE_TOP_N = 10
-
-
-@app.get("/api/trading/exposure")
-def trading_exposure() -> dict[str, Any]:
-    """What the book's ETF positions translate to in individual stocks:
-    position_weight (value/equity) x issuer holding_weight, aggregated across
-    held equity ETFs. Positions come live from spindle /perf."""
-    perf = _trading_passthrough("/perf")  # 503 when spindle is unreachable
-    positions = perf.get("positions") or {}
-    prices = perf.get("prices") or {}
-    equity = perf.get("equity")
-    try:
-        doc = json.loads(ETF_HOLDINGS.read_text())
-    except (OSError, json.JSONDecodeError):
-        doc = {}
-    etfs = doc.get("etfs") or {}
-    notes: list[str] = []
-    if not etfs:
-        notes.append("no holdings file — etf-holdings-fetch.sh hasn't run")
-
-    pos_pct: dict[str, float] = {}
-    if equity:
-        for sym, qty in positions.items():
-            px = prices.get(sym)
-            if px is not None:
-                pos_pct[sym] = qty * px / equity * 100
-
-    agg: dict[str, dict[str, Any]] = {}
-    per_etf: dict[str, dict[str, Any]] = {}
-    non_equity: list[dict[str, Any]] = []
-    for sym, info in sorted(etfs.items()):
-        if not isinstance(info, dict):
-            continue
-        held_pct = pos_pct.get(sym)
-        if not info.get("equity"):
-            entry: dict[str, Any] = {"etf": sym, "describes": info.get("describes")}
-            if held_pct is not None:
-                entry["position_pct_of_book"] = round(held_pct, 2)
-            non_equity.append(entry)
-            continue
-        if held_pct is None:
-            continue  # holdings on file but ETF not currently held
-        top = info.get("top") or []
-        fund_covered = sum(h["weight_pct"] for h in top)
-        # The same 50 rows explain wildly different fractions of the book: QQQ's
-        # 50 largest are 87% of that fund, IWM's are 13% of a small-cap index.
-        # Without these the ranked list below reads as "the book is QQQ".
-        per_etf[sym] = {
-            "position_pct_of_book": round(held_pct, 2),
-            "as_of": info.get("as_of"),
-            "top10": top[:10],
-            "names": len(top),
-            "fund_pct": round(fund_covered, 2),
-            "explains_pct": round(held_pct * fund_covered / 100, 2),
-            "max_name_pct": round(
-                held_pct * max((h["weight_pct"] for h in top), default=0.0) / 100, 3),
-        }
-        for h in top:
-            contrib = held_pct * h["weight_pct"] / 100
-            key = h.get("ticker") or h.get("name") or "?"
-            cur = agg.get(key)
-            # Local-exchange tickers can collide across markets (EFA "ROP" is
-            # Roche; SPY "ROP" is Roper) — only merge when the names agree.
-            if cur is not None and (cur["name"] or "")[:4].upper() != (h.get("name") or "")[:4].upper():
-                key = f"{key}#{sym}"
-                cur = agg.get(key)
-            if cur is None:
-                cur = agg[key] = {"ticker": h.get("ticker"), "name": h.get("name"),
-                                  "book_pct": 0.0, "via": []}
-            cur["book_pct"] += contrib
-            # The issuer weight rides along: deriving it back out of a rounded
-            # contribution over a rounded position printed 5.86% for MSFT next
-            # to the issuer's own 5.87% on the same card.
-            cur["via"].append({"etf": sym, "contrib_pct": round(contrib, 3),
-                               "weight_pct": h["weight_pct"]})
-    for sym, p in sorted(pos_pct.items()):
-        if sym not in etfs:
-            notes.append(f"{sym} held ({p:.0f}% of book) but no holdings data for it")
-
-    ranked = sorted(agg.values(), key=lambda r: -r["book_pct"])
-    book = ranked[:EXPOSURE_TOP_N]
-    for r in ranked:
-        r["book_pct"] = round(r["book_pct"], 3)
-    in_top: dict[str, int] = {}
-    for r in book:
-        for v in r["via"]:
-            in_top[v["etf"]] = in_top.get(v["etf"], 0) + 1
-    for sym, e in per_etf.items():
-        e["in_top"] = in_top.get(sym, 0)
-    return {
-        "generated_at": doc.get("generated_at"),
-        "equity": equity,
-        "book": book,
-        "per_etf": per_etf,
-        "non_equity": non_equity,
-        # How much of the book the ranked list actually accounts for. A silent
-        # [:20] cap reads as "this is everything" when it is an eighth of it.
-        "coverage": {
-            "shown": len(book),
-            "names": len(ranked),
-            "shown_pct": round(sum(r["book_pct"] for r in book), 2),
-            "explained_pct": round(sum(r["book_pct"] for r in ranked), 2),
-        },
-        "notes": notes,
-    }
-
-
-# Self-improvement proposal ledger, derived by hub-server/scripts/meta-ledger-derive.sh
-# (host cron, */5) from the append-only meta ledger at
-# /opt/hub-data/trading/meta/ledger.jsonl — hub-api only mounts /data/hub, so
-# the ledger reaches it via the same filesystem-as-API pattern as spindle.json.
-# No freshness gate: the ledger is append-only history, so stale beats missing
-# (same posture as ETF holdings). Observe-and-propose build: this surface is
-# read-only; answering happens through the existing decision-card flow.
-META_PROPOSALS = Path(os.environ.get("META_PROPOSALS", "/data/hub/log/meta-ledger.json"))
-
-
-@app.get("/api/trading/log")
-def trading_log() -> dict[str, Any]:
-    """What the trading agent tried and couldn't do, plus its guardrail budget,
-    session log and daily decisions — derived by hub-server/scripts/spindle-derive.sh
-    from the journal, which is the only place denials exist (spindle's /events
-    deliberately drops them as high-volume noise).
-
-    Freshness-gated exactly like /status: a dead cron reads as absent, never as
-    stale. Kept as its own route rather than widening _merge_spindle_derived so
-    /api/trading/status stays byte-stable.
-    """
-    try:
-        if time.time() - SPINDLE_DERIVED.stat().st_mtime > SPINDLE_DERIVED_MAX_AGE_S:
-            raise HTTPException(status_code=404, detail="spindle derive is stale")
-        doc = json.loads(SPINDLE_DERIVED.read_text())
-    except (OSError, json.JSONDecodeError):
-        raise HTTPException(status_code=404, detail="spindle derive not available")
-    if not isinstance(doc, dict):
-        raise HTTPException(status_code=502, detail="spindle.json: unexpected shape")
-    return {k: doc.get(k) for k in
-            ("generated_at", "blocked", "blocked_days", "blocked_by_reason",
-             "budget", "sessions", "decisions", "advisory")}
-
-
-@app.get("/api/trading/proposals")
-def trading_proposals() -> dict[str, Any]:
-    """Proposal ledger for the Money tab: awaiting-the user proposals (with what
-    they survived), killed proposals (kept forever with cause of death), and
-    resolved ones. Awaiting items are linked to their decision card by scanning
-    the decisions dir for the proposal id."""
-    try:
-        doc = json.loads(META_PROPOSALS.read_text())
-    except (OSError, json.JSONDecodeError):
-        raise HTTPException(status_code=404, detail="proposal ledger not derived yet")
-    if not isinstance(doc, dict):
-        raise HTTPException(status_code=502, detail="meta-ledger.json: unexpected shape")
-    for item in doc.get("awaiting") or []:
-        if not isinstance(item, dict):
-            continue
-        item.setdefault("decision_id", None)
-        pid = str(item.get("id") or "")
-        if not pid:
-            continue
-        try:
-            for path in sorted(DECISIONS_DIR.glob("*.json")):
-                try:
-                    if pid in path.read_text():
-                        item["decision_id"] = path.stem
-                        break
-                except OSError:
-                    continue
-        except OSError:
-            pass
-    return doc
-
-
-# ---------------------------------------------------------------------------
 # Murmur (pendant capture pipeline) status — derived by
 # hub-server/scripts/murmur-derive.sh (host cron, */5) from live Chronicle,
 # the Supermemory ETL state, and the Pi bridge's own pushed status file.
-# Filesystem-as-API, same freshness contract as spindle.json: read_cache 503s
+# Filesystem-as-API, same freshness contract as the other derived files: read_cache 503s
 # a murmur.json that's missing or older than HUB_CACHE_MAX_AGE_S (900s).
 MURMUR_DERIVED = Path(os.environ.get("MURMUR_DERIVED", "/data/hub/log/murmur.json"))
 

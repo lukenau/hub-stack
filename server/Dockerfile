@@ -10,7 +10,7 @@ COPY app.py ha_actions.py files.py hub_calendar.py webauthn_gate.py devicekeys.p
 COPY chat/ /opt/hub-api/chat/
 
 # Non-root. Uid must match the host data-dir owner (HERMES_UID in deploy/.env — the gateway
-# chowns /opt/hub-data to it) or volume writes (HUB_LOG_DIR, passkeys.json) get EACCES.
+# chowns /srv/hub-data to it) or volume writes (HUB_LOG_DIR, passkeys.json) get EACCES.
 ARG HUB_UID=1000
 RUN useradd --uid "${HUB_UID}" --create-home hubapi
 USER hubapi

@@ -94,7 +94,7 @@ ORIGIN = "https://hub.test"
 # Substrings that must never appear in any error body this file provokes: the tmpdir
 # root (an absolute host path), the platform bearer secret, and the literal env var
 # name the user's real secret lives under.
-FORBIDDEN_IN_ERRORS = (str(TMP), PLATFORM_SECRET, "HUB_PLATFORM_KEY", "/home/agent", "/opt/hub-data")
+FORBIDDEN_IN_ERRORS = (str(TMP), PLATFORM_SECRET, "HUB_PLATFORM_KEY", "/home/user", "/srv/hub-data")
 
 
 # --- webauthn/devicekey fixtures (same idiom as test_devicekeys.py) ------------

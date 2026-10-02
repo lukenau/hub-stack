@@ -60,7 +60,7 @@ log = logging.getLogger("hub.devicekeys")
 
 # Sibling of passkeys.json by construction, so it follows HUB_PASSKEYS wherever the
 # deploy points it (in the container: /data/hub/devicekeys.json, host
-# /opt/hub-data/hub/devicekeys.json). Public keys only — no secret material.
+# /srv/hub-data/hub/devicekeys.json). Public keys only — no secret material.
 # (HUB_PASSKEYS is re-read here rather than imported from webauthn_gate: webauthn_gate
 # imports THIS module for its device-key branch, so the dependency only points one way.)
 _PASSKEYS_JSON = Path(os.environ.get("HUB_PASSKEYS", str(Path(__file__).parent / "passkeys.json")))
@@ -282,7 +282,7 @@ def _save_devicekeys(items: list[dict[str, Any]]) -> None:
     owning the gate. 0600 buys exactly one thing: an unprivileged process running as some
     OTHER uid cannot edit the file. It does NOT defend against the adversary that actually
     matters here (hub-server/SECURITY-FOLLOWUPS.md F1): example-gateway holds
-    /opt/hub-data as a rw mount and runs as ROOT over it, so root ignores the mode bits
+    /srv/hub-data as a rw mount and runs as ROOT over it, so root ignores the mode bits
     entirely, and anything that can write the containing DIRECTORY can replace the file
     regardless. A prompt-injected agent in that container therefore still owns this store.
     0600 is kept because it is strictly better than passkeys.json's current 0644 and costs

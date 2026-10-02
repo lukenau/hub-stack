@@ -1520,7 +1520,7 @@ def test_a_final_that_is_not_the_streamed_text_is_its_own_row():
     st.append_stream_delta(thread_id="thr_g", run_id="run-g", delta="Let me look at the cron job first.")
     assert st.finalize_streaming_message(
         thread_id="thr_g", run_id="run-g",
-        parts=[{"type": "text", "text": "Got it — switching to the trading question."}],
+        parts=[{"type": "text", "text": "Got it — switching to the config question."}],
     ) is None
     (row,) = st.list_messages("thr_g")
     assert row["status"] == "streaming"

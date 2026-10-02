@@ -57,7 +57,7 @@ def test_tolerates_malformed_lines_already_on_disk_without_crashing(tmp_path):
 
 def test_requires_file_to_already_exist(tmp_path):
     # "r+" mode — mirrors the real constraint: hub-api can't create a NEW file in
-    # /opt/hub-data/hub (no directory-write permission), only write into one that
+    # /srv/hub-data/hub (no directory-write permission), only write into one that
     # murmur-derive.sh already pre-created. A missing file must raise, not silently
     # create one hub-api would then own with the wrong permissions.
     path = tmp_path / "missing.json"

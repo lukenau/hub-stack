@@ -69,7 +69,7 @@ logger = logging.getLogger(__name__)
 
 
 # --- secret ------------------------------------------------------------------
-# Container path /data/hub-platform/HUB_PLATFORM_KEY (host /opt/hub-data/hub-platform/
+# Container path /data/hub-platform/HUB_PLATFORM_KEY (host /srv/hub-data/hub-platform/
 # HUB_PLATFORM_KEY), 0640 with a read ACL for uid 1000 — already provisioned (see task
 # brief). Only the path is env-overridable; the key value is never read from an env var.
 HUB_PLATFORM_KEY_FILE = Path(os.environ.get("HUB_PLATFORM_KEY_FILE", "/data/hub-platform/HUB_PLATFORM_KEY"))

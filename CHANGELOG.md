@@ -73,6 +73,7 @@ earlier release to compare against.
 - Backup test fixtures use obviously-fictional values instead of a repository name and size that may be the author's real ones. (`7989e0e`)
 - The slash-command bootstrap seed no longer carries any deployment's real command registry: `server/chat/command_catalog_bootstrap.json` is now a small, hand-authored, generic sample of the catalogue wire format, replacing a generated dump of a live gateway's private skill, plugin and alias registrations. (`92286cf`)
 - The server's own module docstring no longer names an internal deployment: the optional liveness probe is described generically, so the publish gate's internal-hostname scan is clean instead of matching a bare prose component name. (`9e5dfc7`)
+- The brief fixture no longer names a private work-capture tool, and the tree it broke parses again: the synthetic captured items carried the tool's name as their display `source` (rendered as the item sheet eyebrow), now the neutral `Capture`, and the same rewrite left an unquoted `capture-sync` object key in `app/src/components/brief/briefModel.ts` — a syntax error that failed every suite importing it — now quoted. (`55c913b`)
 
 ### Removed
 
@@ -81,6 +82,7 @@ earlier release to compare against.
 - The composed README banner and its SVG source, replaced by the real app icon and character images. (`c10f8ac`)
 - The TestFlight group from `app/eas.json` (a group belongs to a deployment and is supplied at submit time with `--groups`). (`5c5694c`)
 - The two bootstrap-generation scripts (`server/chat/generate_command_catalog_bootstrap.py` and `.sh`), which read a running gateway's registries and wrote them straight into the repo — tooling that existed only to refresh one deployment's seed, with no product role now that the seed is a generic placeholder. (`92286cf`)
+- The Murmur bridge no longer documents or ships its Mac-side memory-sync companion (personal tooling, not product surface): its layout bullet is gone from `services/murmur-bridge/README.md`, and the now-empty `murmur/mac/` package is removed. (`55c913b`)
 
 ---
 

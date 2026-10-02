@@ -27,7 +27,7 @@ reachable from anywhere.
 2. **Clone the repo**
 
    ```bash
-   git clone https://github.com/<your-username>/hub-stack.git
+   git clone https://github.com/lukenau/hub-stack.git
    cd hub-stack
    ```
 
@@ -39,7 +39,8 @@ reachable from anywhere.
 
    First run builds the image (about a minute) and waits for health.
 
-   **Success looks like:**
+   **Success looks like** (first run — on a later run the first line reads
+   `✔ Using existing .env`):
 
    ```
    ✔ Created .env (mode 600)
@@ -76,12 +77,18 @@ reachable from anywhere.
    curl -fsSL https://tailscale.com/install.sh | sh
    sudo tailscale up
    sudo tailscale serve --bg --https=443 http://127.0.0.1:8090
-   tailscale status   # note your machine's tailnet name
+   tailscale serve status   # prints your https://<machine>.<tailnet>.ts.net URL
    ```
 
-   The app then uses `http://<vps-tailnet-name>` — plain HTTP, but inside
-   the encrypted tailnet, so it is never exposed to the public internet.
-   For a real domain with proper TLS, use option B.
+   The app then uses that full `https://<machine>.<tailnet>.ts.net` hostname —
+   Tailscale terminates HTTPS for it, so the scheme is `https`, not `http` — and
+   it is never exposed to the public internet. `--https` needs HTTPS certificates
+   enabled for the tailnet in the Tailscale admin console; [MESH.md](MESH.md)
+   covers that. For a real domain with proper TLS, use option B.
+
+   The installer's separate "from another device" URL is the VPS's **private NIC
+   address**. On a VPS nothing can reach it until you add the mesh above or a
+   proxy (option B), so use the Tailscale hostname on a VPS, not that address.
 
    **Option B — TLS reverse proxy (needed for a public domain).**
    Keep `HUB_BIND=127.0.0.1` — the proxy connects to loopback, so you do

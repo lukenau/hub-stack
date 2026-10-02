@@ -12,17 +12,21 @@ For host-specific detail (VPS, home server, Mac) see the dedicated guides.
 and Docker Compose v2 (`docker compose version` must work).
 
 ```bash
-git clone https://github.com/<your-username>/hub-stack.git
+git clone https://github.com/lukenau/hub-stack.git
 cd hub-stack
 ./install.sh
 ```
 
-Success looks like this:
+On a first run, success looks like this:
 
 ```
 ✔ Created .env (mode 600)
 ✔ hub-api is up  →  http://127.0.0.1:8090
 ```
+
+On any later run the first line is `✔ Using existing .env` instead (the
+installer leaves an existing `.env` untouched), and the `hub-api is up` line
+prints your `HUB_PORT` — `8090` by default.
 
 Then pair the app with your server — see [CONNECT-APP.md](CONNECT-APP.md). There
 is no token to enter: the app is paired with a one-time enrolment code minted
@@ -43,18 +47,23 @@ In order:
    seeds a sensible timezone from the system. An existing `.env` is kept
    untouched.
 3. **Builds and starts** the server with `docker compose up -d --build`.
-4. **Waits for health** — polls `http://127.0.0.1:8090/api/healthz` every
-   2 s for up to 90 s, then points you at the logs if it never came up.
+4. **Waits for health** — polls `http://127.0.0.1:${HUB_PORT}/api/healthz`
+   (`8090` by default) every 2 s for up to 90 s, then points you at the logs if
+   it never came up.
 5. **Prints next steps** — the URL for the app and a pointer to CONNECT-APP.md.
 
-Other modes:
+`install.sh` modes (`./install.sh --help` prints all of them):
 
 | Command | Effect |
 |---|---|
-| `./install.sh` / `--start` | Install or start (steps above) |
+| `./install.sh` / `--start` | Install or start (the default; steps above) |
 | `./install.sh --update` | `git pull --ff-only`, rebuild, restart |
 | `./install.sh --stop` | `docker compose down` |
+| `./install.sh --restart` | `docker compose restart` |
 | `./install.sh --logs` | Follow container logs (last 100 lines) |
+| `./install.sh --status` | Show container state + health (`docker compose ps`) |
+| `./install.sh --url` | Print the URL to point the app at |
+| `./install.sh --uninstall` | Stop and delete all data (asks for confirmation) |
 
 ---
 
@@ -68,12 +77,15 @@ commented there. The important ones:
 | Variable | Default | Meaning |
 |---|---|---|
 | `HUB_BIND` | `127.0.0.1` | Host-side publish address. `127.0.0.1` = reachable from this machine only. Set `0.0.0.0` **only** when a reverse proxy or private mesh is in front — see [CONNECT-APP.md](CONNECT-APP.md). |
+| `HUB_PORT` | `8090` | Host-side port the server is published on. The container always listens on `8090` internally; this moves only the host side. Set it in `.env` (or the environment) — `docker-compose.yml` reads `${HUB_PORT:-8090}`, so don't hand-edit the compose file. If you change it, point `HUB_PUBLIC_BASE` at the same port. |
 | `HUB_API_HOST` / `HUB_API_PORT` | `0.0.0.0` / `8090` | Listen address inside the container. Leave as-is. |
+| `HUB_UID` | `1000` | uid the container runs as. `install.sh` keeps it in step with the owner of `HUB_DATA_DIR` so the non-root container can write its db/uploads. Set it by hand only if you moved the data dir to a different owner. |
 | `HUB_DATA_DIR` | `./data` | Host directory persisted into the container at `/data` (db, uploads, keys). |
 
-The published host **port** is fixed at `8090` in `docker-compose.yml`
-(`"${HUB_BIND:-127.0.0.1}:8090:8090"`). To use a different host port, change
-the left-hand `8090` there.
+The host **port** comes from `HUB_PORT` (default `8090`); `docker-compose.yml`
+publishes `"${HUB_BIND:-127.0.0.1}:${HUB_PORT:-8090}:8090"`. Setting it in `.env`
+also survives `./install.sh --update`, which a hand-edit of the compose file
+would not.
 
 ### Identity / pairing
 
@@ -112,7 +124,10 @@ curl -fsS http://127.0.0.1:8090/api/healthz
 
 Everything else (activity, files, home automation state…) is served without
 authentication. The API has no per-request token: reachability is the access
-boundary (see [SECURITY.md](../SECURITY.md)).
+boundary (see [SECURITY.md](../SECURITY.md)). **Chat is the exception** — every
+chat-data route (threads, messages, media, sends) is gated by the
+`hub_chat_session` cookie, which is minted by a Face ID device-key ceremony, so
+*reading* chat needs a paired device key, not just writing it.
 
 ## Updating
 
@@ -126,8 +141,8 @@ Data in `HUB_DATA_DIR` survives all of this.
 ## Uninstalling
 
 ```bash
-./install.sh --stop     # stop the server
-sudo rm -rf data .env   # remove secrets and data (careful: irreversible)
+./install.sh --stop                          # stop the server
+sudo rm -rf "${HUB_DATA_DIR:-./data}" .env   # data dir + secrets (irreversible)
 ```
 
 ---

@@ -31,7 +31,7 @@ Run the hub on a Mac. This page covers two different goals:
 2. **Clone the repo**
 
    ```bash
-   git clone https://github.com/<your-username>/hub-stack.git
+   git clone https://github.com/lukenau/hub-stack.git
    cd hub-stack
    ```
 
@@ -43,7 +43,8 @@ Run the hub on a Mac. This page covers two different goals:
 
    First run builds the image (about a minute) and waits for health.
 
-   **Success looks like:**
+   **Success looks like** (first run — on a later run the first line reads
+   `✔ Using existing .env`):
 
    ```
    ✔ Created .env (mode 600)
@@ -222,6 +223,9 @@ sudo tailscale serve --bg --https=443 http://127.0.0.1:8090
 tailscale serve status    # shows your https://<machine>.<tailnet>.ts.net URL
 ```
 
+`--https` needs HTTPS certificates enabled for the tailnet in the Tailscale
+admin console — see [MESH.md](MESH.md).
+
 Full setup, including the phone side, is in [MESH.md](MESH.md). One
 server-specific note: the `<machine>` part of that URL comes from the
 Mac's hostname when it joins the tailnet. If you rename the Mac later,
@@ -297,8 +301,10 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md). Mac-specific notes:
 - `Docker daemon not reachable` → Docker Desktop isn't running. Launch it
   and wait for the whale icon, then retry. On a headless server, also
   check **Start Docker Desktop when you sign in** (see above).
-- Port 8090 already in use → something else on the Mac claims it; change
-  the left-hand `8090` in `docker-compose.yml` or stop the other service.
+- Port 8090 already in use → something else on the Mac claims it; set
+  `HUB_PORT` to a free port in `.env` and re-run `./install.sh`, or stop the
+  other service. (`HUB_PORT` is what the compose publish reads, and it survives
+  `./install.sh --update` — don't hand-edit `docker-compose.yml`.)
 - Hub is down after a reboot and won't come back → work through the
   [verification checklist](#7-verify-the-headless-setup). If the Mac has
   FileVault, someone has to unlock it first (see above).

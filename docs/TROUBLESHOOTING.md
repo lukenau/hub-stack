@@ -58,7 +58,7 @@ Work through in order:
 1. **Is the server actually reachable from that device?**
 
    ```bash
-   curl -fsS http://<server-url>/api/healthz
+   curl -fsS <server-url>/api/healthz
    ```
 
    - Works from the server itself but not from your phone → the hub is
@@ -67,18 +67,20 @@ Work through in order:
      just bind `0.0.0.0` on an internet-facing machine.
    - Fails everywhere → the container is down; see above.
 
-2. **401 responses** — gated routes lock individually: the terminal returns
-   `401 terminal locked` until you unlock it with Face ID. Reads are
-   unauthenticated and do not use `HUB_API_TOKEN` (see
-   [SECURITY.md](../SECURITY.md)).
+2. **401 responses** — gated routes lock individually. The terminal returns
+   `terminal locked — unlock with Face ID` until you unlock it; chat returns
+   `chat locked — unlock with Face ID`, and chat's data routes need the chat
+   session cookie, so chat reads are authenticated unlike the hub's other reads.
+   None of this uses `HUB_API_TOKEN` (see [SECURITY.md](../SECURITY.md)).
 
 3. **CORS / origin errors in the web app** — the origin the app runs from
    isn't in `HUB_ORIGIN`. Add it (comma-separated list) and
    `docker compose up -d`.
 
 4. **URL mistakes** — the server URL must include the scheme and port:
-   `https://hub.example.com`, not `hub.example.com`; `http://192.168.1.50:8090`,
-   not just the IP.
+   `https://hub.example.com`, not `hub.example.com`; `http://127.0.0.1:8090`,
+   not just the IP. The app accepts `http://` only for `localhost` /
+   `127.0.0.1`, so any other server must be reached over `https://`.
 
 ## Server unreachable after a reboot
 
@@ -96,13 +98,13 @@ Work through in order:
 
   ```bash
   ./install.sh --stop
-  sudo rm -rf data .env
+  sudo rm -rf "${HUB_DATA_DIR:-./data}" .env
   ./install.sh
   ```
 
 ## Still stuck
 
-Open a [GitHub issue](https://github.com/<your-username>/hub-stack/issues)
+Open a [GitHub issue](https://github.com/lukenau/hub-stack/issues)
 with: the exact command, the full installer output, `docker compose ps`, and
 the last ~50 lines of `./install.sh --logs`. Redact any credentials (API
 keys, tokens).

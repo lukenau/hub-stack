@@ -28,7 +28,7 @@ data at home.
 2. **Clone the repo**
 
    ```bash
-   git clone https://github.com/<your-username>/hub-stack.git
+   git clone https://github.com/lukenau/hub-stack.git
    cd hub-stack
    ```
 
@@ -125,5 +125,5 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md). Home-server-specific notes:
   deliberately.
 - IP changed after a router reboot → set a DHCP reservation.
 - NAS won't bind the port → check the NAS firewall and whether port 8090
-  is already used by a NAS service (change the left-hand `8090` in
-  `docker-compose.yml`).
+  is already used by a NAS service (set `HUB_PORT` in `.env` to a free port
+  and re-run `./install.sh`; don't hand-edit `docker-compose.yml`).

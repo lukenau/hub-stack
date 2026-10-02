@@ -70,10 +70,16 @@ and prints the URL to point the app at. That's it.
                       no login.
 ```
 
-Next, point a build at that URL and pair the device. A source build takes its
-server address from `expo.extra.apiBase` in `app/app.json` — there is no field
-in the app for it — and pairing is a six-character code you mint behind Face ID.
-Details: **[docs/SETUP.md](docs/SETUP.md)** and
+Next, point the app at that URL and pair the device. Both happen in the app:
+type the address into **Config → Server address** (no rebuild needed — this
+user-set value wins over the build-time `expo.extra.apiBase` in `app/app.json`).
+Pairing mints a one-time six-character code on the Hub PWA's **Config → Security**
+page (the **Pair iPhone app** action) and you type it into the app's
+**Config → Security → Pair this iPhone** screen; the code is six characters from
+A–Z (no `I`/`O`) and 2–9 (no `0`/`1`), single-use, and expires after 120 seconds
+by default. The installer's `from another device` line above is your machine's
+LAN address — on a VPS that is a private NIC reachable from nothing until you add
+a mesh or proxy. Details: **[docs/SETUP.md](docs/SETUP.md)** and
 **[docs/CONNECT-APP.md](docs/CONNECT-APP.md)**.
 
 ---

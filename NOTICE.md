@@ -18,7 +18,7 @@ a mailbox, and it ships with no user accounts and no per-request
 authentication. Reachability is the access boundary. If you bind it to a public
 interface, expose the port, or put it behind a tunnel that is open to the
 internet, you are the one who decided that, and the consequences are yours. Read
-[docs/SECURITY.md](docs/SECURITY.md) before you do.
+[SECURITY.md](SECURITY.md) before you do.
 
 ## No affiliation
 

@@ -115,8 +115,9 @@ No. Verified in this repo:
 
 - The app's default server is a placeholder (`https://hub.example.com` in
   `app/src/lib/api.ts`); there is no fallback to any author's server. The app
-  talks only to the URL built into it (`expo.extra.apiBase`) — nothing is entered
-  or changed in-app.
+  talks only to the server you point it at — the address you enter under
+  **Config → Server address**, or the build-time `expo.extra.apiBase` if you
+  never set one.
 - The app contains no analytics or telemetry SDK (no Sentry/Amplitude/Segment/
   PostHog, no Expo analytics).
 - The EAS `projectId` is a real project id (it ships inside every build, so it is

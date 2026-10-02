@@ -1,6 +1,6 @@
 # hub-stack
 
-![Xavier: a personal AI agent you host yourself](assets/img/xavier-banner.svg)
+<img src="assets/img/xavier-icon.png" alt="Xavier: a personal AI agent you host yourself" width="200">
 
 **Self-host a private AI hub: one server you own, plus the app that talks to it.**
 

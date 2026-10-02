@@ -52,18 +52,18 @@ jobs:
           docker compose config -q && echo "compose OK"
 
   hygiene:
-    name: no work/personal markers
+    name: publish gate (no work/personal markers)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fail if forbidden strings are present
-        run: |
-          set -e
-          if grep -rInE 'employer|analytics-repo|dbt-repo|\.ts\.net|100\.(64|81)\.' \
-               --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.github . ; then
-            echo "::error::forbidden work/host marker found"; exit 1
-          fi
-          echo "hygiene OK"
+      # One implementation of the gate, not two. The inline grep that used to
+      # live here was a cruder copy of scripts/hub-stack-gate.sh: it did not
+      # exclude the gate script itself (so the guard's own pattern lines
+      # matched) and its bare \.ts\.net flagged legitimate public Tailscale
+      # docs. The script excludes itself and matches the author's actual
+      # tailnet, so CI runs the script.
+      - name: Run the publish gate
+        run: bash scripts/hub-stack-gate.sh
 
   dco:
     name: DCO sign-off

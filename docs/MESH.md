@@ -52,8 +52,9 @@ use `--https`, which provisions a real certificate.
 ### 3. Phone
 
 1. Install the Tailscale app and sign in to the **same tailnet**.
-2. Open the Hub app → **Settings → Server** → enter
-   `https://<machine>.<your-tailnet>.ts.net` and your token.
+2. Point the app at `https://<machine>.<your-tailnet>.ts.net`. There is no
+   server-URL or token field in the app — the URL is baked in at build time
+   (`expo.extra.apiBase`); see [CONNECT-APP.md](CONNECT-APP.md).
 3. Pair the device (see [BETA.md](BETA.md) if someone else is joining).
 
 ### Notes

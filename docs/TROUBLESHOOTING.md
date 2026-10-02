@@ -29,9 +29,10 @@ The build succeeded but the container never answered `/api/healthz` within
      lsof -i :8090                 # macOS
      ```
 
-     Stop the other service, or change the **left-hand** `8090` in the
-     `ports:` line of `docker-compose.yml` (e.g. `8091:8090`) — then also
-     update `HUB_PUBLIC_BASE`.
+     Stop the other service, or set `HUB_PORT` (in `.env`, or in the
+     environment) to a free port and re-run `./install.sh`. The container
+     always listens on 8090 internally; `HUB_PORT` only moves the host side.
+     If you change it, also update `HUB_PUBLIC_BASE` to the same port.
    - **First build was slow** — on a small VPS the image build can take a
      few minutes; the 90 s health wait may time out even though the
      container comes up right after. Re-run `./install.sh --logs` or
@@ -91,7 +92,7 @@ Work through in order:
 
 - **Logs**: `./install.sh --logs` (or `docker compose logs -f hub-api`).
 - **Restart fresh without losing data**: `./install.sh --stop && ./install.sh`.
-- **Full reset (deletes your data and token)**:
+- **Full reset (deletes your data and `.env`)**:
 
   ```bash
   ./install.sh --stop
@@ -103,4 +104,5 @@ Work through in order:
 
 Open a [GitHub issue](https://github.com/<your-username>/hub-stack/issues)
 with: the exact command, the full installer output, `docker compose ps`, and
-the last ~50 lines of `./install.sh --logs`. Redact the API token.
+the last ~50 lines of `./install.sh --logs`. Redact any credentials (API
+keys, tokens).

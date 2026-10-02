@@ -317,11 +317,11 @@ build appears.
 
 ### 3.4 What testers need to use the app
 
-The app pairs at runtime: it asks for a server URL and a token on first
-launch (see CONNECT-APP.md). A tester pointing at your server sees your
-data, so for the public-safe build either point testers at a demo server
-with nothing personal in it, or accept that they pair to their own hub.
-The token lives in `.env` on the server and is never in the build.
+The app is pointed at a server at build time (`expo.extra.apiBase`) and
+pairs with a one-time enrolment code (see CONNECT-APP.md). A tester
+pointing at your server sees your data, so for the public-safe build either
+point testers at a demo server with nothing personal in it, or accept that
+they pair to their own hub.
 
 ---
 

@@ -7,12 +7,12 @@
 <text x="32" y="62" font-family="ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#94a3b8" text-anchor="start">Point the Hub app at your server — two supported paths · guide: docs/CONNECT-APP.md</text>
 <rect x="330" y="96" width="300" height="44" rx="22" fill="rgba(76,29,149,0.35)" stroke="#a78bfa" stroke-width="1.5"/>
 <text x="480" y="114" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" fill="#a78bfa" text-anchor="middle" font-weight="600">pairing — asked once, stored in the app</text>
-<text x="480" y="130" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">server URL  +  API token (HUB_API_TOKEN)</text>
+<text x="480" y="130" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">one-time 6-character enrolment code</text>
 <rect x="60" y="180" width="240" height="200" rx="10" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
 <text x="180.0" y="206" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="13.5" fill="#22d3ee" text-anchor="middle" font-weight="600">Hub app</text>
 <text x="180.0" y="224" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11.5" fill="#94a3b8" text-anchor="middle">web · iOS · Android</text>
-<text x="180.0" y="242" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11.5" fill="#94a3b8" text-anchor="middle">enter the server URL</text>
-<text x="180.0" y="260" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11.5" fill="#94a3b8" text-anchor="middle">paste the API token</text>
+<text x="180.0" y="242" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11.5" fill="#94a3b8" text-anchor="middle">talks to the built-in URL</text>
+<text x="180.0" y="260" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11.5" fill="#94a3b8" text-anchor="middle">no token, no login</text>
 <text x="180.0" y="278" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11.5" fill="#94a3b8" text-anchor="middle">JSON over HTTPS</text>
 <rect x="140" y="304" width="80" height="26" rx="13" fill="rgba(2,6,23,0.6)" stroke="#22d3ee" stroke-width="1"/>
 <text x="180" y="321" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" fill="#22d3ee" text-anchor="middle">Connect</text>
@@ -21,7 +21,7 @@
 <text x="780.0" y="224" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11.5" fill="#94a3b8" text-anchor="middle">FastAPI in Docker</text>
 <text x="780.0" y="242" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11.5" fill="#94a3b8" text-anchor="middle">loopback by default:</text>
 <text x="780.0" y="260" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11.5" fill="#94a3b8" text-anchor="middle">127.0.0.1:8090</text>
-<text x="780.0" y="278" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11.5" fill="#94a3b8" text-anchor="middle">token in .env</text>
+<text x="780.0" y="278" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11.5" fill="#94a3b8" text-anchor="middle">no per-request auth</text>
 <rect x="340" y="180" width="280" height="74" rx="10" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4 4"/>
 <text x="480" y="202" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" fill="#fbbf24" text-anchor="middle" font-weight="600">PATH A — reachable from anywhere</text>
 <text x="480" y="220" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#94a3b8" text-anchor="middle">reverse proxy + TLS certificate</text>
@@ -36,7 +36,7 @@
 <path d="M620,337 L660,337" fill="none" stroke="#fb7185" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ar-fb7185)"/>
 <rect x="60" y="440" width="840" height="84" rx="12" fill="rgba(15,23,42,0.35)" stroke="#475569" stroke-width="1.5"/>
 <text x="84" y="466" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11.5" fill="#e2e8f0" text-anchor="start" font-weight="600">either way:</text>
-<text x="84" y="486" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" fill="#94a3b8" text-anchor="start">• the token is the credential — a bearer header on every request; without it the API answers nothing useful</text>
-<text x="84" y="506" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" fill="#94a3b8" text-anchor="start">• sensitive routes can additionally require WebAuthn / device keys</text>
+<text x="84" y="486" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" fill="#94a3b8" text-anchor="start">• there is no per-request token — reachability is the access boundary; anything that can reach the port can read</text>
+<text x="84" y="506" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" fill="#94a3b8" text-anchor="start">• writes are separately gated by a Face ID device key</text>
 <text x="84" y="526" font-family="ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" fill="#94a3b8" text-anchor="start">• A keeps the server public-reachable by design; B keeps it off the public internet entirely — pick per threat model</text>
 </svg>

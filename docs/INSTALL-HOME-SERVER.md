@@ -41,7 +41,7 @@ data at home.
    **Success looks like:**
 
    ```
-   ✔ Created .env
+   ✔ Created .env (mode 600)
    ✔ hub-api is up  →  http://127.0.0.1:8090
    ```
 

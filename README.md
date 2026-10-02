@@ -44,7 +44,9 @@ key, your spend, your choice.
 ## Quick start (5 minutes)
 
 **You need:** a machine that stays on (VPS, home server, or Mac) with
-[Docker](https://docs.docker.com/engine/install/) and Docker Compose v2.
+[Docker](https://docs.docker.com/engine/install/), Docker Compose v2, and
+`bash` — the installer is a bash script. `curl` is used for the health check
+when present, with a built-in fallback if it is not.
 
 ```bash
 git clone https://github.com/lukenau/hub-stack.git
@@ -52,13 +54,20 @@ cd hub-stack
 ./install.sh
 ```
 
-`install.sh` creates `.env`, generates a random API token, builds the server,
-starts it, and prints the URL to point the app at. That's it.
+`install.sh` creates `.env`, builds the server, starts it, waits for health,
+and prints the URL to point the app at. That's it.
 
 ```
 ✔ hub-api is up  →  http://127.0.0.1:8090
-  Server URL for your app build:  http://<this-machine>:8090
-  (see docs/CONNECT-APP.md to lock this down with TLS / Tailscale)
+
+✔ Done.
+
+  Point the app at:   http://127.0.0.1:8090   (this machine)
+                      http://192.168.1.50:8090   (from another device on your network)
+
+  Pair the app:       Config → Security → Pair this iPhone — a one-time
+                      6-character enrolment code from the Hub PWA. No token,
+                      no login.
 ```
 
 Next, point a build at that URL and pair the device. A source build takes its

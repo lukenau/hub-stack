@@ -42,7 +42,7 @@ reachable from anywhere.
    **Success looks like:**
 
    ```
-   ✔ Created .env with a fresh API token
+   ✔ Created .env (mode 600)
    ✔ hub-api is up  →  http://127.0.0.1:8090
    ```
 
@@ -127,7 +127,9 @@ reachable from anywhere.
    docker compose up -d    # recreate with the new env
    ```
 
-8. **Pair the app** — server URL + token, per [CONNECT-APP.md](CONNECT-APP.md).
+8. **Pair the app** — a one-time 6-character enrolment code from the Hub
+   PWA's Config → Security page (no token, no login), per
+   [CONNECT-APP.md](CONNECT-APP.md).
 
 ## Keeping it up to date
 

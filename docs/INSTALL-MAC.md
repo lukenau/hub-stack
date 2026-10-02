@@ -41,14 +41,12 @@ Run the hub on a Mac. This page covers two different goals:
    ./install.sh
    ```
 
-   The script handles BSD/macOS differences itself (it uses `sed -i ''`
-   and falls back to `/dev/urandom` if `openssl` is missing). First run
-   builds the image and waits for health.
+   First run builds the image (about a minute) and waits for health.
 
    **Success looks like:**
 
    ```
-   ✔ Created .env
+   ✔ Created .env (mode 600)
    ✔ hub-api is up  →  http://127.0.0.1:8090
    ```
 

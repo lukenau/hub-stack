@@ -20,7 +20,7 @@ cd hub-stack
 Success looks like this:
 
 ```
-✔ Created .env with a fresh API token
+✔ Created .env (mode 600)
 ✔ hub-api is up  →  http://127.0.0.1:8090
 ```
 

@@ -57,15 +57,14 @@ resolve correctly.
   or rename an env var, update `.env.example` and any doc that references
   it in the same PR.
 - **Server changes must keep the security posture**: loopback-by-default
-  publishing, bearer-token auth, the explicit POST allowlist, and the
+  publishing, the Face ID device-key write gate, the explicit POST allowlist, and the
   single-worker constraint (the WebAuthn challenge cache is in-process).
   A PR that weakens any of these needs a very good reason.
 - **Docs are part of the product.** If a change alters behavior a user
   can observe (ports, env vars, endpoints, install steps), update the
   relevant page under `docs/`.
 - **Bash portability matters** for `install.sh`: it must work on GNU and
-  BSD/macOS `sed`, and without `openssl` (falls back to `/dev/urandom`).
-  Test on both if you touch it.
+  BSD/macOS `sed`. Test on both if you touch it.
 
 ## Sending a change
 

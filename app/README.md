@@ -17,8 +17,9 @@ npm test              # npm run check, then jest (jest-expo preset)
 npx expo start        # dev client / Expo Go
 ```
 
-Point the app at your server in **Settings → Server** (base URL + API token printed
-by `install.sh`), then pair the device. See
+Point the app at your server by setting `expo.extra.apiBase` before a build
+(there is no in-app URL or token field), then pair the device with a one-time
+enrolment code. See
 [`../docs/CONNECT-APP.md`](../docs/CONNECT-APP.md).
 
 ## Build & ship

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="656" viewBox="0 0 1600 656">
-<defs><marker id="m0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#f0ab5e"/></marker><marker id="m1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#4696ac"/></marker><marker id="m2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9085e9"/></marker><marker id="m3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff8350"/></marker></defs>
+<defs><marker id="m0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#f0ab5e"/></marker><marker id="m1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#4ade80"/></marker><marker id="m2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9085e9"/></marker><marker id="m3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff8350"/></marker></defs>
 <rect width="1600" height="656" fill="#000d0e"/>
 <text x="40" y="210" font-family="HubMono-550" font-size="12" fill="#868b82" letter-spacing="1.6">YOUR DEVICES</text>
 <text x="330" y="210" font-family="HubMono-550" font-size="12" fill="#868b82" letter-spacing="1.6">YOUR NETWORK</text>
@@ -16,14 +16,14 @@
 <text x="346" y="398" font-family="HubOnest-560" font-size="15" fill="#f4f4f3" text-anchor="start">HTTPS</text>
 <text x="425" y="416" font-family="HubMono-400" font-size="10.5" fill="#9fa39b" text-anchor="middle">LAN or private mesh</text>
 <rect x="560" y="240" width="640" height="320" rx="16" fill="#1a130a" stroke="#f0ab5e" stroke-width="1.5"/>
-<rect x="580" y="280" width="260" height="240" rx="12" fill="#0b1e24" stroke="#4696ac" stroke-width="1.5"/>
+<rect x="580" y="280" width="260" height="240" rx="12" fill="#09261c" stroke="#4ade80" stroke-width="1.5"/>
 <text x="596" y="310" font-family="HubOnest-560" font-size="15" fill="#f4f4f3" text-anchor="start">the server</text>
 <text x="596" y="330" font-family="HubMono-400" font-size="10.5" fill="#9fa39b" text-anchor="start">answers the app, stores data</text>
-<rect x="596" y="360" width="110" height="60" rx="12" fill="#0b1e24" stroke="#4696ac" stroke-width="1.5"/>
+<rect x="596" y="360" width="110" height="60" rx="12" fill="#09261c" stroke="#4ade80" stroke-width="1.5"/>
 <text x="651" y="396" font-family="HubOnest-560" font-size="12.5" fill="#f4f4f3" text-anchor="middle">REST API</text>
-<rect x="714" y="360" width="110" height="60" rx="12" fill="#0b1e24" stroke="#4696ac" stroke-width="1.5"/>
+<rect x="714" y="360" width="110" height="60" rx="12" fill="#09261c" stroke="#4ade80" stroke-width="1.5"/>
 <text x="769" y="396" font-family="HubOnest-560" font-size="12.5" fill="#f4f4f3" text-anchor="middle">events</text>
-<rect x="596" y="440" width="228" height="60" rx="12" fill="#0b1e24" stroke="#4696ac" stroke-width="1.5"/>
+<rect x="596" y="440" width="228" height="60" rx="12" fill="#09261c" stroke="#4ade80" stroke-width="1.5"/>
 <text x="710" y="476" font-family="HubOnest-560" font-size="12.5" fill="#f4f4f3" text-anchor="middle">local database</text>
 <rect x="920" y="280" width="260" height="240" rx="12" fill="#16142c" stroke="#9085e9" stroke-width="1.5"/>
 <text x="936" y="310" font-family="HubOnest-560" font-size="15" fill="#f4f4f3" text-anchor="start">the agent</text>
@@ -47,7 +47,7 @@
 <text x="1400" y="476" font-family="HubOnest-560" font-size="12.5" fill="#f4f4f3" text-anchor="middle">Frontier models</text>
 <path d="M280,332 L330,332" fill="none" stroke="#f0ab5e" stroke-width="1.5" marker-end="url(#m0)"/>
 <path d="M280,468 L330,468" fill="none" stroke="#f0ab5e" stroke-width="1.5" marker-end="url(#m0)"/>
-<path d="M520,400 L580,400" fill="none" stroke="#4696ac" stroke-width="1.5" marker-end="url(#m1)"/>
+<path d="M520,400 L580,400" fill="none" stroke="#4ade80" stroke-width="1.5" marker-end="url(#m1)"/>
 <path d="M840,400 L920,400" fill="none" stroke="#9085e9" stroke-width="1.5" marker-end="url(#m2)"/>
 <path d="M1180,400 L1260,400" fill="none" stroke="#ff8350" stroke-width="1.5" marker-end="url(#m3)"/>
 <text x="800.0" y="618" font-family="HubOnest-400" font-size="15" fill="#868b82" text-anchor="middle">You run the server. Nothing is exposed to the public internet.</text>

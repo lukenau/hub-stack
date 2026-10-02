@@ -18,10 +18,14 @@ a copy-pasteable `.env` block per service.
 
 The short version: the agent gateway (`HERMES_API_BASE`) is the big one. hub-api
 is deliberately a *thin, unprivileged* service: it holds no docker socket and
-reaches the agent through the bridge. Without it, treat hub-stack as a private
-dashboard + chat shell rather than a full agent, and that standalone mode is a
-supported configuration, not a degraded one (see "Start with nothing" in
-SERVICES.md).
+posts argv to a separate bridge sidecar (`services/hub-bridge`) instead of
+reaching the agent directly. That bridge is **not included in this repository**
+— only the hub-side code that calls it is — so its allowlist enforcement is not
+something this repo lets you audit; see the bridge note in
+[SERVICES.md](SERVICES.md#hub-bridge-sidecar). Without the agent gateway, treat
+hub-stack as a private dashboard + chat shell rather than a full agent, and that
+standalone mode is a supported configuration, not a degraded one (see "Start
+with nothing" in SERVICES.md).
 
 ## Configuring any integration
 

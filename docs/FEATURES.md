@@ -170,11 +170,15 @@ disappears into a hole.
 - **Writes fail closed.** Every state-changing call goes through a challenge, sign,
   apply gate: the phone signs with a key held in its Secure Enclave, enrolled through
   a one-time code minted by a human completing a Face ID ceremony. With no signer
-  registered, the app refuses to send the apply at all. A leaked server token alone
-  cannot enrol a writing device or authorize a write.
-- **The server is deliberately thin and unprivileged.** It holds no docker socket and
-  reaches the agent gateway only through a bridge sidecar that enforces a strict
-  read-only allowlist (`docs/INTEGRATIONS.md`).
+  registered, the server refuses the apply with a 412 before any proof is even
+  checked — that's what this repo's server code can attest to; a signature only
+  proves possession of the Enclave key, not that Face ID itself matched. A leaked
+  server token alone cannot enrol a writing device or authorize a write.
+- **The server is deliberately thin and unprivileged.** It holds no docker socket;
+  instead of calling the agent gateway directly it posts argv to a separate bridge
+  sidecar (`services/hub-bridge`, not included in this repository) that is described
+  as enforcing a read-only allowlist. That enforcement lives in code this repo
+  doesn't ship, so it isn't something you can audit here (`docs/INTEGRATIONS.md`).
 - **Degrades, never fakes.** Panels backed by services you have not configured show
   an honest empty state rather than invented data.
 

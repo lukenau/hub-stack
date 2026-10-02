@@ -24,8 +24,10 @@ Success looks like this:
 ✔ hub-api is up  →  http://127.0.0.1:8090
 ```
 
-Then point the app at the server and enter the token — see
-[CONNECT-APP.md](CONNECT-APP.md). The token is in `.env` under `HUB_API_TOKEN`.
+Then pair the app with your server — see [CONNECT-APP.md](CONNECT-APP.md). There
+is no token to enter: the app is paired with a one-time enrolment code minted
+from the Hub PWA, not with `HUB_API_TOKEN` (which the server never reads — see
+the configuration table below).
 
 ![Quickstart](../assets/img/quickstart.svg)
 

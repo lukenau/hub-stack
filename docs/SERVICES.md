@@ -61,9 +61,15 @@ name are labels the hub shows for the agent.
 
 ### hub-bridge sidecar
 
-A privileged helper that runs read-only agent CLI commands (skills list, spend
-reads) on the hub's behalf. The hub itself holds no docker socket; it POSTs
-argv to the bridge, which enforces a strict read-only allowlist.
+A privileged helper intended to run read-only agent CLI commands (skills list,
+spend reads) on the hub's behalf, keeping the docker socket and any privileged
+access out of the hub-api container itself. **This sidecar is not included in
+this repository** — only `server/app.py`'s client code that POSTs argv to it
+exists here. The hub sends its argv to `/run` (reads) and `/run-write`
+(writes) on the URL below; whatever enforces a read-only allowlist on those
+endpoints lives in `services/hub-bridge`'s own source, which you must supply
+and run yourself. Treat the allowlist as a claim about a sibling service, not
+something this repo lets you verify.
 
 ```ini
 HUB_BRIDGE_URL=http://hub-bridge:port

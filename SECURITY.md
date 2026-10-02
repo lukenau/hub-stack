@@ -38,14 +38,19 @@ server exposes — calendar, files, chat, briefs. Treat reachability as authorit
 
 ## Writes
 
-Sensitive write actions require a **device key**: a P-256 key in the phone's
-Secure Enclave that cannot sign without a live Face ID match. A new device is
-never self-asserted — it is enrolled with a single-use, time-limited code minted
-behind a passkey assertion on an already-trusted device
-(`server/devicekeys.py`).
+Sensitive write actions require a **device key**: a P-256 signature from a key
+enrolled in the phone's Secure Enclave. A new device is never self-asserted —
+it is enrolled with a single-use, time-limited code minted behind a passkey
+assertion on an already-trusted device (`server/devicekeys.py`). With no
+enrolled signer, the server refuses the apply with a 412 before any proof is
+even checked (`server/app.py`) — that refusal is what this repo can attest to;
+whether a given client would even attempt the call first is client behavior
+outside this codebase.
 
-Honest limitation, stated in that module too: the signature proves possession of
-the Enclave key, not that a biometric actually matched. An attacker with a
+Honest limitation, stated in that module too: a valid signature proves
+possession of the Enclave key, not that Face ID actually matched. Normally the
+OS only lets the Enclave sign after a live Face ID match, but that's an
+OS-level guarantee this server has no way to verify. An attacker with a
 jailbroken handset and an unlocked Enclave is inside this gate.
 
 ## No telemetry

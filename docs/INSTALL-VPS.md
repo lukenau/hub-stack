@@ -54,8 +54,8 @@ reachable from anywhere.
    ```
 
    There is no token to pair the app with: pairing uses a one-time enrolment
-   code minted from the Hub PWA, not `.env`. `HUB_API_TOKEN` is generated here
-   but the server never reads it — see [SECURITY.md](../SECURITY.md).
+   code minted from the Hub PWA, not `.env`. The server never reads
+   `HUB_API_TOKEN` — see [SECURITY.md](../SECURITY.md).
 
 5. **Lock down the firewall** (optional but good practice — the hub itself
    is already loopback-only)

@@ -11,11 +11,12 @@ repo ships no credentials of any kind.
 | Display name (home screen) | **Xavier** | `app/app.json` → `expo.name` |
 | App Store name | **Xavier: Private AI Hub** | set in App Store Connect |
 | Slug / EAS project | **xavier** | `app/app.json` → `expo.slug` |
-| Bundle identifier | **me.lukenau.xavier** | `app/app.json` → `expo.ios.bundleIdentifier` |
+| Bundle identifier (example) | **me.example.xavier** | `app/app.json` → `expo.ios.bundleIdentifier` |
 
-The bundle identifier follows reverse-DNS on the owner's handle. Change it now
-if you have a domain you would rather use (`com.<yourdomain>.xavier`); it is
-**permanent after the first upload** — Apple will not let you reuse or rename it.
+The bundle identifier follows reverse-DNS on a domain or handle you control —
+`me.example.xavier` above is an example, not a value to copy. Pick your own
+before the first upload; it is **permanent after that** — Apple will not let
+you reuse or rename it.
 
 ---
 
@@ -33,7 +34,7 @@ npx eas-cli init               # creates the project, writes expo.extra.eas.proj
 Then set the owner so the project belongs to the right account:
 
 ```json
-"owner": "lukenau"
+"owner": "<your-expo-username>"
 ```
 
 ## 2. Apple Developer — App ID
@@ -41,7 +42,7 @@ Then set the owner so the project belongs to the right account:
 In <https://developer.apple.com/account/resources/identifiers>:
 
 1. **+** → App IDs → App.
-2. Bundle ID (explicit): `me.lukenau.xavier`.
+2. Bundle ID (explicit): the one you picked above (e.g. `me.example.xavier`).
 3. Capabilities: enable **Push Notifications** (the hub sends push) and leave
    the rest default. Face ID needs no capability; it uses the standard
    `NSFaceIDUsageDescription` already in `app.json`.
@@ -54,7 +55,7 @@ In <https://appstoreconnect.apple.com> → My Apps → **+** → New App:
 - **Name**: `Xavier: Private AI Hub` (must be unique across the App Store; if it
   is taken, try `Xavier Hub`, then `Xavier: AI Hub`)
 - **Primary language**: English (U.S.)
-- **Bundle ID**: pick `me.lukenau.xavier` (the one from step 2)
+- **Bundle ID**: pick the one from step 2
 - **SKU**: `xavier-hub` (internal, your choice)
 
 Copy the **Apple ID** it assigns (a number like `6811085935`) — that is the

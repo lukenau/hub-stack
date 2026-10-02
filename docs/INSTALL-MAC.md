@@ -48,7 +48,7 @@ Run the hub on a Mac. This page covers two different goals:
    **Success looks like:**
 
    ```
-   ✔ Created .env with a fresh API token
+   ✔ Created .env
    ✔ hub-api is up  →  http://127.0.0.1:8090
    ```
 
@@ -63,7 +63,6 @@ Run the hub on a Mac. This page covers two different goals:
    ```bash
    curl -fsS http://127.0.0.1:8090/api/healthz
    # → {"status":"ok"}
-   grep HUB_API_TOKEN .env
    ```
 
 5. **Reach it from other devices** — the Mac binds loopback by default,
@@ -91,7 +90,9 @@ Run the hub on a Mac. This page covers two different goals:
    docker compose up -d    # recreate with the new env
    ```
 
-7. **Pair the app** — server URL + token, per [CONNECT-APP.md](CONNECT-APP.md).
+7. **Pair the app** — with a one-time 6-character enrolment code from the
+   Hub PWA's Config → Security page (no token, no login), per
+   [CONNECT-APP.md](CONNECT-APP.md).
 
 For a "try it locally" setup you are done: start Docker Desktop and run
 `./install.sh` when you need the hub, `./install.sh --stop` when you don't.

@@ -18,8 +18,8 @@ support burden, and nobody's data touches your box.
 
 ## Model B — they connect to *your* server (the invited beta)
 
-This is the "added to my beta" case: one server (yours), several testers. Each
-tester needs three things, in this order:
+This is the case where you invite people onto your own server: one server
+(yours), several testers. Each tester needs three things, in this order:
 
 1. **The app** — via TestFlight (see below).
 2. **Your server URL** — the address they reach you at (a tailnet name or an
@@ -71,6 +71,10 @@ Revoke a tester by removing their device key on the **Security** page. Because
 reads are not authenticated, that removes their ability to *act*, not to *read*
 — cut their network access (remove them from the tailnet, or rotate the mesh
 credentials) to revoke reads.
+
+Inviting someone onto your server makes you the operator of their data, not
+just the author of a program — see [HOSTING-FOR-OTHERS.md](HOSTING-FOR-OTHERS.md)
+for what that means and a notice you can hand them.
 
 ### Gotchas
 

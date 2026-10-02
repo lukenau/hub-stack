@@ -9,7 +9,6 @@
 #   ./install.sh --logs       follow server logs
 #   ./install.sh --status     show container state + health
 #   ./install.sh --url        print the URL to point the app at
-#   ./install.sh --token      print the API token (for the app's first setup)
 #   ./install.sh --uninstall  stop and DELETE all data (asks first)
 #   ./install.sh --help       this text
 #
@@ -58,8 +57,6 @@ print_url() {
   printf '%s\n' "http://${ip:-THIS-MACHINE}:${PORT}"
 }
 
-token_value() { sed -n 's/^HUB_API_TOKEN=//p' .env 2>/dev/null | head -1; }
-
 wait_healthy() {
   say "Waiting for the server to become healthy…"
   local i
@@ -80,30 +77,21 @@ write_env() {
   [ -f .env.example ] || die ".env.example is missing — is this a complete clone?"
   cp .env.example .env
 
-  local token
-  if command -v openssl >/dev/null 2>&1; then
-    token=$(openssl rand -hex 32)
-  else
-    token=$(head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n')
-  fi
-
   # Portable in-place edit (GNU sed vs BSD/macOS sed).
   local sed_inplace=(-i)
   sed --version >/dev/null 2>&1 || sed_inplace=(-i '')
 
-  sed "${sed_inplace[@]}" "s|^HUB_API_TOKEN=.*|HUB_API_TOKEN=${token}|" .env
   # Seed a sensible timezone so schedules/calendar read correctly.
   local tz; tz=$(cat /etc/timezone 2>/dev/null || true)
   [ -n "$tz" ] || tz=$(date +%Z 2>/dev/null || true)
-  [ -n "$tz" ] && sed "${sed_inplace[@]}" "s|^HUB_TZ=.*|HUB_TZ=${tz}|" .env || true
+  [ -n "$tz" ] && sed "s|^HUB_TZ=.*|HUB_TZ=${tz}|" .env || true
 
   chmod 600 .env
-  ok "Created .env with a fresh 256-bit API token (mode 600)"
+  ok "Created .env (mode 600)"
 }
 
 case "${1:-}" in
   -h|--help) usage ;;
-  --token)   [ -f .env ] || die "No .env yet — run ./install.sh first."; token_value; exit 0 ;;
   --url)     print_url; exit 0 ;;
   --stop)    need_docker; docker compose down; ok "hub-api stopped (your data is untouched)"; exit 0 ;;
   --logs)    need_docker; exec docker compose logs -f --tail=100 ;;
@@ -142,8 +130,8 @@ command -v curl >/dev/null 2>&1 || warn "curl not found — health checks will b
 ok "Docker + Compose v2 ready"
 
 say "2/4  Configuring"
-if [ -f .env ] && [ -n "$(token_value)" ]; then
-  ok "Existing .env with a token found"
+if [ -f .env ]; then
+  ok "Existing .env found"
 else
   write_env
 fi
@@ -164,8 +152,9 @@ $(ok "Done.")
   Point the app at:   http://127.0.0.1:${PORT}   (this machine)
                       $(print_url)   (from another device on your network)
 
-  API token:          in .env as HUB_API_TOKEN   (./install.sh --token to print it)
-                      The app asks for it once, on first setup.
+  Pair the app:       Config → Security → Pair this iPhone — a one-time
+                      6-character enrolment code from the Hub PWA. No token,
+                      no login. See docs/CONNECT-APP.md.
 
   Next:               docs/CONNECT-APP.md — put TLS or a private mesh in front
                       before exposing this to any other device.

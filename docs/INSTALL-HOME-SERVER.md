@@ -41,7 +41,7 @@ data at home.
    **Success looks like:**
 
    ```
-   ✔ Created .env with a fresh API token
+   ✔ Created .env
    ✔ hub-api is up  →  http://127.0.0.1:8090
    ```
 
@@ -50,7 +50,6 @@ data at home.
    ```bash
    curl -fsS http://127.0.0.1:8090/api/healthz
    # → {"status":"ok"}
-   grep HUB_API_TOKEN .env
    ```
 
 5. **Decide how other devices reach it**
@@ -68,8 +67,10 @@ data at home.
    `--https` instead of `--http`). Works from home **and** away.
 
    **Option B — LAN-only direct access.** Convenient, but any device on
-   your network (guests, IoT gear) can reach the port — token auth is then
-   the only barrier. If you accept that:
+   your network (guests, IoT gear) can reach the port — there is no
+   login or token, so anything on the LAN can read what the server
+   exposes. Writes are still gated by Face ID device-key pairing. If you
+   accept that:
 
    ```ini
    HUB_BIND=0.0.0.0
@@ -96,7 +97,9 @@ data at home.
    docker compose up -d    # recreate with the new env
    ```
 
-7. **Pair the app** — server URL + token, per [CONNECT-APP.md](CONNECT-APP.md).
+7. **Pair the app** — with a one-time 6-character enrolment code from the
+   Hub PWA's Config → Security page (no token, no login), per
+   [CONNECT-APP.md](CONNECT-APP.md).
 
 ## Autostart
 

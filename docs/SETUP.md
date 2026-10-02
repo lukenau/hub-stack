@@ -40,8 +40,8 @@ In order:
 1. **Checks prerequisites** — Docker present, Docker Compose v2 present,
    Docker daemon reachable. Any miss exits with a plain-English error.
 2. **Creates `.env`** from `.env.example` (only if it doesn't exist) and
-   generates a random 64-hex-char `HUB_API_TOKEN` (via `openssl`, falling
-   back to `/dev/urandom`). An existing `.env` is kept untouched.
+   seeds a sensible timezone from the system. An existing `.env` is kept
+   untouched.
 3. **Builds and starts** the server with `docker compose up -d --build`.
 4. **Waits for health** — polls `http://127.0.0.1:8090/api/healthz` every
    2 s for up to 90 s, then points you at the logs if it never came up.
@@ -79,7 +79,7 @@ the left-hand `8090` there.
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `HUB_API_TOKEN` | *auto-generated* | **RESERVED** — not enforced today. The server does not read this value and the API does not require it; access control is the network boundary (see SECURITY.md). install.sh still fills it so existing installs keep working if enforcement is added later. Do NOT rely on it to protect an exposed port. |
+| `HUB_API_TOKEN` | *(empty)* | **RESERVED** — not enforced today. The server does not read this value and the API does not require it; access control is the network boundary (see SECURITY.md). install.sh no longer fills it. Do NOT rely on it to protect an exposed port. |
 | `HUB_ORIGIN` | `http://localhost:8081` | Origins allowed to call the API (comma-separated). The default matches the app's web dev server. |
 | `HUB_PUBLIC_BASE` | `http://127.0.0.1:8090` | Base URL the server advertises to clients. Set this to whatever URL the app will actually use. |
 | `HUB_USER_NAME` / `HUB_USER_HANDLE` | `Your Name` / `you` | Display identity shown in the app. |

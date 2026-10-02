@@ -7,12 +7,11 @@ operational checklist, not a legal opinion.
 
 ## 1. Bundle identifier
 
-Confirm the bundle identifier in `app/app.json`; it is currently
-`me.lukenau.xavier`. App Store Connect rejects an id you do not control, so if
-that is not a reverse-domain you own, replace it now (for example
-`tld.domain.xavier`). Keep it stable for the life of the app: changing it
-later creates a new app identity, breaking TestFlight groups, purchases, and
-push configuration.
+Confirm the bundle identifier in `app/app.json` (`expo.ios.bundleIdentifier`).
+App Store Connect rejects an id you do not control, so if it is not a
+reverse-domain you own, replace it now (for example `tld.domain.xavier`).
+Keep it stable for the life of the app: changing it later creates a new app
+identity, breaking TestFlight groups, purchases, and push configuration.
 
 ## 2. EAS project id and submit credentials
 

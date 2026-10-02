@@ -22,9 +22,11 @@ services:
       HUB_API_HOST: 0.0.0.0
       HUB_API_PORT: "8090"
     ports:
-      # Change the left side to 0.0.0.0 only if you are deliberately putting a
-      # proxy/mesh in front. Default keeps it reachable from this machine only.
-      - "${HUB_BIND:-127.0.0.1}:8090:8090"
+      # Left address: 0.0.0.0 only if you are deliberately putting a proxy/mesh
+      # in front. Default keeps it reachable from this machine only.
+      # Left port: host side; set HUB_PORT (in .env or the shell) to move it.
+      # Right port: always 8090 inside the container.
+      - "${HUB_BIND:-127.0.0.1}:${HUB_PORT:-8090}:8090"
     volumes:
       - "${HUB_DATA_DIR:-./data}:/data"
     healthcheck:

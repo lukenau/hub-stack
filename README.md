@@ -194,7 +194,7 @@ hub-stack/
 
 ## What actually does the work
 
-![How a request flows: the app talks to your server, which hands the work to the agent runtime](assets/img/flow-request.png)
+![How a request flows, top to bottom: you ask from your phone or browser, your server checks it is really you, the agent works out what to do and reaches for a model or a tool, and the answer comes back](assets/img/flow-request.png)
 
 
 The hub is the **server and the app**. The intelligence behind it is an agent

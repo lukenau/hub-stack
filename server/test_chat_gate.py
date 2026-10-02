@@ -651,8 +651,8 @@ def test_commands_returns_the_live_catalog_after_a_push_and_never_falls_back_aga
 
 
 def test_bootstrap_catalog_json_parses_and_every_entry_is_well_formed():
-    """Asserts against the actual shipped file, not a fixture — this is the file
-    generate_command_catalog_bootstrap.sh writes and chat/routes.py serves as-is."""
+    """Asserts against the actual shipped file, not a fixture — this is the
+    hand-authored placeholder chat/routes.py serves as-is until a live push lands."""
     raw = json.loads(chat_routes.COMMAND_CATALOG_BOOTSTRAP_FILE.read_text())
     assert isinstance(raw["version"], int)
     commands = raw["commands"]

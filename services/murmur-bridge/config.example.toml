@@ -1,0 +1,25 @@
+mac = "AA:BB:CC:DD:EE:FF"
+base_url = "http://127.0.0.1:8100"
+# Mint it with `POST /api/api-keys` (no `expires_in_days`) on your Chronicle
+# instance. NEVER paste a `POST /auth/jwt/login` access_token here — those die
+# after 24h (JWT_LIFETIME_SECONDS) and an expired credential wedges the drain
+# silently: uploads 401, the ACK watermark stops advancing, and the pendant's
+# ~35h flash buffer fills and starts overwriting un-shipped audio.
+# Store the key in a private env file (e.g. /etc/murmur-bridge/.env) as
+# CHRONICLE_API_KEY.
+api_key = "REPLACE_WITH_CHRONICLE_API_KEY"
+store_dir = "/var/lib/murmur-bridge"
+
+# Status push + command pull with the hub server, both over rsync.
+# Omit status_remote/commands_remote to run with the sync disabled (drain-only).
+#
+# The remote principal should be a dedicated, sudo-less, docker-less unix user
+# (example name: `murmur-relay`) whose key is authorized with a forced rrsync
+# command. NEVER authorize a relay key under a privileged account: any account
+# with NOPASSWD sudo ALL or docker-group membership means a stolen bridge host
+# (or a readable SD card) would be instant root on the server.
+status_path = "/var/lib/murmur-bridge/status.json"
+status_remote = "murmur-relay@example-host:/srv/murmur/bridge-status.json"
+commands_path = "/var/lib/murmur-bridge/commands.json"
+commands_remote = "murmur-relay@example-host:/srv/murmur/murmur-commands.json"
+status_interval_s = 60

@@ -1,0 +1,4 @@
+bleak>=0.22,<2
+protobuf>=7.35,<8
+opuslib>=3
+requests

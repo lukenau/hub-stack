@@ -4,16 +4,18 @@ hub-stack's own code is MIT (see [LICENSE](LICENSE)). It depends on or bundles
 the following third-party components. Reproduce these notices when
 redistributing.
 
-This file covers three groups:
+This file covers four groups:
 
 1. Bundled and embedded assets (fonts, the xterm.js bundle, doc conventions).
-2. The npm dependency set of the app in `app/` (declared dependencies plus
+2. Vendored and ported code in the Murmur bridge (`services/murmur-bridge/`).
+3. The npm dependency set of the app in `app/` (declared dependencies plus
    everything installed under `app/node_modules`).
-3. The Python dependency set of the server in `server/`.
+4. The Python dependency set of the server in `server/`.
 
 ## Summary
 
 - There are no GPL, AGPL, or LGPL components anywhere in the dependency tree.
+- The two vendored/ported upstreams in the Murmur bridge are both MIT (below).
 - Every npm package is under a permissive license (MIT, ISC, BSD-2, BSD-3,
   Apache-2.0, 0BSD, Unlicense, BlueOak-1.0.0, PSF, or CC0-1.0), with three
   exceptions called out below: lightningcss (MPL-2.0), caniuse-lite (CC-BY-4.0),
@@ -67,6 +69,75 @@ package.
 
 The `> **For agentic workers:**` plan-header format used in some docs is
 derived from **obra/superpowers** (MIT, © 2025 Jesse Vincent).
+
+## Vendored and ported code (`services/murmur-bridge/`)
+
+The Murmur pendant bridge is not entirely original code. Two parts come from
+MIT-licensed upstream projects, and the licence notices below must be
+reproduced with any redistribution of the bridge.
+
+### MAkcanca/pendant-cli (MIT)
+
+The protobuf schemas in `services/murmur-bridge/murmur/bridge/proto/` are
+vendored verbatim from **[MAkcanca/pendant-cli](https://github.com/MAkcanca/pendant-cli)**
+(the pendant's own BLE protocol definitions), and the generated Python
+bindings in `murmur/bridge/gen/` are compiled from them. The vendoring is
+pinned to upstream commit `5e0eace94042096a74944861cc4d60060cd3aa8f`; the
+schema files themselves are unmodified.
+
+```
+MIT License
+
+Copyright (c) 2026 Mustafa Akcanca
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+### BasedHardware/omi (MIT)
+
+The flash-page drain semantics — how the bridge walks the pendant's storage
+buffer, requests pages, and advances the acknowledge watermark — are ported
+from **[BasedHardware/omi](https://github.com/BasedHardware/omi)** (MIT).
+
+```
+MIT License
+
+Copyright (c) 2024 Based Hardware Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
 ## npm dependencies (`app/`)
 

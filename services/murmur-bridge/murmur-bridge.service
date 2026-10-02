@@ -1,0 +1,16 @@
+[Unit]
+Description=Murmur bridge daemon
+After=bluetooth.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/srv/murmur-bridge
+Environment=PYTHONPATH=/srv/murmur-bridge
+ExecStart=/srv/murmur-bridge/venv/bin/python -m murmur.bridge.daemon /etc/murmur/config.toml
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

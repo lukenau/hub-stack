@@ -64,3 +64,16 @@ jobs:
             echo "::error::forbidden work/host marker found"; exit 1
           fi
           echo "hygiene OK"
+
+  dco:
+    name: DCO sign-off
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # needed to diff against the PR base commit
+      - name: Check Developer Certificate of Origin sign-offs
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: bash scripts/check-dco.sh

@@ -10,7 +10,7 @@ version in `app/app.json`, but the repository has no matching tag.)
 
 ## 2026-10-02 — first public release (no version tag)
 
-The first cut of the public repository, through commit `81b4d93`. Everything
+The first cut of the public repository, through commit `c945524`. Everything
 listed under **Added** ships in this release. The **Changed**, **Fixed** and
 **Removed** entries record corrections made in the repository's own public
 history before this cut, not changes against an earlier release — there is no
@@ -45,6 +45,8 @@ earlier release to compare against.
 - README architecture and request-flow diagrams, plus a screenshot set rebuilt from the app's own captures.
 - A full documentation set covering setup, connecting the app, mesh networking, services, features, Murmur, privacy, security, comparisons, app publishing and troubleshooting.
 - Continuous integration: a test workflow, a DCO sign-off check, and a publish gate that scans the tree for private or owner-specific content.
+- A pass of chat improvements ported from the personal Hub app. The weather card is now composed from its sections (day and hour counts, labels, and a per-day hourly chart). The photo picker takes several pictures at once, up to the four a message holds. Message images render uncropped and open in a full-screen viewer. File parts are drawn from the downloaded bytes (text, markdown, frame and image) with a preview sheet that keeps Share in the header. A timeline widget (a timestamped event log) joins the widget set. Finished tool calls fold on completion, and a thinking block collapses with an animation instead of snapping from its streaming tail to a one-line label. Chat text now sizes itself: the stale pinned height that left a gap above the timestamp — and made the page bounce while a long reply streamed — is gone. (`94c5e08`)
+- The chat port adds three runtime dependencies — `expo-document-picker`, `expo-file-system` and `expo-sharing` — and extends the iOS paste module so a pasted file is read and handed over as base64 alongside the pasted picture it already accepted. (`94c5e08`)
 
 ### Changed
 
@@ -59,6 +61,7 @@ earlier release to compare against.
 
 ### Fixed
 
+- The installer's first-install defects, all of which fired on a normal cold start: `./data` is now created and owned before `docker compose up`, so the non-root container can write it (Docker used to create it `root:root` 755, and the first write failed with `EACCES` after the script had already printed "Done"); a host without `curl` falls back to the same in-container `/api/healthz` probe compose uses instead of spinning for 90 seconds and reporting a healthy server as failed; `HUB_PORT` is actually honoured (compose publishes `${HUB_PORT:-8090}` and the script resolves shell env, then `.env`, then 8090, and exports it); the `HUB_TZ` seed uses the script's own `sed_inplace` helper rather than a bare `sed` that dumped all of `.env` to stdout and left the value unmodified; and the port-in-use check probes `/dev/tcp` instead of trusting BusyBox `lsof`, which ignores the TCP filters and exits 0 on a free port. `--help` now prints only the header comment. (`b1ebfad`)
 - Home Assistant applies now use the primary WebAuthn gate, so the authenticator's sign counter is persisted and cloned-authenticator detection applies to `/api/ha/apply` like every other privileged surface. (`44ad156`)
 - The publish gate defaults to the current directory (and CI passes the repo root), so it no longer dies on a hard-coded local path before it scans anything. (`0e54dc5`)
 - CI's hygiene job runs the maintained publish-gate script instead of a drifted inline copy that had failed every run since it was added. (`08572ab`)

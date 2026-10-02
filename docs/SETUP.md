@@ -29,9 +29,9 @@ installer leaves an existing `.env` untouched), and the `hub-api is up` line
 prints your `HUB_PORT` — `8090` by default.
 
 Then pair the app with your server — see [CONNECT-APP.md](CONNECT-APP.md). There
-is no token to enter: the app is paired with a one-time enrolment code minted
-from the Hub PWA, not with `HUB_API_TOKEN` (which the server never reads — see
-the configuration table below).
+is no token to enter: the app is paired with a one-time enrolment code you mint
+on the server machine (`./install.sh --pair`), not with `HUB_API_TOKEN` (which
+the server never reads — see the configuration table below).
 
 ![Quickstart](../assets/img/quickstart.svg)
 

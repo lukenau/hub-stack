@@ -20,7 +20,7 @@ earlier release to compare against.
 
 - The self-hostable hub server (FastAPI) and its companion app for web, iPhone and Android (Expo / React Native), in one MIT-licensed repository.
 - A one-command installer (`./install.sh`) that checks prerequisites, creates `.env` with mode 600, builds and starts the server, waits for a health check, and prints the URL to point the app at. Subcommands cover start, stop, restart, update, logs, status, URL, uninstall and help.
-- Device pairing with a one-time six-character enrolment code minted from the Hub PWA behind Face ID — no pasted token, no login.
+- Device pairing with a one-time six-character enrolment code minted on the server machine (`./install.sh --pair`), or from the optional Hub web UI behind Face ID — no pasted token, no login.
 - A write gate on every state-changing call: the server issues a challenge, the phone signs it with a key held in its Secure Enclave, and the change is applied only after verification. With no signer registered the server refuses with a 412 before any proof is checked.
 - Chat with the assistant in the native app: durable server-side threads with pin, rename, archive and unread cursors, a cross-thread "what needs me" inbox, streamed replies, and the ability to queue, steer, redirect or stop a running turn.
 - Approval cards for actions that need a human decision, applied as a Face ID gated batch.

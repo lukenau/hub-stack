@@ -14,7 +14,8 @@ Three things, in this order:
 2. **Their own server** — they run `hub-api` themselves (`install.sh`), so they
    are the owner of their own box. Point them at [`SETUP.md`](SETUP.md).
 3. **An enrolment code** — a one-time, 6-character code that pairs *their* device
-   key to *their* server, minted by them from their own Hub PWA.
+   key to *their* server, minted by them on their own server
+   (`./install.sh --pair` on the server machine).
 
 Because the server is theirs, so is the data: nothing a tester does reaches
 anyone else.
@@ -36,18 +37,20 @@ enough to read everything on it — still cannot enrol a new device that can
 
 ## Pairing a device
 
-1. Open the Hub PWA → **Config → Security** → *Pair this iPhone* (the
-   `devicekey.enroll_code` action) and complete the Face ID / passkey prompt.
-2. Read the 6-character code it shows. It is single-use and expires
+1. On the server machine, mint a code: run `./install.sh --pair`. It runs
+   inside the running server over a local unix socket, so nothing is sent over
+   the network and no browser is involved.
+2. Read the 6-character code it prints. It is single-use and expires
    (`HUB_ENROLL_CODE_TTL_S`); only one code is ever live, so mint one at a time.
 3. In the app: **Config → Security → Pair this iPhone**, and enter the code. The
    app generates a Secure Enclave key, posts the public half to
    `/api/devicekey/register`, and the device is trusted.
 4. Face ID now authorises writes on that device.
 
-Revoke a device by removing its key on the **Security** page. Because reads are
-not authenticated, that removes its ability to *act*, not to *read* — cut network
-access to revoke reads.
+Revoke a device by removing its key with the hub's **Config → Security** page if
+you run the web UI, or by deleting its entry from the server's
+`devicekeys.json`. Because reads are not authenticated, that removes its ability
+to *act*, not to *read* — cut network access to revoke reads.
 
 > **There is no token to send and no login screen.** The server has no
 > per-request authentication: a device that can reach it can read it. The

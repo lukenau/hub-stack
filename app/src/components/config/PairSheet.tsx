@@ -3,13 +3,13 @@
 // no native equivalent for this RP (docs/research/passkeys.md), so this sheet
 // is the native replacement for that ceremony.
 //
-// The flow, end to end: the user opens the PWA's Security page and taps "Pair
-// iPhone app", which mints a one-time code behind a REAL passkey assertion;
-// he types those 6 characters here; the app generates a Secure-Enclave P-256
-// key and posts the public half with the code to /api/devicekey/register. The
-// human passkey ceremony is what vouches for the key — this screen holds no
-// authority of its own, and the code is single-use, TTL-bound and rate-limited
-// server-side (services/hub-api/devicekeys.py).
+// The flow, end to end: the user mints a one-time code on the server machine
+// (`./install.sh --pair`, or the WebAuthn-gated Security page of an optional
+// web UI); he types those 6 characters here; the app generates a Secure-Enclave
+// P-256 key and posts the public half with the code to /api/devicekey/register.
+// The human ceremony — a host shell or a passkey assertion — is what vouches
+// for the key; this screen holds no authority of its own, and the code is
+// single-use, TTL-bound and rate-limited server-side (server/devicekeys.py).
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SymbolView } from 'expo-symbols';
@@ -81,8 +81,8 @@ export function PairSheet() {
       ) : null}
 
       <Text style={[styles.note, { color: t('fg-3') }]}>
-        On the Hub, open Config → Security and tap “Pair iPhone app”. Type the 6-character code it
-        shows here before the countdown runs out.
+        On the server, run ./install.sh --pair to mint a one-time code, then type it here before the
+        countdown runs out.
       </Text>
 
       <TextInput

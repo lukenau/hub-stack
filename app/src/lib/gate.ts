@@ -278,10 +278,11 @@ function toEnrolError(err: unknown): GateError {
 }
 
 /**
- * Pair this iPhone. Runs once, behind the PWA's WebAuthn gate: `code` is the
- * one-time, TTL-bound, attempt-capped code the Security page just minted, and
- * a real passkey ceremony is what minted it — that human assertion is what
- * vouches for the Enclave key the server is about to trust.
+ * Pair this iPhone. `code` is the one-time, TTL-bound, attempt-capped code just
+ * minted on the server — locally over a unix socket (`./install.sh --pair`, the
+ * host shell is already full trust) or, for an optional web UI, behind its
+ * WebAuthn gate. Either way a human on the server vouched for the Enclave key
+ * the server is about to trust; the app asserts nothing on its own.
  *
  * Ordering is the security-relevant part. The key is generated into the spare
  * alias, the server is asked to accept it, and only a 200 promotes it to live.

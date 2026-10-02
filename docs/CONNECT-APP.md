@@ -131,9 +131,11 @@ Pairing the device is the one in-app step, and it is what lets this phone
 *write* — and read chat. Two devices are involved, and the buttons do **not**
 have the same name:
 
-1. **On the Hub (your server):** open **Config → Security** and use the
-   **Pair iPhone app** action. It asks for a Face ID / passkey assertion and
-   then shows a one-time enrolment code.
+1. **On the server machine:** run `./install.sh --pair`. It mints a one-time
+   enrolment code inside the running server over a local unix socket — no
+   browser and nothing over the network. (If you also run a Hub web UI, not part
+   of this repository, its **Config → Security** page can mint the same code
+   after a Face ID / passkey prompt; that UI is optional.)
 2. **On the iPhone app:** open **Config → Security → Pair this iPhone** and type
    that code in before the countdown runs out. The code is six characters drawn
    from A–Z (without `I` or `O`) and 2–9 (without `0` or `1`); it is single-use
@@ -186,9 +188,10 @@ If that fails, the problem is network reachability, not the app — see
 ## Unpairing a device
 
 To revoke a phone's ability to *write* (and to read chat), remove its device
-key on the Hub PWA's **Config → Security** page — the paired key stops being
-trusted immediately and no new chat session can be minted with it. That does
-**not** revoke the unauthenticated reads (activity, files, home automation
+key — with the **Config → Security** page if you run the Hub web UI, or by
+deleting its entry from the server's `devicekeys.json`. The paired key stops
+being trusted immediately and no new chat session can be minted with it. That
+does **not** revoke the unauthenticated reads (activity, files, home automation
 state…): those still answer anything that can reach the port, so also remove the
 device from the network that reaches the server (its tailnet membership, mesh
 credentials, or LAN access) — see [SECURITY.md](../SECURITY.md).

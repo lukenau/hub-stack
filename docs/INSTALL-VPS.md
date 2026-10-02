@@ -55,8 +55,8 @@ reachable from anywhere.
    ```
 
    There is no token to pair the app with: pairing uses a one-time enrolment
-   code minted from the Hub PWA, not `.env`. The server never reads
-   `HUB_API_TOKEN` — see [SECURITY.md](../SECURITY.md).
+   code you mint on the server machine with `./install.sh --pair`, not `.env`.
+   The server never reads `HUB_API_TOKEN` — see [SECURITY.md](../SECURITY.md).
 
 5. **Lock down the firewall** (optional but good practice — the hub itself
    is already loopback-only)
@@ -134,9 +134,9 @@ reachable from anywhere.
    docker compose up -d    # recreate with the new env
    ```
 
-8. **Pair the app** — a one-time 6-character enrolment code from the Hub
-   PWA's Config → Security page (no token, no login), per
-   [CONNECT-APP.md](CONNECT-APP.md).
+8. **Pair the app** — run `./install.sh --pair` on the server to mint a
+   one-time 6-character enrolment code (no token, no login), then enter it in
+   the app per [CONNECT-APP.md](CONNECT-APP.md).
 
 ## Keeping it up to date
 

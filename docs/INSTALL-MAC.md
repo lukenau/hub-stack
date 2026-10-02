@@ -89,9 +89,9 @@ Run the hub on a Mac. This page covers two different goals:
    docker compose up -d    # recreate with the new env
    ```
 
-7. **Pair the app** — with a one-time 6-character enrolment code from the
-   Hub PWA's Config → Security page (no token, no login), per
-   [CONNECT-APP.md](CONNECT-APP.md).
+7. **Pair the app** — run `./install.sh --pair` on the server to mint a
+   one-time 6-character enrolment code (no token, no login), then enter it in
+   the app per [CONNECT-APP.md](CONNECT-APP.md).
 
 For a "try it locally" setup you are done: start Docker Desktop and run
 `./install.sh` when you need the hub, `./install.sh --stop` when you don't.

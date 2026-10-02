@@ -1,8 +1,16 @@
-# Murmur: always-on voice capture, without giving up the audio
+# Murmur: Xavier's wearable capture sub-product
 
-Murmur is hub-stack's optional always-on memory pipeline. A small wearable
-audio recorder buffers what it hears onto its own flash storage, a daemon on
-your network drains it, and a transcription backend you run turns it into
+**Murmur is a sub-product of Xavier**, and like any sub-product it exists to do
+one job the rest of the product cannot do without it. Here that job is the
+**BLE passthrough**. A wearable audio recorder is only as useful as the software
+that can reach it: something has to bond to the device over Bluetooth, drain the
+audio it has been recording to its own flash, and hand that audio onward to be
+transcribed. Xavier supplies that piece — the bridge daemon this repo ships at
+[`services/murmur-bridge/`](../services/murmur-bridge/) — which is why Murmur
+lives under Xavier rather than beside it. The hardware captures; Xavier is what
+makes the capture usable.
+
+Once the audio is off the device, a transcription backend you run turns it into
 speaker-tagged transcripts and a memory index your assistant can search.
 
 The reason it exists is custody, not convenience. Consumer capture devices
@@ -20,16 +28,19 @@ independent of it.
 
 ## The pipeline, end to end
 
+Step 1 is the hardware; every stage after it is the half Xavier owns — the
+software that makes step 1 worth doing.
+
 1. **Capture.** A wearable BLE audio recorder records continuously to its
    on-board flash buffer (Opus, 16 kHz mono, roughly 35 hours of VAD-gated speech).
    The author runs a BLE pendant; any recorder of that class works at this
    boundary, the pipeline does not care which one.
-2. **Bridge daemon.** A small service on an always-on machine in your house
-   bonds to the recorder over Bluetooth, drains the flash buffer when the
-   device is in range, and ships the audio to the transcription backend over
-   your private network. It queues while you are out and only deletes a flash
-   page once the backend has acknowledged receipt of its audio — the 35-hour
-   buffer is the gap-safety, not a data-loss risk.
+2. **Bridge daemon — the BLE passthrough.** A small service on an always-on
+   machine in your house bonds to the recorder over Bluetooth, drains the flash
+   buffer when the device is in range, and ships the audio to the transcription
+   backend over your private network. It queues while you are out and only
+   deletes a flash page once the backend has acknowledged receipt of its audio —
+   the 35-hour buffer is the gap-safety, not a data-loss risk.
 3. **Transcription backend.** A self-hosted service (the author runs
    [Chronicle](https://github.com/SimpleOpenSoftware/chronicle), MIT) receives
    the audio, transcribes it, diarizes it, and recognizes enrolled speakers,

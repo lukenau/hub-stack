@@ -85,20 +85,27 @@ Tailscale, Headscale, WireGuard, Cloudflare Tunnel, or LAN-only — see
 
 ---
 
-## Optional headline capability: always-on voice capture (Murmur)
+## Murmur: Xavier's wearable capture sub-product
 
-hub-stack's most unusual capability is **Murmur**: an optional always-on memory
-pipeline. A small wearable audio recorder buffers your day onto its own flash
-storage, a daemon on your network drains it, and a transcription backend you
-run turns it into speaker-tagged transcripts and a memory index your assistant
-can search. The point is custody — the audio leaves hardware you own and goes
-to a machine you run, with no consumer cloud anywhere in the path.
+**Murmur** is a sub-product of Xavier — not a separate thing bolted on beside
+it — and it earns its place on the part that is actually hard: the **BLE
+passthrough**. A wearable audio recorder is inert on its own. Something has to
+bond to it over Bluetooth, drain the audio it has been quietly recording to its
+own flash, and hand that audio onward to be turned into something searchable.
+That piece is Xavier, and it is what turns the hardware into memory.
 
-It is also **strictly optional**, and stated plainly: most self-hosters have no
-wearable and will not get one. Without a configured capture bridge the Murmur
-page does not appear, and the hub you get is exactly the one documented
-everywhere else. Full pipeline, hardware, and honest limits:
-**[docs/MURMUR.md](docs/MURMUR.md)**.
+So: a wearable recorder (any BLE wearable that records to on-board flash)
+buffers your day on its own storage, and the bridge this repo ships drains it
+over Bluetooth to a transcription backend you run, which produces
+speaker-tagged transcripts and a memory index your assistant can search. The
+custody story is the same one as everywhere else here — the audio leaves
+hardware you own and lands on a machine you run, with no consumer cloud
+anywhere in the path.
+
+Murmur is **strictly optional**: most self-hosters have no wearable and will
+not get one. Without a configured capture bridge the Murmur page does not
+appear, and the hub you get is exactly the one documented everywhere else.
+Full pipeline, hardware, and honest limits: **[docs/MURMUR.md](docs/MURMUR.md)**.
 
 ---
 

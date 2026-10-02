@@ -125,9 +125,11 @@ from the inference key above).
 
 ### Murmur (voice capture bridge)
 
-Voice capture status and control on the Murmur page: pendant, bridge, and
-pipeline state, plus gated actions (drain, pause) that the bridge picks up.
-What the pipeline is, stage by stage: [MURMUR.md](MURMUR.md).
+Murmur is a sub-product of Xavier: the BLE passthrough that drains a
+flash-recording wearable into transcripts. The Murmur page shows capture status
+and control — pendant, bridge, and pipeline state, plus gated actions (drain,
+pause) that the bridge picks up. What the pipeline is, stage by stage:
+[MURMUR.md](MURMUR.md).
 
 ```ini
 MURMUR_BRIDGE_TOKEN=

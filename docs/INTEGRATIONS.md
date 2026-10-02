@@ -6,8 +6,9 @@ is yours to run (or skip it; the hub works standalone without it).
 
 `hub-api` starts fine with every integration unset. Panels that depend on a
 service you have not configured degrade (a 503 or an empty card) rather than
-crash. One of them, Murmur (optional always-on voice capture), has its own
-page: [MURMUR.md](MURMUR.md).
+crash. One of them is Murmur — a sub-product of Xavier whose headline is the
+BLE passthrough that makes a flash-recording wearable usable — and it has its
+own page: [MURMUR.md](MURMUR.md).
 
 ## The full catalogue
 

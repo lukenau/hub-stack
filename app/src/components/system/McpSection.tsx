@@ -17,7 +17,7 @@ export function McpSection() {
     <View style={styles.section}>
       <SectionHead label="MCP Connectors" count={q.data ? `${q.data.enabled}/${q.data.count}` : ''} />
       {q.isLoading ? (
-        <StatePanel tone="pending" title="Reading connectors…" detail="hermes mcp list · via CLI-bridge" />
+        <StatePanel tone="pending" title="Reading connectors…" detail="connector list" />
       ) : null}
       {q.isError ? <StatePanel tone="error" title="MCP unavailable" detail={q.error?.message ?? ''} /> : null}
       {q.data && servers.length === 0 ? (

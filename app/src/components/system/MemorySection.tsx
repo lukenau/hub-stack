@@ -17,7 +17,7 @@ export function MemorySection() {
     <View style={styles.section}>
       <SectionHead label="Memory" count={q.data ? (q.data.provider ?? q.data.built_in ?? '') : ''} />
       {q.isLoading ? (
-        <StatePanel tone="pending" title="Reading memory…" detail="hermes memory status · via CLI-bridge" />
+        <StatePanel tone="pending" title="Reading memory…" detail="memory status" />
       ) : null}
       {q.isError ? <StatePanel tone="error" title="Memory unavailable" detail={q.error?.message ?? ''} /> : null}
       {q.data ? (

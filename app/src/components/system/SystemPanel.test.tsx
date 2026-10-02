@@ -118,11 +118,11 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-test('the header says read-only and names the transport', async () => {
+test('the header says read-only', async () => {
   const renderer = await render();
   const t = texts(renderer);
   expect(t).toContain('System');
-  expect(t).toContain('read-only · CLI-bridge');
+  expect(t).toContain('read-only');
 });
 
 test('Skills is open by default and Plugins is collapsed', async () => {

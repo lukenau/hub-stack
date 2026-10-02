@@ -33,7 +33,7 @@ export function DoctorSection() {
     <View style={styles.section}>
       <SectionHead label="Doctor" count={q.data ? (q.data.summary.ok ? 'healthy' : 'attention') : ''} />
       {q.isLoading ? (
-        <StatePanel tone="pending" title="Running checks…" detail="hermes doctor · via CLI-bridge" />
+        <StatePanel tone="pending" title="Running checks…" detail="diagnostic checks" />
       ) : null}
       {q.isError ? <StatePanel tone="error" title="Doctor unavailable" detail={q.error?.message ?? ''} /> : null}
       {q.data ? (

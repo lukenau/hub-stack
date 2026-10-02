@@ -38,7 +38,7 @@ export function SystemPanel() {
       <View style={styles.header}>
         <Text style={[styles.title, { color: t('fg-1') }]}>System</Text>
         <View style={styles.headerRight}>
-          <Text style={[styles.note, { color: t('fg-4') }]}>read-only · CLI-bridge</Text>
+          <Text style={[styles.note, { color: t('fg-4') }]}>read-only</Text>
           <RefreshControl queries={[skills, plugins, mcp, doctor]} />
         </View>
       </View>

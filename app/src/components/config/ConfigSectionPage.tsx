@@ -274,7 +274,7 @@ function ScalarLeafRow({
           {hint ? <Text style={[styles.leafHint, { color: t('fg-4') }]}>{hint}</Text> : null}
           {domainMismatch ? (
             <Text style={[styles.leafHint, { color: t('status-warn') }]}>
-              (unrecognised — hermes falls back to default)
+              (unrecognised — the default value applies)
             </Text>
           ) : null}
           {help ? (
@@ -544,12 +544,12 @@ export function ConfigSectionPage({ groupId }: { groupId: string }) {
         }
       >
         {config.isLoading ? (
-          <StatePanel tone="pending" title="Reading config…" detail="config.yaml · via CLI-bridge" />
+          <StatePanel tone="pending" title="Reading config…" detail="config file" />
         ) : config.isError ? (
           <StatePanel
             tone="error"
             title="Config unavailable"
-            detail={config.error?.message || 'CLI-bridge unreachable'}
+            detail={config.error?.message || 'the configuration service is unreachable'}
           />
         ) : blocks.length === 0 ? (
           <StatePanel title="Nothing here" detail={`No config settings are grouped under "${groupId}" right now.`} />

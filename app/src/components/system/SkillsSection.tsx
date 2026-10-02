@@ -62,7 +62,7 @@ export function SkillsSection() {
         onToggle={() => setOpen((v) => !v)}
       />
       {open && q.isLoading ? (
-        <StatePanel tone="pending" title="Reading skills…" detail="hermes skills list · via CLI-bridge" />
+        <StatePanel tone="pending" title="Reading skills…" detail="installed skills" />
       ) : null}
       {open && q.isError ? (
         <StatePanel tone="error" title="Skills unavailable" detail={q.error?.message ?? ''} />

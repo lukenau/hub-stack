@@ -344,5 +344,5 @@ export function stagePending(
 /** `res.status !== 'applied'` → the toast text (ConfigSectionPage.tsx:791-792). */
 export function rejectedMessage(stderr: string | undefined, code: number | undefined): string {
   const why = (stderr || '').trim().replace(/\s+/g, ' ').slice(0, 140);
-  return why || `hermes rejected the change (exit ${code ?? '?'})`;
+  return why || `the change was rejected (exit ${code ?? '?'})`;
 }

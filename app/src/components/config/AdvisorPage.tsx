@@ -330,12 +330,12 @@ export function AdvisorPage() {
         <Text style={[styles.intro, { color: t('fg-2') }]}>{INTRO}</Text>
 
         {advisor.isLoading ? (
-          <StatePanel tone="pending" title="Reading advisor config…" detail="config.yaml · via CLI-bridge" />
+          <StatePanel tone="pending" title="Reading advisor config…" detail="config file" />
         ) : advisor.isError ? (
           <StatePanel
             tone="error"
             title="Advisor config unavailable"
-            detail={advisor.error?.message || 'CLI-bridge unreachable'}
+            detail={advisor.error?.message || 'the configuration service is unreachable'}
           />
         ) : advisor.data ? (
           <>

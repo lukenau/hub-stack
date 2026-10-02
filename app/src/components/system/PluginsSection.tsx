@@ -68,7 +68,7 @@ export function PluginsSection() {
         onToggle={() => setOpen((v) => !v)}
       />
       {open && q.isLoading ? (
-        <StatePanel tone="pending" title="Reading plugins…" detail="hermes plugins list --json · via CLI-bridge" />
+        <StatePanel tone="pending" title="Reading plugins…" detail="installed plugins" />
       ) : null}
       {open && q.isError ? (
         <StatePanel tone="error" title="Plugins unavailable" detail={q.error?.message ?? ''} />

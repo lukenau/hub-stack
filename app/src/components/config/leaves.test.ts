@@ -340,7 +340,7 @@ describe('rejectedMessage', () => {
   });
 
   test('falls back to the exit code, and to "?" when there is not even one', () => {
-    expect(rejectedMessage('', 2)).toBe('hermes rejected the change (exit 2)');
-    expect(rejectedMessage(undefined, undefined)).toBe('hermes rejected the change (exit ?)');
+    expect(rejectedMessage('', 2)).toBe('the change was rejected (exit 2)');
+    expect(rejectedMessage(undefined, undefined)).toBe('the change was rejected (exit ?)');
   });
 });

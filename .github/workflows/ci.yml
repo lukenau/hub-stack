@@ -111,6 +111,11 @@ jobs:
       # tailnet, so CI runs the script.
       - name: Run the publish gate
         run: bash scripts/hub-stack-gate.sh .
+      # A rule that never fires is dead weight: plant one probe per rule and
+      # assert the gate blocks on every one (and passes on a clean tree). The
+      # probes are built at runtime, so the guard names no marker it guards.
+      - name: Gate self-test (every rule still fires)
+        run: bash scripts/hub-stack-gate.sh --self-test
 
   dco:
     name: DCO sign-off

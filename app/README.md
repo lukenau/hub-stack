@@ -38,6 +38,18 @@ For a build with personal features stripped out (a "public-safe" variant you can
 hand to beta testers while keeping the personal build for yourself), see
 [`../docs/PUBLIC-BUILD.md`](../docs/PUBLIC-BUILD.md).
 
+### Web (optional)
+
+The same app also exports to a static web bundle, as one option for reaching the
+hub without an iOS build. It is not a replacement for the native app and not a
+PWA — see [`../docs/CONNECT-APP.md`](../docs/CONNECT-APP.md) for what it is and
+isn't.
+
+```bash
+npm run build:web    # → dist/  (single-page app; serve from the site root)
+npm run check:web    # scan the artifact for leaked identifiers and secrets
+```
+
 ## Layout
 
 | Path | What |

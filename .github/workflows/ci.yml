@@ -72,6 +72,12 @@ jobs:
       # passing; run `npm run check:pwa` in a checkout that has the PWA.
       - name: Repo checks
         run: npm run check
+      # The web export is a shipped capability (docs/CONNECT-APP.md): the same
+      # app exported for the browser. Build it and scan the artifact here so the
+      # ability cannot quietly rot — check:web fails on any leaked identifier,
+      # hostname, path or secret in the bundle the browser would receive.
+      - name: Web export + bundle scan
+        run: npm run build:web && npm run check:web
       # This step is the point of the job: the full jest suite. It is
       # serialised (--maxWorkers=1, via `test:ci`) on purpose. The suite has a
       # documented cross-file mock leak under parallel workers

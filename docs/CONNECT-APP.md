@@ -155,21 +155,44 @@ chat; without it, chat stays locked.
 **Success looks like:** the app's home screen loads live data instead of an
 empty/error state.
 
-### Running the app from source (for development)
+### Running it in a browser (optional)
+
+The same Expo app renders for the browser through `react-native-web`. Treat this
+as **one option among several** for reaching the hub — next to the native iOS
+app, and the from-source dev client — never as a requirement. Nothing in the
+pairing step above depends on it; you can pair a phone and never build the web
+version at all.
 
 ```bash
 cd app
 npm install
-npm run web     # http://localhost:8081
-npm run ios     # needs macOS + Xcode
-npm run android # needs Android SDK / emulator or device
+npm run web          # dev server, live reload → http://localhost:8081
+npm run build:web    # static web build → app/dist/ (provenance below)
+npm run check:web    # scan that artifact for leaked identifiers and secrets
+npm run ios          # native: needs macOS + Xcode
+npm run android      # native: needs Android SDK / emulator or device
 ```
 
-The default `HUB_ORIGIN=http://localhost:8081` already allows the web dev
-server. The web build resolves its server the same way the native app does —
-**Config → Server address** first, then `extra.apiBase` in `app/app.json`, then
-the shipped default — so either set `extra.apiBase` before `npm run web`, or
-point it at your server from inside the running app.
+`app/dist/` is a **single-page app served from the site root**: its assets are
+referenced as `/_expo/…`, so serve it at `/`, not under a subpath (for example
+`npx serve app/dist`). The web build resolves its server the same way the native
+app does — **Config → Server address** first, then `extra.apiBase` in
+`app/app.json`, then the shipped default — and the dev server's origin
+(`http://localhost:8081`) is already allowed by the default `HUB_ORIGIN`.
+
+What the web build **is not**:
+
+- **Not a replacement for the native app.** It cannot pair or write — the write
+  gate needs a Secure Enclave device key, and a browser has no equivalent — and
+  it has no Face ID, push notifications or native modules. Treat it as a
+  read-mostly way to reach the hub from a computer, not a handheld substitute.
+- **Not a PWA.** `expo export` writes a plain web bundle with no service worker
+  and no web-app manifest, so it is not installable and has no offline mode.
+- **Not the separate Hub web UI.** That is a different, private codebase, not
+  part of this repository (the files under `app/src/shared` were ported from
+  it); it is not needed to build or run this export.
+- **Not distributed or supported.** See the platform note in the
+  [README](../README.md) — build it for yourself if you want it.
 
 ---
 

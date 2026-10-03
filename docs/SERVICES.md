@@ -30,7 +30,8 @@ The minimum viable install is the hub with every service knob left blank:
 
 ```ini
 # .env, server basics only
-HUB_PUBLIC_BASE=http://127.0.0.1:8090
+HUB_PUBLIC_BASE=http://localhost:8090
+HUB_ORIGIN=http://localhost:8090
 ```
 
 That gives you a private dashboard (health, files, calendar if you point
@@ -369,14 +370,17 @@ gated action. Self-contained; this is what makes a network-reachable hub safe
 to write to.
 
 ```ini
-HUB_RP_ID=your-hub-hostname
+HUB_ORIGIN=https://hub.example.com   # exact origin the browser uses; REQUIRED
+HUB_RP_ID=hub.example.com            # optional; derived from HUB_ORIGIN
 HUB_RP_NAME=Hub
 HUB_PASSKEYS=/path/to/passkeys.json
 ```
 
-Requires: nothing external. Set `HUB_RP_ID` to the hostname your app actually
-uses (the default is `localhost`, which only works for local testing);
-passkeys are bound to it. The passkey store path has a working default.
+Requires: nothing external. `HUB_ORIGIN` must be the exact origin a browser uses
+to reach the hub — passkeys are bound to it, and with it left blank the server
+refuses passkey setup with an error naming the variable instead of failing inside
+the browser. `HUB_RP_ID` defaults to that origin's hostname; set it only when it
+must differ. The passkey store path has a working default.
 
 ### Device keys and enrolment
 

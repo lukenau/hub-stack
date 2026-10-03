@@ -103,7 +103,8 @@ Everything is environment-driven via `.env` (see
   protect anything.
 - `HUB_BIND` — host publish address.
 - `HUB_DATA_DIR` — persistence.
-- `HUB_ORIGIN` — CORS allowlist.
+- `HUB_ORIGIN` — the public origin passkeys are bound to. Required for WebAuthn;
+  must match the address a browser uses (see [SETUP.md](SETUP.md#identity--pairing)).
 - `HUB_PUBLIC_BASE` — the URL advertised to clients.
 - Optional integrations: Hermes gateway, Murmur bridge, Home Assistant
   (`HA_LIVE_APPLY` flips the HA apply flow from dry-run to live),

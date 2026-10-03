@@ -92,8 +92,9 @@ would not.
 | Variable | Default | Meaning |
 |---|---|---|
 | `HUB_API_TOKEN` | *(empty)* | **RESERVED** — not enforced today. The server does not read this value and the API does not require it; access control is the network boundary (see SECURITY.md). install.sh no longer fills it. Do NOT rely on it to protect an exposed port. |
-| `HUB_ORIGIN` | `http://localhost:8081` | Origins allowed to call the API (comma-separated). The default matches the app's web dev server. |
-| `HUB_PUBLIC_BASE` | `http://127.0.0.1:8090` | Base URL the server advertises to clients. Set this to whatever URL the app will actually use. |
+| `HUB_ORIGIN` | `http://localhost:8090` | **The origin a browser uses to reach the hub** (scheme + host + port). Required for passkeys: WebAuthn binds credentials to it, so it must match the browser's address bar. Leave it blank and passkey setup is refused with an error naming this variable. Comma-separated list; the first entry is the WebAuthn origin. |
+| `HUB_RP_ID` | *(derived)* | Relying-party hostname the passkeys are scoped to. Derived from `HUB_ORIGIN`'s hostname; set it only when it must differ (e.g. `hub.example.com`). |
+| `HUB_PUBLIC_BASE` | `http://localhost:8090` | Base URL the server advertises to clients. Set this to whatever URL the app will actually use. |
 | `HUB_USER_NAME` / `HUB_USER_HANDLE` | `Your Name` / `you` | Display identity shown in the app. |
 | `HUB_TZ` | `UTC` | Timezone for anything time-formatted. |
 

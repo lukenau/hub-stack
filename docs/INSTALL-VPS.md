@@ -124,7 +124,7 @@ reachable from anywhere.
 
    ```ini
    HUB_PUBLIC_BASE=https://hub.example.com     # or the tailnet URL
-   HUB_ORIGIN=https://hub.example.com          # comma-separate extra origins
+   HUB_ORIGIN=https://hub.example.com          # exact origin the browser uses (required for passkeys)
    HUB_USER_NAME=Your Name
    HUB_USER_HANDLE=you
    HUB_TZ=Europe/Berlin                        # your timezone

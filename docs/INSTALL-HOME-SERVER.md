@@ -75,6 +75,7 @@ data at home.
    ```ini
    HUB_BIND=0.0.0.0
    HUB_PUBLIC_BASE=http://192.168.1.50:8090    # your server's LAN IP
+   HUB_ORIGIN=http://192.168.1.50:8090         # the same origin a browser uses
    ```
 
    Plain HTTP over LAN is unencrypted; if that bothers you, use Option A

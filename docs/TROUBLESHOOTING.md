@@ -67,15 +67,20 @@ Work through in order:
      just bind `0.0.0.0` on an internet-facing machine.
    - Fails everywhere → the container is down; see above.
 
-2. **401 responses** — gated routes lock individually. The terminal returns
-   `terminal locked — unlock with Face ID` until you unlock it; chat returns
-   `chat locked — unlock with Face ID`, and chat's data routes need the chat
-   session cookie, so chat reads are authenticated unlike the hub's other reads.
-   None of this uses `HUB_API_TOKEN` (see [SECURITY.md](../SECURITY.md)).
+2. **401 / 412 responses** — gated routes lock individually. A lock returns `412
+   no_passkey` when no passkey or paired device is enrolled yet (enrol one in
+   Settings to unlock — there is nothing to unlock with before that), and `401
+   chat_locked` / `401 terminal_locked` once a credential exists but the session
+   has lapsed (re-authenticate). Chat's data routes need the chat session cookie,
+   so chat reads are authenticated unlike the hub's other reads. None of this uses
+   `HUB_API_TOKEN` (see [SECURITY.md](../SECURITY.md)).
 
-3. **CORS / origin errors in the web app** — the origin the app runs from
-   isn't in `HUB_ORIGIN`. Add it (comma-separated list) and
-   `docker compose up -d`.
+3. **Passkey setup fails with "WebAuthn is not configured"** — `HUB_ORIGIN` is
+   blank, or it doesn't match the address in the browser's bar. Set it to the
+   exact origin (scheme + host + port) you reach the hub on —
+   `http://localhost:8090` locally, `https://hub.example.com` behind TLS — then
+   `docker compose up -d`. A comma-separated list is accepted; the first entry is
+   the WebAuthn origin.
 
 4. **URL mistakes** — the server URL must include the scheme and port:
    `https://hub.example.com`, not `hub.example.com`; `http://127.0.0.1:8090`,

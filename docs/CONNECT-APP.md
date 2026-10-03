@@ -177,8 +177,11 @@ npm run android      # native: needs Android SDK / emulator or device
 referenced as `/_expo/…`, so serve it at `/`, not under a subpath (for example
 `npx serve app/dist`). The web build resolves its server the same way the native
 app does — **Config → Server address** first, then `extra.apiBase` in
-`app/app.json`, then the shipped default — and the dev server's origin
-(`http://localhost:8081`) is already allowed by the default `HUB_ORIGIN`.
+`app/app.json`, then the shipped default. Note that passkeys are bound to
+`HUB_ORIGIN`, so a browser running the web build from the Expo dev server
+(`http://localhost:8081`) is a *different* origin from the shipped default
+(`http://localhost:8090`) — set `HUB_ORIGIN=http://localhost:8081` while you use
+the dev server, or serve the build from the same origin as the API.
 
 What the web build **is not**:
 

@@ -47,15 +47,54 @@ Revisit it if app-level payload encryption is ever added.
 
 ## 5. Trademark knock-out search
 
-Run a knock-out search on the app name in the USPTO (TESS / the current USPTO
-search system) and EUIPO before committing to it. Apple enforces name
-uniqueness on the App Store and can force a rename after launch, so have a
-fallback name ready. The app has been renamed to 'Xavier', which is far more
-distinctive than the earlier 'Hub' / 'AGENT HUB' and reduces, but does not
-eliminate, collision risk.
+**Run, 2026-10-02.** Checked the USPTO register (its search API, then filtered
+locally), EUIPO (data API) and UKIPO, with TMview for cross-register coverage;
+domains by registry WHOIS/RDAP. The full record, with serial numbers and
+sources, is in [TRADEMARK.md](TRADEMARK.md).
 
-## 6. Legal disclaimer
+- **United States — usable but weak.** No **live** US registration for plain
+  "XAVIER" in Class 9 or Class 42; every plain-"XAVIER"-in-software application
+  found was dead or abandoned. The nearest live filings are Marvin AI's
+  "XAVIER AI" (Classes 9/42, filed and **under opposition**) and NVIDIA's
+  "JETSON AGX XAVIER" (Class 9).
+- **EU and UK — materially exposed.** NVIDIA owns plain "XAVIER" as a
+  **registered** mark in **Classes 9 and 42**, in both the EU (EUIPO 017662933)
+  and the UK (UK00917662933), and BGRP S.r.l. holds a second EU registration
+  covering Class 42 (018718599). "XAVIER AI" is also applied for in the EU and
+  opposed.
+- **Domains.** `xavier.app` is registered (a parked lander) and
+  `getxavier.com` redirects to Dext; `xavierhq.com` was free at registry level.
+  So the obvious handles are gone.
+- **Read.** Fine as the name of a private, non-commercial self-hosted project,
+  but **not realistically ownable**, and a poor bet for anything commercial or
+  marketed in the EU/UK. Keep a fallback name in mind; screened candidates with
+  available handles are **Custos** and **Famulus** (`-hq.com` free at registry
+  level), with **Penates** as a third.
+
+Apple enforces name uniqueness on the App Store and can force a rename after
+launch regardless of trademark rights, so hold a fallback before submitting
+metadata.
+
+## 6. Keep the store listing clean
+
+Do **not** put "Muse", any other company's trademark, or the comparison from
+[COMPARISON.md](COMPARISON.md) into the app name, subtitle, keywords, or
+screenshots — App Store Review Guideline **2.3.7** bars another company's
+trademark in metadata. The comparison belongs in the repository and in prose.
+As it stands `app.json` sets the display name "Xavier" and ships no keywords or
+subtitle, so the metadata is clean — keep it that way.
+
+## 7. App Store Connect — DSA trader status
+
+The EU Digital Services Act makes App Store Connect show a **trader-status**
+banner that applies **account-wide**, not per app. Left unaddressed it leads to
+the app's removal from the EU storefront. It is a legal declaration about the
+account holder, so it has to be answered in App Store Connect by the account
+holder; it cannot be set from the repository.
+
+## 8. Legal disclaimer
 
 Nothing in this checklist is legal advice. It records practical pre-submission
 steps from a compliance review. Consult a lawyer for questions about
-licensing, trademarks, or export compliance.
+licensing, trademarks, or export compliance — in particular before any
+commercial or EU/UK use of the name (section 5).

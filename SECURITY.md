@@ -73,6 +73,11 @@ The server does not call home or report usage. See the Privacy section of the
 - Keep `.env` out of version control (it is gitignored) and back it up securely.
 - Treat the server's reachability as its password.
 
+None of this is supported. The software is provided **as-is**, with no warranty,
+no support commitment and no SLA, by one individual — you are responsible for
+how you expose your server, and the consequences of that choice are yours. See
+[NOTICE.md](NOTICE.md).
+
 ## Supported versions
 
 hub-stack is pre-1.0 and moves quickly. There are no release branches: the

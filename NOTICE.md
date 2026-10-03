@@ -11,6 +11,13 @@ implied, and no support commitment. Issues and pull requests are welcome, but
 they are handled on a best-effort basis by one person, with no response time
 guaranteed and no obligation to fix anything in particular.
 
+## A personal project
+
+hub-stack is a personal project of **Luke Nau**. It is not a company, a product
+line, or a hosted service, and it is not offered on anyone else's behalf. It is
+built and maintained on his own time and hardware, and it reflects no one's
+views or products but the author's.
+
 ## You are responsible for your own exposure
 
 This software includes a server that can read files, a calendar, a terminal and
@@ -27,9 +34,10 @@ by any company whose product is referenced in this documentation.
 
 ## Trademarks
 
-"Xavier" and "hub-stack" are used here as the names of this project. No
-trademark registration is claimed; these names identify the software, nothing
-more.
+"Xavier" and "hub-stack" are used here informally, as the names of this personal
+project rather than as a brand. They are not registered trademarks, no
+registration is claimed, and no rights in them are granted to anyone. They are
+common-law names that identify the software, nothing more.
 
 All other product names, company names and logos that appear in this repository
 or its documentation (including, without limitation, OpenRouter, Apple, Xcode,

@@ -18,6 +18,7 @@ earlier release to compare against.
 
 ### Added
 
+- The legal and liability surface for a public release: `NOTICE.md` (as-is/no-support, "a personal project", no-affiliation, and a trademark note for "Xavier"/"hub-stack"), `docs/PRIVACY.md` (what the code actually does with data, path by path), `docs/TESTER-PRIVACY.md` (a short notice to hand a beta tester), `docs/TRADEMARK.md` (the app-name knock-out search), an "if you host this for other people" section in the README (what a host holds about others, how to revoke and delete), and `CONTRIBUTING.md` with a Developer Certificate of Origin requirement.
 - The self-hostable hub server (FastAPI) and its companion app for web, iPhone and Android (Expo / React Native), in one MIT-licensed repository.
 - A one-command installer (`./install.sh`) that checks prerequisites, creates `.env` with mode 600, builds and starts the server, waits for a health check, and prints the URL to point the app at. Subcommands cover start, stop, restart, update, logs, status, URL, uninstall and help.
 - Device pairing with a one-time six-character enrolment code minted on the server machine (`./install.sh --pair`), or from the optional Hub web UI behind Face ID — no pasted token, no login.

@@ -292,7 +292,64 @@ talking to it.
   [SECURITY.md](SECURITY.md) before exposing it — `HUB_API_TOKEN` in `.env` is
   reserved and **not enforced**.
 - No telemetry, no phoning home, no hosted service.
+- **Provided as-is, by one person, with no support commitment and no SLA.** You
+  are responsible for how you expose your server; the software carries MIT's
+  warranty disclaimer and nothing more — see [NOTICE.md](NOTICE.md).
 - See [SECURITY.md](SECURITY.md) for the threat model and how to report issues.
+
+---
+
+## If you host this for other people
+
+hub-stack is built for one person running their own hub. Nothing stops you
+pointing other people — beta testers, family, friends — at your server, but the
+moment you do, you are the operator of their data, and that job is yours, not
+the project's. Everything below still lives on your machine, in
+`${HUB_DATA_DIR:-./data}`; there is no hub-stack cloud in the middle.
+
+**What your server then holds about them:**
+
+- **Their messages.** Chat history in a SQLite database
+  (`/data/hub/chat/chat.db`), with any images they attach kept in a `media/`
+  directory beside it. If someone talks to the agent through your server, their
+  side of the conversation is in that database.
+- **Their identity on your server.** The public half of each enrolled device key
+  (the thing that authorises *writes*), any passkey, and a push token if they
+  turned notifications on, under `/data/hub`.
+- **Config and logs.** The server's settings and the secrets it mints at runtime
+  (`/data/hub/secrets`), files people upload (`HUB_INBOX_DIR`), and JSON-lines
+  logs — enough to see that a device connected and what the server did.
+
+Reads are not authenticated — see [SECURITY.md](SECURITY.md) — so anyone who can
+reach the port can read everything the server exposes, including those messages.
+The only thing standing between a participant's data and the next device on your
+network is your network.
+
+**How to revoke someone's access.** There are two halves, and you need both:
+
+- **Writes:** delete their device key — the hub's **Config → Security** page if
+  you run the web UI, or its entry in `devicekeys.json`. That ends their ability
+  to *act*.
+- **Reads:** cut them off at the network. Because reads carry no authentication,
+  removing a key does not stop them reading; you have to stop them reaching the
+  port (drop them from the mesh, proxy, or tunnel you let them in through).
+
+**Deletion on request.** If someone asks you to delete what you hold about them,
+the honest answer is that the software will not do it for you. Delete their chat
+rows and media, drop their device key, clear their push token, and remove any
+files they uploaded — all under `${HUB_DATA_DIR:-./data}`. Nothing is resurrected
+and there is no backup unless you made one, so clear your backups too.
+
+**Retention is your call.** The software expires nothing on its own; data sits
+until you or the person deletes it. Decide a window, tell the people whose data
+it is, then actually apply it. If you host for others at any scale, or for money,
+you are holding other people's data and privacy law may attach real obligations
+— get advice for your own situation. **[docs/PRIVACY.md](docs/PRIVACY.md)** walks
+through this in more detail, and
+**[docs/TESTER-PRIVACY.md](docs/TESTER-PRIVACY.md)** is a short notice you can
+hand a TestFlight tester.
+
+---
 
 ## How this compares to hosted personal agents
 
@@ -359,6 +416,8 @@ does, with the mechanism behind each claim. The rest, by task:
   optional, and what happens when a service is unset.
 - **[docs/PRIVACY.md](docs/PRIVACY.md)** — what the software does with data,
   claim by claim, against the source.
+- **[docs/TRADEMARK.md](docs/TRADEMARK.md)** — the app-name knock-out search
+  (USPTO/EUIPO/UKIPO, domains) and what it found.
 - **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** — symptom → fix.
 - **[SECURITY.md](SECURITY.md)** — threat model and how to report issues.
 

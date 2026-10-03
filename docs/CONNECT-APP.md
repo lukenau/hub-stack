@@ -182,10 +182,11 @@ app does — **Config → Server address** first, then `extra.apiBase` in
 
 What the web build **is not**:
 
-- **Not a replacement for the native app.** It cannot pair or write — the write
-  gate needs a Secure Enclave device key, and a browser has no equivalent — and
-  it has no Face ID, push notifications or native modules. Treat it as a
-  read-mostly way to reach the hub from a computer, not a handheld substitute.
+- **Not a replacement for the native app.** It cannot pair or write: this app's
+  write gate is the Secure Enclave device key, which exists only on iOS/Android,
+  and the browser build carries no WebAuthn path of its own. It also has no Face
+  ID, push notifications or native modules. Treat it as a read-mostly way to
+  reach the hub from a computer, not a handheld substitute.
 - **Not a PWA.** `expo export` writes a plain web bundle with no service worker
   and no web-app manifest, so it is not installable and has no offline mode.
 - **Not the separate Hub web UI.** That is a different, private codebase, not

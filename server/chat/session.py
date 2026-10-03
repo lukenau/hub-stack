@@ -28,9 +28,8 @@ The in-process `_CHAT_SESSIONS` dict is fine — it matches the terminal's own
 precedent (`_TERM_SESSIONS` in app.py) and hub-api runs a single uvicorn worker
 permanently (v2-decision-reliability.md §1) — but a hub-api restart empties it same as
 `_TERM_SESSIONS`, so a restart invalidates every outstanding chat cookie and the app
-must re-unlock with Face ID. That is the same behavior the terminal already has, not a
-new gap this file introduces.
-"""
+must re-authenticate. That is the same behavior the terminal already has, not a
+new gap this file introduces."""
 from __future__ import annotations
 
 import os
@@ -142,6 +141,29 @@ def _require_enrolled(devicekey_assertion: DeviceKeyAssertion | None) -> None:
             status_code=412,
             detail={"code": "no_passkey", "detail": "No passkey registered."},
         )
+
+
+def locked_gate_detail(surface: str) -> tuple[int, dict[str, str]]:
+    """Status + body for a locked cookie gate (`surface` is "chat" or "terminal").
+
+    Two states used to share the one message "… locked — unlock with Face ID", and
+    on a fresh install that instruction named a credential the user does not have:
+
+      * nothing enrolled yet — no passkey and no paired device. 412 `no_passkey`,
+        the same code the challenge routes already answer, which the app renders as
+        "enrol in Security first". The actionable step here is to ENROL.
+      * a credential exists but the session lapsed (TTL, restart, logout). 401
+        `<surface>_locked`. The actionable step here is to RE-AUTHENTICATE.
+    """
+    if wa.has_passkey() or dk.has_devicekey():
+        return 401, {
+            "code": f"{surface}_locked",
+            "detail": f"The {surface} session has lapsed — re-authenticate to unlock it.",
+        }
+    return 412, {
+        "code": "no_passkey",
+        "detail": "No passkey or paired device registered yet. Enrol a passkey in Settings first.",
+    }
 
 
 def _verify_proof(req: GatedRequest, purpose: str, ctx_hash: str | None) -> str:

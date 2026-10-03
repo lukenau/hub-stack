@@ -19,6 +19,10 @@ os.environ["HUB_CHAT_DB"] = str(TMP / "chat" / "chat.db")
 os.environ["HUB_CHAT_MEDIA_DIR"] = str(TMP / "chat" / "media")
 os.environ["HUB_PLATFORM_KEY_FILE"] = str(TMP / "hub-platform-key")
 os.environ["HUB_PUSH_TOKENS"] = str(TMP / "push_tokens.json")
+# Keep the credential stores hermetic: the gate's no-passkey/no-devicekey branch reads
+# them, and this file deliberately enrols neither.
+os.environ["HUB_PASSKEYS"] = str(TMP / "passkeys.json")
+os.environ["HUB_DEVICEKEYS"] = str(TMP / "devicekeys.json")
 (TMP / "hub-platform-key").write_text("test-platform-secret\n")
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
@@ -428,8 +432,15 @@ def test_a_bad_batch_lands_nothing(autos):
 
 # --- routes ---------------------------------------------------------------------------
 def test_reads_are_behind_the_chat_cookie():
-    assert client.get("/api/chat/automations").status_code == 401
-    assert client.post("/api/chat/automations/read-all", json={}).status_code == 401
+    # No cookie, and this file enrols no passkey/device key — so the gate's honest
+    # answer is 412 no_passkey ("enrol first"), not the old blanket 401 that told a
+    # fresh install to unlock with a credential it did not have (task t_602da9c5).
+    r = client.get("/api/chat/automations")
+    assert r.status_code == 412
+    assert r.json()["detail"]["code"] == "no_passkey"
+    r = client.post("/api/chat/automations/read-all", json={})
+    assert r.status_code == 412
+    assert r.json()["detail"]["code"] == "no_passkey"
 
 
 def test_sync_needs_the_platform_key():

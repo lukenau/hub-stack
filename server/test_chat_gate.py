@@ -388,6 +388,53 @@ def test_bootstrap_200s_with_a_valid_cookie():
     assert r.json() == {"threads": []}
 
 
+# --- session: the locked-state message tells the truth about the user's state -------
+# On a fresh install there is no passkey to "unlock with", so the gate must ask the
+# user to ENROL; only once a credential exists is a locked session a re-auth. These
+# pin both states for the chat gate and the terminal gate (task t_602da9c5).
+def test_locked_chat_with_no_credentials_asks_to_enrol_not_to_unlock():
+    """The autouse fixture seeds a passkey; a fresh install has neither passkey nor
+    paired device. The gate must not name a credential that does not exist yet."""
+    (TMP / "passkeys.json").unlink(missing_ok=True)
+    (TMP / "devicekeys.json").unlink(missing_ok=True)
+    r = client.get("/api/chat/bootstrap")
+    assert r.status_code == 412
+    body = r.json()["detail"]
+    assert body["code"] == "no_passkey"
+    assert "enrol" in body["detail"].lower()
+    assert "Face ID" not in body["detail"]
+    assert_no_secrets_leaked(r)
+
+
+def test_locked_chat_with_a_credential_asks_to_reauthenticate():
+    """With a credential on file, a locked session is a re-auth, not an enrolment."""
+    r = client.get("/api/chat/bootstrap")
+    assert r.status_code == 401
+    body = r.json()["detail"]
+    assert body["code"] == "chat_locked"
+    assert "Face ID" not in body["detail"]
+    assert "re-authenticate" in body["detail"]
+    assert_no_secrets_leaked(r)
+
+
+def test_locked_terminal_gate_uses_the_same_two_state_message(monkeypatch):
+    """The terminal proxy carried the same "unlock with Face ID" defect. HUB_TTYD_SOCK
+    is set so the route reaches the session check rather than the 503 guard."""
+    import app as mod
+    monkeypatch.setattr(mod, "HUB_TTYD_SOCK", "/tmp/does-not-exist-ttyd.sock")
+
+    r = client.get("/terminal")
+    assert r.status_code == 401
+    assert r.json()["detail"]["code"] == "terminal_locked"
+    assert "Face ID" not in r.json()["detail"]["detail"]
+
+    (TMP / "passkeys.json").unlink(missing_ok=True)
+    (TMP / "devicekeys.json").unlink(missing_ok=True)
+    r = client.get("/terminal")
+    assert r.status_code == 412
+    assert r.json()["detail"]["code"] == "no_passkey"
+
+
 # --- session: expiry ---------------------------------------------------------------
 def test_expired_token_is_refused_like_an_unknown_one():
     """`chat_session_valid` treats a token past its stored expiry exactly like one that

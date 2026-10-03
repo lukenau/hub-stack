@@ -59,7 +59,7 @@ from chat.platform import (
     _hub_platform_key,
     get_store,
 )
-from chat.session import chat_session_valid
+from chat.session import chat_session_valid, locked_gate_detail
 
 
 # The bootstrap placeholder shipped in the repo next to this file — a small,
@@ -86,11 +86,14 @@ _MEDIA_ID_RE = re.compile(r"^med_[0-9a-f]{16}$")
 
 
 def _require_chat_session(hub_chat_session: str | None) -> None:
-    if not chat_session_valid(hub_chat_session):
-        raise HTTPException(
-            status_code=401,
-            detail={"code": "chat_locked", "detail": "chat locked — unlock with Face ID"},
-        )
+    if chat_session_valid(hub_chat_session):
+        return
+    # Two states used to share one message ("chat locked — unlock with Face ID"),
+    # which on a fresh install named a credential the user did not have. The helper
+    # tells the two apart: no credential yet -> 412 no_passkey (enrol); a lapsed
+    # session with a credential on file -> 401 chat_locked (re-authenticate).
+    status, detail = locked_gate_detail("chat")
+    raise HTTPException(status_code=status, detail=detail)
 
 
 def _chat_session_dep(hub_chat_session: str | None = Cookie(default=None)) -> None:

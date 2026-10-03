@@ -62,7 +62,7 @@ from chat.automations import router as chat_automations_router
 from chat.automations import badge_router as chat_automations_badge_router
 from chat.platform import router as chat_platform_router
 from chat.routes import router as chat_routes_router
-from chat.session import router as chat_session_router
+from chat.session import router as chat_session_router, locked_gate_detail
 from chat.ws import router as chat_ws_router
 
 LOG_DIR = Path(os.environ.get("HUB_LOG_DIR", "/var/log/hub"))
@@ -2765,21 +2765,39 @@ async def imessage_draft(request: Request) -> Response:
     chat_id = form.get("chat_id", "").strip()
     contact = form.get("contact", "").strip()[:120]
     text = form.get("text", "").strip()
+    # This endpoint is the POST target of the server-rendered iMessage pages, so a
+    # browser form submit (which always advertises text/html) gets the HTML result
+    # page. Any other client — `Accept: application/json`, or none naming HTML — must
+    # get the SAME structured error shape every other endpoint uses
+    # (`{"detail": {"code", "detail"}}`), not an HTML document that breaks `res.json()`.
+    as_page = "text/html" in request.headers.get("accept", "").lower()
+
+    def _invalid(status: int, code: str, detail: str, *, title: str, icon: str,
+                 heading: str, body: str) -> Response:
+        if as_page:
+            return _compose_page(title, icon, heading, body, status)
+        raise HTTPException(status_code=status, detail={"code": code, "detail": detail})
+
     if not text:
-        return _compose_page("Empty message", "✏️", "Nothing to send",
-                             '<p class="sub">The message text was empty. Go back and type something.</p>', 400)
+        return _invalid(400, "empty_message", "The message text was empty.",
+                        title="Empty message", icon="✏️", heading="Nothing to send",
+                        body='<p class="sub">The message text was empty. Go back and type something.</p>')
     if len(text) > _IM_TEXT_MAX:
-        return _compose_page("Too long", "✂️", "Message too long",
-                             f'<p class="sub">{len(text)} characters — the limit is {_IM_TEXT_MAX}. '
-                             'Go back and trim it.</p>', 400)
+        return _invalid(400, "message_too_long",
+                        f"The message is {len(text)} characters; the limit is {_IM_TEXT_MAX}.",
+                        title="Too long", icon="✂️", heading="Message too long",
+                        body=f'<p class="sub">{len(text)} characters — the limit is {_IM_TEXT_MAX}. '
+                             'Go back and trim it.</p>')
     if not _CHAT_ID_RE.match(chat_id):
-        return _compose_page("Bad request", "⚠️", "Invalid conversation id",
-                             '<p class="sub">This page posted a malformed chat id. Re-open the '
-                             'conversation from the briefing and try again.</p>', 400)
+        return _invalid(400, "bad_chat_id", "The conversation id was malformed.",
+                        title="Bad request", icon="⚠️", heading="Invalid conversation id",
+                        body='<p class="sub">This page posted a malformed chat id. Re-open the '
+                             'conversation from the briefing and try again.</p>')
     if not contact:
-        return _compose_page("Bad request", "⚠️", "Missing contact",
-                             '<p class="sub">This page posted no contact name, and the Mac needs one '
-                             'to file the draft. Re-open the conversation from the briefing.</p>', 400)
+        return _invalid(400, "missing_contact", "The request carried no contact name.",
+                        title="Bad request", icon="⚠️", heading="Missing contact",
+                        body='<p class="sub">This page posted no contact name, and the Mac needs one '
+                             'to file the draft. Re-open the conversation from the briefing.</p>')
 
     preview = html.escape(text[:160] + ("…" if len(text) > 160 else ""))
     try:
@@ -5646,7 +5664,11 @@ def terminal_proxy(rest: str = "", hub_term_session: str | None = Cookie(default
     if not HUB_TTYD_SOCK:
         raise HTTPException(status_code=503, detail="terminal backend not configured")
     if not _term_session_valid(hub_term_session):
-        raise HTTPException(status_code=401, detail="terminal locked — unlock with Face ID")
+        # Same two-state distinction as the chat gate (see chat/session.py
+        # `locked_gate_detail`): on a fresh install there is no passkey to
+        # "unlock with", so tell the user to enrol rather than to unlock.
+        status, detail = locked_gate_detail("terminal")
+        raise HTTPException(status_code=status, detail=detail)
     # Preserve the full /terminal-prefixed path (ttyd runs with --base-path /terminal).
     # Request ttyd's index at "/terminal/" (with slash) so it serves 200 directly
     # instead of 302-redirecting "/terminal" → "/terminal/" (which dead-ended blank).

@@ -1,86 +1,123 @@
-# services/hub-api/
+# `server/` — hub-api
 
-## Plain English
+The FastAPI backend of hub-stack. It serves the app's read surface, streams chat
+and terminal traffic, and puts a real authentication gate in front of every write:
+a WebAuthn (Face ID / Touch ID) passkey, or a Secure-Enclave device key paired to
+a phone. Reads are meant to be reached only over a private network; writes are
+cryptographically gated on top of that.
 
-The hub-api is a tiny FastAPI service on the Mac Studio that the hub PWA talks to. It serves read-only JSON endpoints for health, agents, backups, audit, activity, schedules, skills, Home Assistant state, my-pages, a liveness probe (`/api/healthz`), and a multi-root file browser (`/api/files/{roots,browse,read}`). It also gates the Terminal iframe (`/api/terminal/{challenge,session,logout}`) + HA action flow (`/api/ha/{challenge,apply}`) via WebAuthn. No POST action verbs Day-1 beyond those two WebAuthn-gated flows — per-action Face ID ships with ADR 011 from the start.
+It is one piece of the repo. Run and configure it from the repository root with
+`./install.sh` and `docker compose`; the sections below describe the service
+itself.
 
-Runs as a launchd user agent bound to `127.0.0.1:8787`. Exposed over Tailscale via `tailscale serve --set-path=/api http://127.0.0.1:8787` on the same hostname as the hub, so the PWA fetches `/api/*` without a cross-origin hop.
+## How it runs
+
+- **Container, one worker.** `docker-compose.yml` builds this directory and runs
+  `uvicorn app:app`. The container listens on **8090** and, by default, the host
+  publishes it on `127.0.0.1:8090` — loopback only, so nothing is reachable off
+  the machine until you add a mesh or a TLS reverse proxy (see
+  [../docs/CONNECT-APP.md](../docs/CONNECT-APP.md)).
+- **Single worker is load-bearing.** The WebAuthn challenge cache is in-process,
+  so a challenge minted by one worker must be verified by the same one. Do not
+  raise the worker count.
+- **Non-root.** The container runs as `HUB_UID` (default `1000`) and writes its
+  database, uploads and key stores under the mounted data dir (`/data`).
+
+Point the app at the host URL that `install.sh` prints; see
+[../docs/SETUP.md](../docs/SETUP.md) for the full configuration table.
+
+## Configuration
+
+Everything is environment-driven from `.env` (copied from `.env.example` by
+`install.sh`). The keys that matter most here:
+
+- `HUB_ORIGIN` — **required for passkeys.** The exact origin a browser uses to
+  reach the hub (`https://hub.example.com`, or `http://localhost:8090` for a
+  local-only install). WebAuthn binds credentials to it, so it must match the
+  browser's address bar. If it is blank the server refuses passkey setup with an
+  error naming this variable, rather than failing inside the browser with no
+  explanation. A comma-separated list is accepted; the first entry is the one
+  WebAuthn uses.
+- `HUB_RP_ID` — the relying-party hostname passkeys are scoped to. Derived from
+  `HUB_ORIGIN`'s hostname when left blank; set it only when it must differ (for
+  example `hub.example.com` for `https://hub.example.com`).
+- `HUB_PUBLIC_BASE` — the URL the server advertises to clients (used in
+  notification links).
+- `HUB_BIND` / `HUB_PORT` — host-side publish address and port.
+- `HUB_DATA_DIR` — the host directory persisted into the container at `/data`.
+- `HUB_BRIDGE_URL` — base URL of the CLI-bridge sidecar, the only component with
+  Docker-socket access (used for agent/config/cron reads and writes). Empty
+  disables those surfaces.
+- `HUB_TTYD_SOCK` / `HUB_TMUXD_SOCK` — host unix sockets for the terminal and
+  tmux backends. Unix sockets, not TCP ports: reachable only by a process that
+  can open the socket file.
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `app.py` | FastAPI app — read-only GETs + WebAuthn endpoints + middleware allowlist |
-| `ha_actions.py` | HA proposal challenge + apply router (dry-run Day-1, live when `HA_LIVE_APPLY=true`) |
-| `files.py` | Multi-root read-only file browser (`sites`, `code`, `hub_config`, `launch_agents`) |
-| `requirements.txt` | pinned pip deps (fastapi, uvicorn, webauthn) |
-| `launchd/com.example.hub-api.plist.tmpl` | envsubst-rendered by `scripts/render-plists.sh` |
-| `passkeys.json` | registered platform authenticator credentials (gitignored, populated at Phase 9.5 enrolment) |
+| `app.py` | FastAPI app — read endpoints, the WebAuthn/device-key gate, chat, terminal and static-page routes |
+| `webauthn_gate.py` | the passkey gate: registration + assertion verification and the shared challenge cache |
+| `devicekeys.py` | the native-app second verifier: Secure-Enclave device keys and their enrolment codes |
+| `ha_actions.py` | Home Assistant proposal → challenge → apply router (dry-run until `HA_LIVE_APPLY=true`) |
+| `files.py` | read-only multi-root file browser |
+| `hub_calendar.py` | calendar read surface |
+| `pair_local.py` / `pair_cli.py` | local (unix-socket) pairing-code minting for `./install.sh --pair` |
+| `chat/` | chat session, approval, automation and websocket routers |
+| `Dockerfile` | container image for this service |
+| `requirements.txt` / `requirements-dev.txt` | runtime and test dependencies |
+| `run_tests.sh` | runs the suite the way it is designed to run (one process per test file) |
 
-## Run
+Runtime stores (`passkeys.json`, `devicekeys.json`) are created in the data dir at
+enrolment time and are never committed.
 
-```bash
-# Day-1 bootstrap: pipx install deps
-pipx install 'fastapi[standard]' --include-deps
-pipx inject fastapi 'webauthn>=2.5'
+## Endpoints
 
-# Render + load launchd plist
-./scripts/render-plists.sh
-launchctl bootstrap gui/$UID ~/Library/LaunchAgents/com.example.hub-api.plist
+Read endpoints (no credential; reached over your private network):
 
-# Smoke test
-curl -sf http://127.0.0.1:8787/api/health | jq '.services[0]'
-```
+| Endpoint | Reads from |
+|---|---|
+| `/api/health`, `/api/healthz` | health feed / in-process liveness |
+| `/api/agents` | agent roster, live from the gateway when available |
+| `/api/backups`, `/api/audit`, `/api/activity` | cache files written by your own cron jobs |
+| `/api/schedules` | schedule cache |
+| `/api/skills` | the bridge's `hermes skills list` |
+| `/api/my-pages`, `/my-pages/*` | self-hosted pages under the configured root |
+| `/api/files/{roots,browse,read}` | allowlisted filesystem roots (traversal-guarded, 256 KB read cap) |
+| `/api/finance` | a snapshot file, if one is written |
+| `/api/calendar` | calendar source |
+| `/api/passkey/status`, `/api/devicekey/status` | enrolment state only, never credential material |
 
-## Data sources (read-only)
+Gated POST endpoints (each requires a live WebAuthn assertion or device-key proof):
 
-| Endpoint | Reads from | Transform |
-|---|---|---|
-| `/api/health` | `/var/log/hub/healthcheck.jsonl` | tail last 20, aggregate by service |
-| `/api/agents` | `openclaw status --json` (subprocess, fixed single arg) | merge with static roster from `~/.hub/agents.json` |
-| `/api/backups` | `/var/log/hub/restic-snapshots.json` (written by restic-backup.sh post-run) | read + format |
-| `/api/audit` | `/var/log/hub/access-report.json` (written by access-report.sh) + `log-activity.sh` JSONL | compose snapshot |
-| `/api/activity` | `/var/log/hub/tool-calls.jsonl` (written by `.claude/hooks/log-activity.sh`) | tail last 50, newest-first |
-| `/api/schedules` | `~/Library/LaunchAgents/*.plist` (plistlib read) | label + interval/calendar + run_at_load |
-| `/api/skills` | `~/.hub/skills.json` (manual seed) | pass-through, empty on absence |
-| `/api/home-assistant` | `~/.hub/home-assistant.json` (seeded after HA setup; see `home-assistant.json.example`) | strips any `token` field before returning |
-| `/api/my-pages` | `~/.hub/my-pages.json` + directory scan of `~/Sites/my-pages/` | curated + unlisted slug list |
-| `/api/healthz` | in-process | liveness probe — `{"status": "ok"}` |
-| `/api/terminal/challenge` | stdlib `secrets` | returns base64-url challenge |
-| `/api/terminal/session` | `passkeys.json` | verifies assertion; sets `hub_term_session` cookie |
-| `/api/terminal/logout` | — | clears `hub_term_session` cookie |
-| `/api/ha/challenge` | `passkeys.json` + in-memory challenge cache (30s TTL) | returns a challenge bound to the proposal's sha256 hash |
-| `/api/ha/apply` | cached challenge + `passkeys.json` | verifies assertion; Day-1 appends dry-run log; Phase 2 (`HA_LIVE_APPLY=true`) proxies to HA `/api/services/...` |
-| `/api/files/roots` | static root registry (overridable via `HUB_FS_*` env) | lists configured roots + existence flags |
-| `/api/files/browse` | filesystem (`Path.iterdir`) | listing capped at 500 entries; traversal-guarded via resolved-path `relative_to` check |
-| `/api/files/read` | filesystem (`Path.read_bytes` + utf-8 decode) | 256 KB cap; 413 on oversize, 415 on binary |
+| Endpoint | Gate |
+|---|---|
+| `/api/passkey/register/{options,verify}` | enrol a platform authenticator |
+| `/api/action/{challenge,apply}` | structured writes: `config.set`, `cron.*`, pairing, gateway restart, tmux, murmur, device-key administration |
+| `/api/terminal/{challenge,session,logout}` | unlock the terminal (sets a cookie the `/terminal` proxy requires) |
+| `/api/ha/{challenge,apply}` | Home Assistant actions |
+| `/api/config/topics/*`, `/api/decisions/*`, `/api/briefing/*`, `/api/push/*` | the remaining gated surfaces |
 
 ## Auth posture
 
-- **Reads:** tailnet-only (device trust).
-- **Writes:** tailnet + **WebAuthn platform authenticator (Face ID) challenge per call**. The ADR 011 "zero POST action verbs" lock was amended to allow `/api/ha/*` since Day-1 because the HA apply endpoint is gated by the same WebAuthn primitive as the Terminal session and returns dry-run logs until `HA_LIVE_APPLY=true` flips it to live. See `.meta/decisions/011-hub-ia-security.md` amendment.
-- **No shell parameterization ever.** Commands are fixed-arg.
+- **Reads:** private-network boundary (device trust), not per-request auth.
+- **Writes:** the network boundary **plus** a per-action WebAuthn passkey
+  challenge, or a paired device key. Unknown credentials are rejected and every
+  anomaly fails closed. The origin a passkey is bound to is set explicitly
+  (`HUB_ORIGIN`); it is never derived from the request, so a caller cannot choose
+  what the credential is bound to.
+- **No shell parameterization.** The one subprocess allowed is a fixed-argument
+  status probe; structured writes are mapped to argv server-side and re-validated
+  by the bridge.
 
-## HA actions — Day-1 dry-run vs Phase 2 live-apply
+Details on the model and its limits: [../SECURITY.md](../SECURITY.md).
 
-Day-1 flow (no HA physically reachable yet):
-1. Client POSTs `/api/ha/challenge` with a proposal → server returns a challenge bound to `sha256(canonical_json(proposal))`.
-2. Client runs `navigator.credentials.get(...)` → iOS Face ID.
-3. Client POSTs `/api/ha/apply` with `{proposal, assertion}` → server verifies, appends `/var/log/hub/ha-would-apply.jsonl`, returns `{status: "dry_run_ok"}`.
-
-Phase 2 flip (after HA is configured + responsive):
-1. Seed `~/.hub/home-assistant.json` with a long-lived HA access token (add a `"token"` field — `GET /api/home-assistant` strips this before returning so it never leaks).
-2. `launchctl setenv HA_LIVE_APPLY true` → reload `com.example.hub-api` plist.
-3. Same `/api/ha/apply` path now calls `ha_actions._live_apply` which proxies to HA's service-call API.
-
-Implementation status of the live-apply function: scaffolded but intentionally raises 501 until the service-call mapping (change.kind → HA domain/service) is written. Writing that mapping is the one remaining Phase 2 coding task.
-
-Inspect dry-run activity with:
+## Tests
 
 ```bash
-tail -f /var/log/hub/ha-would-apply.jsonl
+./run_tests.sh
 ```
 
-## Seeding `~/.hub/home-assistant.json`
-
-Copy `home-assistant.json.example` → `~/.hub/home-assistant.json`, edit for your tailnet, hit `GET /api/home-assistant` to confirm the Hub reads it. See Phase 11.5 of `MAC_STUDIO_ARRIVAL.md`.
+Each `test_*.py` runs in its own process on purpose: the chat tests set their
+environment at module scope before importing `app`, so a single shared `pytest`
+invocation would let one module's environment leak into another.

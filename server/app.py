@@ -186,6 +186,20 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
     return Response(content=payload, status_code=422, media_type="application/json")
 
 
+@app.exception_handler(wa.ConfigError)
+async def webauthn_config_error_handler(request: Request, exc: wa.ConfigError) -> Response:
+    """A WebAuthn flow ran on a host with no public origin configured — HUB_ORIGIN
+    unset (see webauthn_gate._require_config). Answered as an honest, actionable 503
+    naming the variable to set, instead of letting a mismatched relying party fail
+    inside the browser with an error the user cannot act on. Covers every gated
+    surface (enrolment, action, terminal, chat, HA, topics, decisions, push) because
+    they all reach the one gate module."""
+    return JSONResponse(
+        status_code=503,
+        content={"detail": {"code": "webauthn_unconfigured", "detail": str(exc)}},
+    )
+
+
 def tail_jsonl(path: Path, n: int = 20) -> list[dict[str, Any]]:
     if not path.exists():
         return []

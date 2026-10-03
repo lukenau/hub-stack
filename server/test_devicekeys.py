@@ -837,3 +837,32 @@ def test_challenge_endpoints_are_byte_identical_in_shape():
     assert set(r) == {"challenge", "rp_id", "user_verification", "allowed_credentials", "timeout_ms"}
     assert r["user_verification"] == "required"
     assert r["allowed_credentials"] == [{"id": b64u(CRED_ID), "type": "public-key"}]
+
+
+def test_unconfigured_origin_refuses_webauthn_with_an_actionable_message(monkeypatch):
+    """An unconfigured host must name the variable to set, not fail in the browser."""
+    monkeypatch.setattr(wa, "ORIGIN", None)
+    monkeypatch.setattr(wa, "RP_ID", None)
+    with pytest.raises(wa.ConfigError) as exc:
+        wa.registration_options()
+    assert "HUB_ORIGIN" in str(exc.value)
+
+    r = client.post("/api/passkey/register/options", json={})
+    assert r.status_code == 503
+    detail = r.json()["detail"]
+    assert detail["code"] == "webauthn_unconfigured" and "HUB_ORIGIN" in detail["detail"]
+
+    # The status GET must stay a 200 that reports the state, never a 500.
+    status = client.get("/api/passkey/status").json()
+    assert status["configured"] is False and status["rp_id"] is None
+
+
+def test_rp_id_defaults_to_the_origin_hostname(monkeypatch):
+    monkeypatch.setattr(wa, "ORIGIN", "https://hub.example.com")
+    monkeypatch.setattr(wa, "RP_ID", "hub.example.com")  # what the module derives from ORIGIN
+    assert wa.registration_options()["rp"]["id"] == "hub.example.com"
+
+    # A hand-set RP_ID that no browser could complete a ceremony for is refused too.
+    monkeypatch.setattr(wa, "RP_ID", "other.test")
+    with pytest.raises(wa.ConfigError):
+        wa.registration_options()

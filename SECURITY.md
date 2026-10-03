@@ -87,9 +87,9 @@ survives.
 
 ## Reporting a vulnerability
 
-The preferred channel is GitHub's private vulnerability reporting on this
-repository, if it is enabled. Otherwise open a private security advisory on
-the repository, or contact the maintainer, **Luke Nau**
+The preferred channel is GitHub's private vulnerability reporting, which is
+enabled on this repository. Otherwise open a private security advisory on the
+repository, or contact the maintainer, **Luke Nau**
 ([@lukenau](https://github.com/lukenau)). Please do not open a public issue
 for an unexploited vulnerability.
 

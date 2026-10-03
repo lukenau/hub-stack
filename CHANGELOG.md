@@ -51,6 +51,7 @@ earlier release to compare against.
 
 ### Changed
 
+- The Murmur documentation is a specification, not a pitch: `docs/MURMUR.md`, the README section, `docs/FEATURES.md`, `docs/INTEGRATIONS.md`, `docs/SERVICES.md` and `services/murmur-bridge/README.md` now state what Murmur is, its interfaces in order, its requirements, its configuration keys and its limits, with the positioning framing ("sub-product", competitor contrast, why-you-should-care) removed.
 - The installer no longer generates or asks for an `HUB_API_TOKEN`; pairing is a one-time enrolment code. `HUB_API_TOKEN` remains in `.env.example` only as a documented reserved placeholder that the server does not read. (`20fa991`, `81b4d93`, `5d16636`)
 - Documentation and the shown installer output now match the installer's real behaviour: it prints `Created .env (mode 600)`, the stated prerequisites are Docker, Compose v2 and bash (curl optional), and the `--token` flag is gone. (`81b4d93`, `20fa991`)
 - The README and connection docs describe the app's real connection model: a source build takes its server address from `expo.extra.apiBase` at build time, and the app can also be pointed at a server URL at runtime. (`8d1c80f`, `7e5a2ef`)
@@ -63,6 +64,7 @@ earlier release to compare against.
 
 ### Fixed
 
+- The Murmur documentation asserted a recorder class the bridge does not support: it offered "any BLE wearable that records to on-board flash" (and "any recorder of that class"), while `services/murmur-bridge/README.md` and the vendored protobuf schemas require the pendant's own BLE wire protocol. The requirement is now stated consistently across all five Murmur documents: the recorder must speak the protocol in `services/murmur-bridge/murmur/bridge/proto/` (vendored from `MAkcanca/pendant-cli`).
 - The installer's first-install defects, all of which fired on a normal cold start: `./data` is now created and owned before `docker compose up`, so the non-root container can write it (Docker used to create it `root:root` 755, and the first write failed with `EACCES` after the script had already printed "Done"); a host without `curl` falls back to the same in-container `/api/healthz` probe compose uses instead of spinning for 90 seconds and reporting a healthy server as failed; `HUB_PORT` is actually honoured (compose publishes `${HUB_PORT:-8090}` and the script resolves shell env, then `.env`, then 8090, and exports it); the `HUB_TZ` seed uses the script's own `sed_inplace` helper rather than a bare `sed` that dumped all of `.env` to stdout and left the value unmodified; and the port-in-use check probes `/dev/tcp` instead of trusting BusyBox `lsof`, which ignores the TCP filters and exits 0 on a free port. `--help` now prints only the header comment. (`b1ebfad`)
 - Home Assistant applies now use the primary WebAuthn gate, so the authenticator's sign counter is persisted and cloned-authenticator detection applies to `/api/ha/apply` like every other privileged surface. (`44ad156`)
 - The publish gate defaults to the current directory (and CI passes the repo root), so it no longer dies on a hard-coded local path before it scans anything. (`0e54dc5`)

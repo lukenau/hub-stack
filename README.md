@@ -108,27 +108,21 @@ Tailscale, Headscale, WireGuard, Cloudflare Tunnel, or LAN-only — see
 
 ---
 
-## Murmur: Xavier's wearable capture sub-product
+## Murmur: BLE capture bridge
 
-**Murmur** is a sub-product of Xavier — not a separate thing bolted on beside
-it — and it earns its place on the part that is actually hard: the **BLE
-passthrough**. A wearable audio recorder is inert on its own. Something has to
-bond to it over Bluetooth, drain the audio it has been quietly recording to its
-own flash, and hand that audio onward to be turned into something searchable.
-That piece is Xavier, and it is what turns the hardware into memory.
+Murmur is a BLE audio-recorder pipeline in two parts. The recorder is hardware
+you supply: a wearable that records continuously to its own flash. The bridge
+daemon is what this repo ships (`services/murmur-bridge/`) — it bonds to the
+recorder over Bluetooth, drains the recorded audio off its flash, and uploads it
+to a transcription backend you run, which produces speaker-tagged transcripts;
+an ETL step mirrors those into a memory index the assistant can search. The
+recorder's wire protocol, the pipeline stages, the hub's configuration keys and
+the honest limits are specified in **[docs/MURMUR.md](docs/MURMUR.md)**.
 
-So: a wearable recorder (any BLE wearable that records to on-board flash)
-buffers your day on its own storage, and the bridge this repo ships drains it
-over Bluetooth to a transcription backend you run, which produces
-speaker-tagged transcripts and a memory index your assistant can search. The
-custody story is the same one as everywhere else here — the audio leaves
-hardware you own and lands on a machine you run, with no consumer cloud
-anywhere in the path.
-
-Murmur is **strictly optional**: most self-hosters have no wearable and will
-not get one. Without a configured capture bridge the Murmur page does not
-appear, and the hub you get is exactly the one documented everywhere else.
-Full pipeline, hardware, and honest limits: **[docs/MURMUR.md](docs/MURMUR.md)**.
+Murmur is optional and absent unless a capture bridge is configured: with no
+bridge token the Murmur page does not appear (see
+[docs/SERVICES.md](docs/SERVICES.md#murmur-voice-capture-bridge)), and the rest
+of the hub is unchanged.
 
 ---
 

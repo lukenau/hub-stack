@@ -6,10 +6,10 @@ to a transcription backend (Chronicle) which turns it into speaker-tagged
 transcripts. A small companion script then mirrors those transcripts into a
 memory store and a canonical day-file directory.
 
-This is the piece that makes an always-on memory pipeline reproducible: the
-pendant records continuously into a ~35-hour flash buffer, and the bridge
-drains that buffer before it overwrites, resuming from the last acknowledged
-page after a restart.
+The pendant records continuously into a ~35-hour flash buffer; the bridge drains
+that buffer before it overwrites (deleting a flash page only once the backend
+has acknowledged its audio), and resumes from the last acknowledged page after a
+restart.
 
 ## Layout
 

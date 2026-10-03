@@ -28,7 +28,7 @@ model access.
 | [Google Workspace](https://workspace.google.com) | Gmail, Calendar, Drive, Docs, Sheets | The `gws` CLI over OAuth | Your own Google account |
 | [Apple Messages](https://support.apple.com/guide/messages/welcome/mac) | Read and send iMessage from the agent | A collector running on a Mac plus an MCP endpoint (`IMESSAGE_MCP_URL`) | The Mac must be awake |
 | [Home Assistant](https://www.home-assistant.io) | Lights, climate, scenes, sensors | The Home Assistant API; writes are gated | Dry-run until you opt in (`HA_LIVE_APPLY`) |
-| [Murmur](MURMUR.md) | Xavier's wearable capture sub-product: the BLE passthrough that drains a flash-recording wearable into searchable, speaker-tagged transcripts | A wearable recorder plus a local bridge service (`MURMUR_BRIDGE_URL`) | Sub-product of Xavier; optional hardware |
+| [Murmur](MURMUR.md) | A BLE capture bridge: drains a flash-recording wearable into speaker-tagged transcripts | A wearable recorder plus the bridge daemon in this repo (`services/murmur-bridge/`) | Optional; absent unless a bridge token is provisioned |
 | [Oura](https://ouraring.com) | Sleep, readiness, recovery | The Oura API | Your own ring and token |
 | [AfterShip](https://www.aftership.com) | Package tracking and returns | An API key | Reads tracking numbers from mail and chat |
 | [Box](https://www.box.com) | Cloud files and sharing | The Box API | Alternative to local file roots |

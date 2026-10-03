@@ -85,11 +85,40 @@ port_busy() {
   return 1  # can't tell → assume free, never block the install
 }
 
-print_url() {
+# Best-effort LAN address of this host. Prints an address, or nothing at all
+# when none can be found: macOS has no `hostname -I`, and a machine behind NAT
+# may genuinely have no address another device can reach. An empty result is a
+# real answer, not an error — the callers below decide how to explain it.
+lan_ip() {
   local ip=""
   ip=$(hostname -I 2>/dev/null | awk '{print $1}') || true
-  [ -n "$ip" ] || ip=$(ipconfig getifaddr en0 2>/dev/null) || true
-  printf '%s\n' "http://${ip:-THIS-MACHINE}:${PORT}"
+  [ -n "$ip" ] || ip=$(ipconfig getifaddr en0 2>/dev/null) || true   # macOS Wi-Fi
+  [ -n "$ip" ] || ip=$(ipconfig getifaddr en1 2>/dev/null) || true   # macOS Ethernet
+  [ -n "$ip" ] || ip=$(ip route get 1.1.1.1 2>/dev/null \
+    | awk '{for (i=1; i<=NF; i++) if ($i == "src") { print $(i+1); exit }}') || true
+  printf '%s' "$ip"
+}
+
+# How this OS asks for its own address — printed when detection fails, so the
+# reader always has a command to run instead of a placeholder to puzzle over.
+lan_ip_command() {
+  case "$(uname -s)" in
+    Darwin) printf '%s' 'ipconfig getifaddr en0' ;;
+    *)      printf '%s' 'hostname -I' ;;
+  esac
+}
+
+# --url: one copy-pasteable URL. When there is no address to print, say so in
+# plain words and hand over the command that finds it — never a placeholder.
+print_url() {
+  local ip; ip=$(lan_ip)
+  if [ -n "$ip" ]; then
+    printf 'http://%s:%s\n' "$ip" "$PORT"
+    return 0
+  fi
+  printf 'No LAN address detected on this machine.\n'
+  printf "Find this machine's address with:  %s\n" "$(lan_ip_command)"
+  printf 'then point the app at:  http://<that-address>:%s\n' "$PORT"
 }
 
 probe_health() {
@@ -227,12 +256,22 @@ docker compose up -d --build
 say "4/4  Health check"
 wait_healthy
 
+# The "from another device" line: the detected LAN URL, or — when this machine
+# has no address another device can reach — the command that finds one. Never a
+# placeholder: the reader must know exactly what to do with the string.
+LAN_IP="$(lan_ip)"
+if [ -n "$LAN_IP" ]; then
+  LAN_LINE="http://${LAN_IP}:${PORT}   (from another device on your network)"
+else
+  LAN_LINE="run '$(lan_ip_command)' to find this machine's address, then use http://<that-address>:${PORT}"
+fi
+
 cat <<EOF
 
 $(ok "Done.")
 
   Point the app at:   http://127.0.0.1:${PORT}   (this machine)
-                      $(print_url)   (from another device on your network)
+                      ${LAN_LINE}
 
   Pair the app:       run  ./install.sh --pair  on this machine to mint a
                       one-time 6-character enrolment code, then enter it in the

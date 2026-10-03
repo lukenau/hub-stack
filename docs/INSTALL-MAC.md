@@ -52,10 +52,12 @@ Run the hub on a Mac. This page covers two different goals:
    ```
 
    Note: macOS has no `hostname -I`, so the installer's "from another device"
-   line falls back to the Mac's `en0` address (`ipconfig getifaddr en0`), or
-   `THIS-MACHINE` if `en0` has none. The `http://127.0.0.1:8090` line is the
-   right URL for use *on the Mac itself*; to reach the hub from other devices,
-   see [CONNECT-APP.md](CONNECT-APP.md).
+   line falls back to the Mac's `en0` address (`ipconfig getifaddr en0`, then
+   `en1`). If no interface has an address, the line tells you to run
+   `ipconfig getifaddr en0` and what to do with the result — it never prints a
+   placeholder you would have to guess at. The `http://127.0.0.1:8090` line is
+   the right URL for use *on the Mac itself*; to reach the hub from other
+   devices, see [CONNECT-APP.md](CONNECT-APP.md).
 
 4. **Verify**
 

@@ -80,24 +80,43 @@ how you expose your server, and the consequences of that choice are yours. See
 
 ## Supported versions
 
-hub-stack is pre-1.0 and moves quickly. There are no release branches: the
-only supported version is the latest commit on the default branch. If you
-are running anything older, update first, then report the problem if it
-survives.
+hub-stack is pre-1.0 and moves quickly. There are no release branches; the
+default branch is the only thing that gets fixes.
+
+| Version | Supported |
+|---|---|
+| Latest commit on the default branch (`main`) | Yes |
+| Any earlier commit, tag or fork | No |
+
+If you are running anything older, update to `main` first, then report the
+problem if it survives.
+
+## If you host this for other people
+
+Pointing other people — testers, family, friends — at your server makes you the
+operator of their data. What the server then holds, how to revoke access, and
+how to delete it on request is set out in the [README's hosting
+section](README.md#if-you-host-this-for-other-people), and
+[docs/TESTER-PRIVACY.md](docs/TESTER-PRIVACY.md) is a five-line notice you can
+hand a tester.
 
 ## Reporting a vulnerability
 
 The preferred channel is GitHub's private vulnerability reporting, which is
-enabled on this repository. Otherwise open a private security advisory on the
-repository, or contact the maintainer, **Luke Nau**
-([@lukenau](https://github.com/lukenau)). Please do not open a public issue
-for an unexploited vulnerability.
+**enabled on this repository**: use *Report a vulnerability* under the repo's
+**Security** tab, and the report reaches the maintainer only. If you cannot use
+it, contact the maintainer, **Luke Nau** ([@lukenau](https://github.com/lukenau)).
+Please do not open a public issue for an unexploited vulnerability.
 
-One person maintains this project, so handling is best effort: there is no
-SLA and no committed response time, and a fix may take a while. Reports are
-read and taken seriously, but patience is part of the deal.
+**Response expectation.** One person maintains this project, so handling is best
+effort and there is no SLA. As a target rather than a promise, the aim is to
+acknowledge a report within **5 days** and give a first assessment shortly
+after. A fix can still take a while, depending on severity; reports are read and
+taken seriously, but patience is part of the deal. If a report warrants a CVE,
+the maintainer will request one through GitHub's advisory flow and credit the
+reporter unless asked not to.
 
-If you research this project in good faith, the maintainer will not pursue
-legal action over vulnerabilities disclosed responsibly. That courtesy does
-not extend to accessing other people's data or degrading the service: do
-neither.
+**Safe harbour.** If you research this project in good faith, the maintainer
+will not pursue legal action over vulnerabilities disclosed responsibly. That
+courtesy does not extend to accessing other people's data or degrading the
+service: do neither.
